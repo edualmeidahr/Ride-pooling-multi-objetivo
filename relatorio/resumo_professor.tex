@@ -1,0 +1,140 @@
+\documentclass[10pt,a4paper]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\IfFileExists{brazil.ldf}{%
+    \usepackage[brazilian]{babel}%
+}{%
+    \usepackage[english]{babel}%
+    \addto\captionsenglish{%
+        \renewcommand{\figurename}{Figura}%
+        \renewcommand{\tablename}{Tabela}%
+    }%
+}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{booktabs}
+\usepackage{geometry}
+\usepackage{enumitem}
+\usepackage{titlesec}
+
+\geometry{a4paper,top=1.5cm,bottom=1.5cm,left=1.8cm,right=1.8cm}
+\setlist[itemize]{itemsep=1pt,topsep=2pt,parsep=0pt}
+\setlength{\parskip}{2.5pt}
+\setlength{\abovedisplayskip}{4pt}
+\setlength{\belowdisplayskip}{4pt}
+
+\titlespacing*{\section}{0pt}{6pt}{3pt}
+\titleformat{\section}{\normalfont\large\bfseries}{\thesection}{0.6em}{}
+
+\theoremstyle{plain}
+\newtheorem{proposicao}{Proposição}
+\newtheorem{corolario}[proposicao]{Corolário}
+
+\pagestyle{empty}
+
+\begin{document}
+
+\begin{center}
+    {\large\textbf{Ride-Pooling vs. Transporte Individual}}\\[2pt]
+    {\normalsize Uma formulação multiobjetivo entre emissões de $\text{CO}_2$ e qualidade de serviço}\\[4pt]
+    {\small Bruno Prado Santos \quad$\cdot$\quad Eduardo Almeida Queiroz \quad$\cdot$\quad Lucas Cerqueira Portela}\\[2pt]
+    {\small\textit{Resumo executivo para discussão --- CEFET-MG, Otimização Multi-Objetivo}}
+\end{center}
+
+\vspace{-2pt}
+\hrule
+\vspace{4pt}
+
+\section*{1. Propósito}
+
+Medir \textbf{quanto de $\text{CO}_2$ o transporte compartilhado economiza e quanto tempo extra o passageiro paga por essa economia}. Se cada pessoa viaja sozinha, ninguém perde tempo, mas a frota roda muito quilômetro e emite muito; se os passageiros são agrupados na mesma van, a frota roda bem menos, mas cada um faz desvios para pegar e deixar os outros. O trabalho entrega o mapa desse equilíbrio: para cada nível de incômodo aceitável, qual é a menor emissão possível.
+
+O problema é um \textit{Dial-a-Ride Problem} (DARP) --- transporte de pessoas porta a porta, sob demanda --- resolvido em duas configurações de frota sobre o \textbf{mesmo} conjunto de viagens: carros de até 4 lugares (cenário individual, emissão/km menor) e vans de 8 a 15 lugares (cenário compartilhado, emissão/km maior mas com agrupamento). Saem duas Fronteiras de Pareto, e a comparação entre elas é o resultado central.
+
+\section*{2. Modelagem}
+
+Sejam $P=\{1,\dots,n\}$ os nós de coleta, $D=\{n+1,\dots,2n\}$ os de entrega (o nó $n+i$ é a entrega da coleta $i$), $\{0,2n+1\}$ o depósito e $K$ a frota homogênea. Parâmetros: $d_{ij}$ e $t_{ij}$ (distância e tempo), $\phi$ (fator de emissão, g$\,$CO$_2$/km), $q_i$ (passageiros), $Q$ (capacidade), $[e_i,l_i]$ (janela de tempo), $s_i$ (tempo de embarque/desembarque), $\rho_i=e_i$ (horário desejado de embarque), $\bar t_i = t_{i,(n+i)}$ (percurso direto) e $L_i=\alpha\bar t_i$ (limite a bordo, $\alpha>1$). Variáveis: $x_{ijk}$ (arco percorrido), $y_k$ (veículo usado), $B_i$ (início do atendimento), $w_i$ (passageiros a bordo) e $R_i$ (tempo a bordo).
+
+\textbf{Objetivo ambiental} --- emissão total de $\text{CO}_2$:
+\begin{equation}
+\min\ f_1 = \sum_{k \in K} \sum_{(i,j) \in A} \phi\, d_{ij}\, x_{ijk}
+\tag{$f_1$}
+\end{equation}
+
+\textbf{Objetivo de serviço} --- tempo perdido pelo usuário, em passageiro-minuto:
+\begin{equation}
+\min\ f_2 = \sum_{i \in P} q_i \Big[ \underbrace{(R_i - \bar{t}_i)}_{\text{desvio de rota}} \;+\; \underbrace{(B_i - \rho_i)}_{\text{espera no embarque}} \Big]
+\tag{$f_2$}
+\end{equation}
+
+Três decisões de modelagem em $f_2$: usa-se o tempo \textit{excedente} $(R_i-\bar t_i)$, porque $\bar t_i$ é constante irredutível e só comprimiria a variação do objetivo; pondera-se por $q_i$, para que uma viagem de 4 pessoas não pese o mesmo que uma de 1; e não há peso relativo entre as duas parcelas, pois ambas são minutos perdidos pelo mesmo usuário. A parcela de espera não é redundante: sem ela, o modelo aceitaria um único veículo atendendo tudo em sequência, com desvio nulo e distância baixa, ao custo de esperas arbitrárias.
+
+\textbf{Restrições:} cada viagem é atendida uma única vez; a mesma van faz a coleta e a entrega da mesma pessoa; conservação de fluxo; saída e retorno ao depósito condicionados a $y_k$; consistência temporal ao longo da rota ($B_j \ge B_i + s_i + t_{ij}$, linearizada com \textit{big-M}); janelas de tempo $e_i \le B_i \le l_i$; tempo a bordo $R_i = B_{(n+i)} - (B_i + s_i)$ com $\bar t_i \le R_i \le L_i$ (que também garante a precedência); capacidade $w_i \le Q$; e duração máxima da jornada $T_{max}$.
+
+\textbf{Por que o custo operacional não é objetivo.} Com veículos do mesmo tipo, o custo acompanha a distância --- a mesma quantidade que define $f_1$ --- e, como terceiro objetivo, repetiria o primeiro em vez de revelar um equilíbrio novo. Ele é calculado \textit{depois}, para cada solução da fronteira, como indicador econômico: $C = \sum_k [F y_k + c\sum_{ij} d_{ij}x_{ijk} + c^h(B^{\text{fim}}_k - B^{\text{ini}}_k)]$.
+
+\section*{3. Os objetivos são conflitantes --- prova e evidência}
+
+\begin{proposicao}[Serviço perfeito proíbe o agrupamento]
+Seja $S$ uma solução viável com $f_2(S)=0$. Então, para toda solicitação $i \in P$, o veículo que a atende não visita nenhum nó entre a coleta $i$ e a entrega $n+i$. Consequentemente, nenhum veículo transporta mais de uma solicitação por vez, e a capacidade $Q > \max_i q_i$ é irrelevante em $S$.
+\end{proposicao}
+
+\noindent\textit{Demonstração (esboço).} Ambas as parcelas de $f_2$ são não negativas, logo $f_2(S)=0$ força $R_i=\bar t_i$ para todo $i$. Se o veículo visitasse um nó $h \notin \{i, n+i\}$ entre a coleta e a entrega de $i$, então $R_i \ge t_{ih} + s_h + t_{h,(n+i)} \ge \bar t_i + s_h > \bar t_i$, pela desigualdade triangular e por $s_h>0$ --- contradição.\hfill$\square$
+
+\begin{corolario}
+Toda a vantagem estrutural da frota compartilhada sobre a individual está estritamente na região $f_2 > 0$.
+\end{corolario}
+
+Ou seja: \textbf{no extremo de serviço perfeito, a van de 15 lugares rende exatamente o mesmo que o carro de 4}. O conflito não depende de calibrar parâmetro algum --- vem de que o caminho mais curto entre dois pontos não passa por um terceiro, e de que embarcar alguém leva tempo.
+
+\textbf{Evidência empírica.} A solução publicada da instância \texttt{pr01} (Cordeau \& Laporte, 24 viagens, 3 veículos) foi reconstruída a partir das coordenadas do arquivo e a distância reproduziu o valor publicado. Avaliada nos dois objetivos deste trabalho:
+
+\begin{center}
+\small
+\begin{tabular}{@{}lr@{\hspace{2.5em}}lr@{}}
+\toprule
+$f_1$ --- distância total & 190,02 & Caminho direto médio por passageiro & 6,31 min \\
+$\sum_i \bar t_i$ (caminhos diretos) & 151,52 & Tempo médio a bordo & 45,62 min \\
+$f_2$ --- tempo perdido total & \textbf{1233,25} & Aumento do tempo de viagem & \textbf{7,2$\times$} \\
+\quad desvio / espera & 943,49 / 289,76 & Desvio médio por passageiro & 39,31 min \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+A solução tida como ótima na literatura deixa o passageiro \textbf{45,6 minutos} no veículo para uma viagem que sozinha levaria \textbf{6,3 minutos}. São 1233 passageiro-minutos de tempo perdido que o modelo de um único objetivo não enxerga. Em vários trechos o tempo a bordo bate exatamente no limite de 90 minutos: para encurtar a rota da frota, o serviço é empurrado até o máximo permitido. Essa solução entra no plano experimental como ponto conhecido da fronteira --- o extremo de menor emissão.
+
+\section*{4. Metaheurísticas propostas}
+
+Três abordagens, cada uma de uma família distinta, seguindo o protocolo de Assis et al. (2013):
+
+\begin{itemize}
+    \item \textbf{NSGA-II} --- evolutivo, baseado em população. Referência canônica da área, disponível em \texttt{pymoo}; serve de linha de base.
+    \item \textbf{MOILS} --- busca local iterativa multiobjetivo. Principal aposta: em problemas de rota, vizinhanças bem construídas costumam superar operadores genéricos, e o MOILS venceu as demais abordagens em todas as métricas no estudo de referência.
+    \item \textbf{$\varepsilon$-restrito + ILS} --- escalarização clássica: fixa-se um teto para $f_2$, minimiza-se $f_1$, e afrouxa-se o teto progressivamente, cada resolução gerando um ponto da fronteira. Base de comparação tradicional.
+\end{itemize}
+
+\textbf{Adaptação necessária das vizinhanças.} Em DARP cada viagem são \textit{dois} nós que precisam mover juntos e na ordem correta, de modo que os movimentos clássicos (\textit{shift}, \textit{swap}, 2-opt, Or-opt) devem operar sobre o \textbf{par} coleta-entrega. Além disso, é indispensável ao menos um movimento que atue sobre $f_2$ --- por exemplo, retirar uma viagem de uma van cheia e alocá-la sozinha em uma van nova, o que melhora $f_2$ e piora $f_1$. Sem isso, a busca só melhora emissão e a fronteira não se forma.
+
+\section*{5. Plano de execução}
+
+\begin{center}
+\small
+\begin{tabular}{@{}clp{7.8cm}@{}}
+\toprule
+\textbf{Fase} & \textbf{Atividade} & \textbf{Entrega / observação} \\
+\midrule
+0 & Alinhamento da modelagem & Validação do escopo com o professor \\
+1 & Leitor de instâncias e avaliador & Rotina que verifica viabilidade e calcula $f_1$ e $f_2$; \textbf{testada contra \texttt{pr01.res}} (deve reproduzir 190,02) \\
+2 & Extremos mono-objetivo e validação exata & Pontos âncora da fronteira; fronteira exata via \textit{solver} em instância de 5--8 viagens, como gabarito \\
+3 & NSGA-II & Primeira fronteira \\
+4 & MOILS & Segunda fronteira, comparável \\
+5 & $\varepsilon$-restrito + ILS & Terceira fronteira \\
+6 & Experimentos, métricas e redação & Hipervolume, cobertura e cardinalidade; delineamento em blocos casualizados \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Três cuidados já identificados. \textbf{(i)} O avaliador é a peça crítica, compartilhada pelos três algoritmos, e pode ser validado sem \textit{solver} algum: basta ler a rota publicada de \texttt{pr01.res}, avaliá-la com o código próprio e conferir o valor de distância. \textbf{(ii)} Para gerar o extremo de $f_2=0$ será preciso \textbf{ampliar a frota} além do que os arquivos oferecem --- em \texttt{pr07} há 9 viagens simultâneas para apenas 4 veículos, e sem esse ajuste o modelo será declarado inviável. \textbf{(iii)} Emissão (gramas) e tempo (minutos) estão em escalas muito distintas; os objetivos devem ser normalizados antes do cálculo do hipervolume, sob pena de o indicador refletir apenas $f_1$.
+
+\end{document}

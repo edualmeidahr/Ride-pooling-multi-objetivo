@@ -1,0 +1,21 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "darp-biobjetivo"
+version = "0.1.0"
+description = "Roteamento de veiculos multiobjetivo: emissao de CO2 x tempo perdido pelo usuario"
+requires-python = ">=3.10"
+dependencies = [
+    "numpy",
+    "scipy",       # agendamento otimo por programacao linear
+    "matplotlib",  # graficos das fronteiras
+]
+
+[project.optional-dependencies]
+solver = ["gurobipy"]  # fronteira exata pelo metodo epsilon-restrito
+
+[tool.setuptools.packages.find]
+where = ["codigo"]
+include = ["darp*"]
