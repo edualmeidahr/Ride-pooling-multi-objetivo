@@ -1,0 +1,128 @@
+{
+  "nome": "Cenario-Mobilidade-Urbana-Exemplo",
+  "descricao": "Instancia de demonstracao com rede fixa de paradas, conexoes reais e requisicoes de viagem",
+  "m": 2,
+  "Q": 4,
+  "T_max": 480.0,
+  "L_arquivo": 60.0,
+  "deposito_origem_id": 0,
+  "deposito_destino_id": 0,
+  "janela_deposito_ini": [0.0, 480.0],
+  "janela_deposito_fim": [0.0, 480.0],
+  "rede": {
+    "direcionado": false,
+    "velocidade": 1.0,
+    "nos_fixos": [
+      {
+        "id": 0,
+        "x": 0.0,
+        "y": 0.0,
+        "nome": "Garagem Central / Deposito",
+        "s_embarque": 0.0,
+        "s_desembarque": 0.0
+      },
+      {
+        "id": 1,
+        "x": 10.0,
+        "y": 10.0,
+        "nome": "Praca Central",
+        "s_embarque": 1.5,
+        "s_desembarque": 1.0
+      },
+      {
+        "id": 2,
+        "x": 15.0,
+        "y": 30.0,
+        "nome": "Hospital Regional",
+        "s_embarque": 2.0,
+        "s_desembarque": 2.0
+      },
+      {
+        "id": 3,
+        "x": 30.0,
+        "y": 10.0,
+        "nome": "Campus Universitario",
+        "s_embarque": 1.5,
+        "s_desembarque": 1.0
+      },
+      {
+        "id": 4,
+        "x": 25.0,
+        "y": 25.0,
+        "nome": "Terminal Rodoviario",
+        "s_embarque": 2.0,
+        "s_desembarque": 1.5
+      },
+      {
+        "id": 5,
+        "x": 35.0,
+        "y": 35.0,
+        "nome": "Centro Comercial / Shopping",
+        "s_embarque": 1.5,
+        "s_desembarque": 1.0
+      }
+    ],
+    "arestas": [
+      { "origem": 0, "destino": 1, "distancia": 12.0, "tempo": 12.0 },
+      { "origem": 0, "destino": 3, "distancia": 25.0, "tempo": 25.0 },
+      { "origem": 1, "destino": 2, "distancia": 18.0, "tempo": 18.0 },
+      { "origem": 1, "destino": 4, "distancia": 16.0, "tempo": 16.0 },
+      { "origem": 2, "destino": 4, "distancia": 10.0, "tempo": 10.0 },
+      { "origem": 3, "destino": 4, "distancia": 14.0, "tempo": 14.0 },
+      { "origem": 4, "destino": 5, "distancia": 12.0, "tempo": 12.0 },
+      { "origem": 2, "destino": 5, "distancia": 15.0, "tempo": 15.0 }
+    ]
+  },
+  "requisicoes": [
+    {
+      "id": 1,
+      "origem_id": 1,
+      "destino_id": 2,
+      "q": 1,
+      "e_coleta": 10.0,
+      "l_coleta": 40.0,
+      "e_entrega": 20.0,
+      "l_entrega": 80.0
+    },
+    {
+      "id": 2,
+      "origem_id": 3,
+      "destino_id": 5,
+      "q": 2,
+      "e_coleta": 15.0,
+      "l_coleta": 45.0,
+      "e_entrega": 35.0,
+      "l_entrega": 90.0
+    },
+    {
+      "id": 3,
+      "origem_id": 4,
+      "destino_id": 2,
+      "q": 1,
+      "e_coleta": 20.0,
+      "l_coleta": 50.0,
+      "e_entrega": 30.0,
+      "l_entrega": 85.0
+    },
+    {
+      "id": 4,
+      "origem_id": 1,
+      "destino_id": 3,
+      "q": 1,
+      "e_coleta": 30.0,
+      "l_coleta": 60.0,
+      "e_entrega": 50.0,
+      "l_entrega": 110.0
+    },
+    {
+      "id": 5,
+      "origem_id": 5,
+      "destino_id": 4,
+      "q": 1,
+      "e_coleta": 60.0,
+      "l_coleta": 100.0,
+      "e_entrega": 75.0,
+      "l_entrega": 140.0
+    }
+  ]
+}
