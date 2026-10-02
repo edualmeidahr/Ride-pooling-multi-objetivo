@@ -6,7 +6,7 @@ ou instancia classica de Cordeau) e comparar diretamente a qualidade das frontei
 de Pareto, o tempo computacional e os valores extremos dos objetivos.
 
 Uso:
-    python codigo/experimentos/comparar_metaheuristicas.py --instancia exemplo_instancia.json
+    python codigo/experimentos/comparar_metaheuristicas.py --instancia dados/exemplo_instancia.json --q 4
     python codigo/experimentos/comparar_metaheuristicas.py --instancia dados/tabu/pr01 --algoritmos sa grasp
 """
 
@@ -23,21 +23,20 @@ from darp import (
     BORDO,
     CEDO,
     OTIMO,
-    AlgoritmoGenetico,
     Avaliador,
-    GRASP,
     Instancia,
     Parametros,
-    SimulatedAnnealing,
     ler_instancia,
     ler_instancia_json,
     obter_metaheuristica,
 )
 from darp.pareto import hipervolume, normalizar
+from darp.instancia import ler_parametros_json
+from darp.cenarios import cenario_capacidade
 
 
-def carregar_instancia_flexivel(caminho_str: str) -> Instancia:
-    """Carrega uma instancia seja ela JSON ou formato texto classico."""
+def resolver_caminho_instancia(caminho_str: str) -> Path:
+    """Resolve a entrada na pasta atual, na raiz do projeto ou em dados."""
     caminho = Path(caminho_str)
     if not caminho.exists():
         # Tenta procurar na raiz ou em dados/
@@ -49,17 +48,25 @@ def carregar_instancia_flexivel(caminho_str: str) -> Instancia:
         else:
             raise FileNotFoundError(f"Arquivo nao encontrado: {caminho_str}")
 
+    return caminho
+
+
+def carregar_instancia_flexivel(caminho_str: str, Q: int | None = None) -> Instancia:
+    """Carrega uma instancia seja ela JSON ou formato texto classico."""
+    caminho = resolver_caminho_instancia(caminho_str)
     if caminho.suffix.lower() == ".json":
-        return ler_instancia_json(caminho)
-    return ler_instancia(caminho)
+        return ler_instancia_json(caminho, Q=Q)
+    inst = ler_instancia(caminho)
+    return cenario_capacidade(inst, Q) if Q is not None else inst
 
 
 def main():
     parser = argparse.ArgumentParser(description="Comparador de Meta-heuristicas para DARP Bi-objetivo")
+    parser.add_argument("--q", type=int, help="Capacidade desta execucao; obrigatoria se nao houver Q no JSON")
     parser.add_argument(
         "--instancia",
         type=str,
-        default="exemplo_instancia.json",
+        default=str(Path(__file__).resolve().parents[2] / "dados" / "exemplo_instancia.json"),
         help="Caminho do arquivo de instancia (.json ou formato classico)",
     )
     parser.add_argument(
@@ -71,9 +78,9 @@ def main():
     parser.add_argument(
         "--politica",
         type=str,
-        default=BORDO,
+        default=None,
         choices=[CEDO, BORDO, OTIMO],
-        help="Politica de agendamento do avaliador (cedo, bordo ou otimo)",
+        help="Sobrescreve a politica do JSON; em arquivos classicos o padrao e bordo",
     )
     parser.add_argument(
         "--seed",
@@ -93,11 +100,19 @@ def main():
     print("COMPARATIVO DE META-HEURISTICAS MULTIOBJETIVO (DARP)")
     print("=" * 80)
 
-    inst = carregar_instancia_flexivel(args.instancia)
-    av = Avaliador(inst, Parametros(politica=args.politica))
+    try:
+        inst = carregar_instancia_flexivel(args.instancia, Q=args.q)
+    except ValueError as erro:
+        parser.error(str(erro))
+    caminho = resolver_caminho_instancia(args.instancia)
+    par = (ler_parametros_json(caminho) if caminho.suffix.lower() == ".json"
+           else Parametros(politica=BORDO))
+    if args.politica is not None:
+        par.politica = args.politica
+    av = Avaliador(inst, par)
 
     print(f"Instancia carregada: {inst.resumo()}")
-    print(f"Politica de avaliacao: {args.politica.upper()}")
+    print(f"Politica de avaliacao: {par.politica.upper()} | alpha={par.alpha} | phi={par.phi}")
     print(f"Algoritmos selecionados: {', '.join(a.upper() for a in args.algoritmos)}")
     print("-" * 80)
 

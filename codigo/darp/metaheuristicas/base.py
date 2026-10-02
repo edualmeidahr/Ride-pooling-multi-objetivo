@@ -2,10 +2,8 @@
 
 from __future__ import annotations
 
-import time
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
-from typing import Sequence
 
 from ..avaliador import Avaliador
 from ..instancia import Instancia

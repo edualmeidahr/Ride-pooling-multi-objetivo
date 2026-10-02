@@ -116,6 +116,9 @@ class GRASP(Metaheuristica):
                 "iteracao": it,
                 "peso_f1": peso_f1,
                 "tamanho_pareto": len(arquivo),
+                "fronteira": [(p[0], p[1]) for p in arquivo.pontos],
+                "agendamentos": getattr(av, "agendamentos", None),
+                "tempo": time.time() - inicio,
             })
 
         duracao = time.time() - inicio

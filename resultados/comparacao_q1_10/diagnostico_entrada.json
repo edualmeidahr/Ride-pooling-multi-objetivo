@@ -1,0 +1,411 @@
+{
+  "nota": "Exemplos viaveis construidos manualmente, nao otimos e nao utilizados como referencia das heuristicas",
+  "capacidades": [
+    {
+      "Q": 1,
+      "minimo_veiculos_por_concorrencia": 12,
+      "exemplo_viavel_distancia": 600.0,
+      "exemplo_viavel_tempo_perdido": 0.0,
+      "carga_maxima_exemplo": 1.0,
+      "rotas": [
+        [
+          1,
+          13
+        ],
+        [
+          5,
+          17
+        ],
+        [
+          9,
+          21
+        ],
+        [
+          2,
+          14
+        ],
+        [
+          6,
+          18
+        ],
+        [
+          10,
+          22
+        ],
+        [
+          3,
+          15
+        ],
+        [
+          7,
+          19
+        ],
+        [
+          11,
+          23
+        ],
+        [
+          4,
+          16
+        ],
+        [
+          8,
+          20
+        ],
+        [
+          12,
+          24
+        ]
+      ]
+    },
+    {
+      "Q": 2,
+      "minimo_veiculos_por_concorrencia": 6,
+      "exemplo_viavel_distancia": 352.0,
+      "exemplo_viavel_tempo_perdido": 98.80000000000004,
+      "carga_maxima_exemplo": 2.0,
+      "rotas": [
+        [
+          1,
+          5,
+          13,
+          17
+        ],
+        [
+          9,
+          2,
+          14,
+          21
+        ],
+        [
+          6,
+          10,
+          18,
+          22
+        ],
+        [
+          3,
+          7,
+          15,
+          19
+        ],
+        [
+          11,
+          4,
+          23,
+          16
+        ],
+        [
+          8,
+          12,
+          20,
+          24
+        ]
+      ]
+    },
+    {
+      "Q": 3,
+      "minimo_veiculos_por_concorrencia": 4,
+      "exemplo_viavel_distancia": 256.0,
+      "exemplo_viavel_tempo_perdido": 112.20000000000006,
+      "carga_maxima_exemplo": 3.0,
+      "rotas": [
+        [
+          1,
+          5,
+          9,
+          13,
+          17,
+          21
+        ],
+        [
+          2,
+          6,
+          10,
+          14,
+          18,
+          22
+        ],
+        [
+          3,
+          7,
+          11,
+          23,
+          15,
+          19
+        ],
+        [
+          4,
+          8,
+          12,
+          20,
+          24,
+          16
+        ]
+      ]
+    },
+    {
+      "Q": 4,
+      "minimo_veiculos_por_concorrencia": 3,
+      "exemplo_viavel_distancia": 192.0,
+      "exemplo_viavel_tempo_perdido": 153.20000000000013,
+      "carga_maxima_exemplo": 4.0,
+      "rotas": [
+        [
+          1,
+          5,
+          9,
+          2,
+          13,
+          14,
+          17,
+          21
+        ],
+        [
+          6,
+          10,
+          3,
+          7,
+          15,
+          18,
+          19,
+          22
+        ],
+        [
+          11,
+          4,
+          8,
+          12,
+          20,
+          23,
+          24,
+          16
+        ]
+      ]
+    },
+    {
+      "Q": 5,
+      "minimo_veiculos_por_concorrencia": 3,
+      "exemplo_viavel_distancia": 182.0,
+      "exemplo_viavel_tempo_perdido": 188.2000000000001,
+      "carga_maxima_exemplo": 5.0,
+      "rotas": [
+        [
+          1,
+          5,
+          9,
+          2,
+          6,
+          13,
+          14,
+          17,
+          18,
+          21
+        ],
+        [
+          10,
+          3,
+          7,
+          11,
+          4,
+          23,
+          15,
+          16,
+          19,
+          22
+        ],
+        [
+          8,
+          12,
+          20,
+          24
+        ]
+      ]
+    },
+    {
+      "Q": 6,
+      "minimo_veiculos_por_concorrencia": 2,
+      "exemplo_viavel_distancia": 152.0,
+      "exemplo_viavel_tempo_perdido": 255.6000000000002,
+      "carga_maxima_exemplo": 6.0,
+      "rotas": [
+        [
+          1,
+          5,
+          9,
+          2,
+          6,
+          10,
+          13,
+          14,
+          17,
+          18,
+          21,
+          22
+        ],
+        [
+          3,
+          7,
+          11,
+          4,
+          8,
+          12,
+          20,
+          23,
+          24,
+          15,
+          16,
+          19
+        ]
+      ]
+    },
+    {
+      "Q": 7,
+      "minimo_veiculos_por_concorrencia": 2,
+      "exemplo_viavel_distancia": 140.0,
+      "exemplo_viavel_tempo_perdido": 221.80000000000024,
+      "carga_maxima_exemplo": 7.0,
+      "rotas": [
+        [
+          1,
+          5,
+          9,
+          2,
+          6,
+          10,
+          3,
+          13,
+          14,
+          17,
+          15,
+          18,
+          21,
+          22
+        ],
+        [
+          7,
+          11,
+          4,
+          8,
+          12,
+          20,
+          23,
+          24,
+          16,
+          19
+        ]
+      ]
+    },
+    {
+      "Q": 8,
+      "minimo_veiculos_por_concorrencia": 2,
+      "exemplo_viavel_distancia": 140.0,
+      "exemplo_viavel_tempo_perdido": 257.2000000000002,
+      "carga_maxima_exemplo": 8.0,
+      "rotas": [
+        [
+          1,
+          5,
+          9,
+          2,
+          6,
+          10,
+          3,
+          7,
+          13,
+          14,
+          17,
+          15,
+          18,
+          21,
+          19,
+          22
+        ],
+        [
+          11,
+          4,
+          8,
+          12,
+          20,
+          23,
+          24,
+          16
+        ]
+      ]
+    },
+    {
+      "Q": 9,
+      "minimo_veiculos_por_concorrencia": 2,
+      "exemplo_viavel_distancia": 138.0,
+      "exemplo_viavel_tempo_perdido": 270.60000000000025,
+      "carga_maxima_exemplo": 9.0,
+      "rotas": [
+        [
+          1,
+          5,
+          9,
+          2,
+          6,
+          10,
+          3,
+          7,
+          11,
+          13,
+          14,
+          17,
+          23,
+          15,
+          18,
+          21,
+          19,
+          22
+        ],
+        [
+          4,
+          8,
+          12,
+          20,
+          24,
+          16
+        ]
+      ]
+    },
+    {
+      "Q": 10,
+      "minimo_veiculos_por_concorrencia": 2,
+      "exemplo_viavel_distancia": 130.0,
+      "exemplo_viavel_tempo_perdido": 351.2000000000003,
+      "carga_maxima_exemplo": 10.0,
+      "rotas": [
+        [
+          1,
+          5,
+          9,
+          2,
+          6,
+          10,
+          3,
+          7,
+          11,
+          4,
+          13,
+          14,
+          17,
+          23,
+          15,
+          18,
+          21,
+          16,
+          19,
+          22
+        ],
+        [
+          8,
+          12,
+          20,
+          24
+        ]
+      ]
+    }
+  ]
+}

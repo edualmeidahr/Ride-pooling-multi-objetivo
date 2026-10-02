@@ -302,13 +302,33 @@ def salvar_instancia_json(inst: Instancia, caminho: str | Path) -> None:
     caminho.write_text(json.dumps(dados, indent=2), encoding="utf-8")
 
 
-def ler_instancia_json(caminho: str | Path) -> Instancia:
+def ler_instancia_json(caminho: str | Path, *, Q: int | None = None) -> Instancia:
     """Carrega uma instancia a partir de um arquivo JSON."""
     caminho = Path(caminho)
     dados = json.loads(caminho.read_text(encoding="utf-8"))
+    if not isinstance(dados, dict):
+        raise ValueError("entrada JSON: esperado objeto")
+    if Q is not None:
+        if isinstance(Q, bool) or not isinstance(Q, int) or Q < 1:
+            raise ValueError("Q do experimento deve ser inteiro positivo")
+        dados["Q"] = Q
+    if "Q" not in dados:
+        raise ValueError("Q nao esta na demanda: informe a capacidade do experimento ao carregar a instancia")
+    if "parametros_avaliacao" in dados:
+        ler_parametros_json(caminho)
 
     if "rede" in dados:
+        _validar_entrada_rede(dados)
         rede = Rede.from_dict(dados["rede"])
+        # Nao permitir que pares ausentes em uma rede viaria virem atalhos
+        # euclidianos pelo fallback da API generica de Rede.
+        ids = rede.nos_fixos
+        if "arestas" in dados["rede"] or "matriz_dist" in dados["rede"]:
+            for u in ids:
+                for v in ids:
+                    if u != v and ((u, v) not in rede.matriz_dist
+                                   or (u, v) not in rede.matriz_tempo):
+                        raise ValueError(f"rede: falta caminho/distancia/tempo de {u} para {v}")
         reqs = [Requisicao.from_dict(r) for r in dados.get("requisicoes", [])]
         dep_ini = dados.get("deposito_origem_id", 0)
         dep_fim = dados.get("deposito_destino_id", dep_ini)
@@ -353,3 +373,133 @@ def ler_instancia_json(caminho: str | Path) -> Instancia:
         nos=nos,
         formato=dados.get("formato", "json"),
     )
+
+
+def _validar_entrada_rede(dados: dict) -> None:
+    """Valida o contrato de entrada de rede antes de converter os tipos."""
+    def numero(valor, campo, minimo=0):
+        if isinstance(valor, bool) or not isinstance(valor, (int, float)) or not math.isfinite(valor) or valor < minimo:
+            raise ValueError(f"{campo}: esperado numero finito >= {minimo}")
+
+    def inteiro(valor, campo, minimo=0):
+        if isinstance(valor, bool) or not isinstance(valor, int) or valor < minimo:
+            raise ValueError(f"{campo}: esperado inteiro >= {minimo}")
+
+    def janela(valor, campo):
+        if not isinstance(valor, (list, tuple)) or len(valor) != 2:
+            raise ValueError(f"{campo}: esperado [inicio, fim]")
+        for v in valor:
+            numero(v, campo)
+        if valor[0] > valor[1]:
+            raise ValueError(f"{campo}: inicio maior que fim")
+
+    inteiro(dados.get("versao_formato", 1), "versao_formato", 1)
+    if dados.get("versao_formato", 1) != 1:
+        raise ValueError("versao_formato: apenas versao 1 suportada")
+    if not isinstance(dados.get("nome"), str) or not dados["nome"].strip():
+        raise ValueError("nome: esperado texto nao vazio")
+    for campo in ("m", "Q"):
+        inteiro(dados.get(campo), campo, 1)
+    for campo in ("T_max", "L_arquivo"):
+        numero(dados.get(campo), campo)
+    for campo in ("janela_deposito_ini", "janela_deposito_fim"):
+        janela(dados.get(campo, [0, JANELA_LIVRE]), campo)
+    unidades = dados.get("unidades")
+    if unidades is not None and unidades != {"distancia": "km", "tempo": "min", "demanda": "passageiros"}:
+        raise ValueError("unidades: o contrato urbano usa km, min e passageiros")
+    rede = dados["rede"]
+    if not isinstance(rede, dict) or not isinstance(rede.get("nos_fixos"), list) or not rede["nos_fixos"]:
+        raise ValueError("rede.nos_fixos: esperado lista nao vazia")
+    ids = set()
+    for no in rede["nos_fixos"]:
+        if not isinstance(no, dict):
+            raise ValueError("rede.nos_fixos: cada parada deve ser objeto")
+        inteiro(no.get("id"), "no.id")
+        if no["id"] in ids:
+            raise ValueError(f"no.id duplicado: {no['id']}")
+        ids.add(no["id"])
+        for c in ("x", "y"):
+            numero(no.get(c), f"no.{c}", -float("inf"))
+        for c in ("s_embarque", "s_desembarque"):
+            numero(no.get(c, 0), f"no.{c}")
+    for campo in ("deposito_origem_id", "deposito_destino_id"):
+        valor = dados.get(campo, dados.get("deposito_origem_id", 0))
+        inteiro(valor, campo)
+        if valor not in ids:
+            raise ValueError(f"{campo}: parada inexistente {valor}")
+    if not isinstance(rede.get("direcionado", False), bool):
+        raise ValueError("rede.direcionado: esperado booleano")
+    numero(rede.get("velocidade", 1), "rede.velocidade", 1e-12)
+    if rede.get("arestas") and rede.get("matriz_dist"):
+        raise ValueError("rede: escolha arestas ou matrizes, nao ambas")
+    if rede.get("matriz_tempo") and not rede.get("matriz_dist"):
+        raise ValueError("rede: matriz_tempo exige matriz_dist")
+    for campo in ("arestas", "matriz_dist", "matriz_tempo"):
+        pares = set()
+        if not isinstance(rede.get(campo, []), list):
+            raise ValueError(f"rede.{campo}: esperado lista")
+        if campo in rede and not rede[campo]:
+            raise ValueError(f"rede.{campo}: lista vazia; omita o campo ou informe os custos")
+        for item in rede.get(campo, []):
+            if not isinstance(item, dict):
+                raise ValueError(f"rede.{campo}: cada item deve ser objeto")
+            par = (item.get("origem"), item.get("destino"))
+            for v in par:
+                inteiro(v, f"{campo}.parada")
+                if v not in ids:
+                    raise ValueError(f"{campo}: parada inexistente {v}")
+            chave = tuple(sorted(par)) if campo == "arestas" and not rede.get("direcionado", False) else par
+            if chave in pares:
+                raise ValueError(f"{campo}: par duplicado {par}")
+            pares.add(chave)
+            numero(item.get("distancia") if campo == "arestas" else item.get("valor"), campo)
+            if campo == "arestas" and "tempo" in item:
+                numero(item["tempo"], "aresta.tempo")
+    reqs = dados.get("requisicoes")
+    if not isinstance(reqs, list) or not reqs:
+        raise ValueError("requisicoes: esperado lista nao vazia")
+    pedidos = set()
+    for req in reqs:
+        if not isinstance(req, dict):
+            raise ValueError("requisicoes: cada pedido deve ser objeto")
+        inteiro(req.get("id"), "requisicao.id", 1)
+        if req["id"] in pedidos:
+            raise ValueError(f"requisicao.id duplicado: {req['id']}")
+        pedidos.add(req["id"])
+        inteiro(req.get("q", 1), "requisicao.q", 1)
+        for c in ("origem_id", "destino_id"):
+            inteiro(req.get(c), f"requisicao.{c}")
+            if req[c] not in ids:
+                raise ValueError(f"requisicao.{c}: parada inexistente")
+        if req["origem_id"] == req["destino_id"]:
+            raise ValueError("requisicao: origem e destino devem ser distintos")
+        for ponta in ("coleta", "entrega"):
+            janela([req.get(f"e_{ponta}", 0), req.get(f"l_{ponta}", JANELA_LIVRE)], f"requisicao.{ponta}")
+            if req.get(f"s_{ponta}") is not None:
+                numero(req[f"s_{ponta}"], f"requisicao.s_{ponta}")
+
+
+def ler_parametros_json(caminho: str | Path):
+    """Le parametros operacionais opcionais; a leitura da instancia e separada."""
+    from .avaliador import BORDO, CEDO, OTIMO, Parametros
+    dados = json.loads(Path(caminho).read_text(encoding="utf-8"))
+    if not isinstance(dados, dict):
+        raise ValueError("entrada JSON: esperado objeto")
+    valores = dados.get("parametros_avaliacao", {})
+    if not isinstance(valores, dict):
+        raise ValueError("parametros_avaliacao: esperado objeto")
+    permitidos = set(Parametros.__dataclass_fields__)
+    desconhecidos = set(valores) - permitidos
+    if desconhecidos:
+        raise ValueError(f"parametros_avaliacao: campos desconhecidos {sorted(desconhecidos)}")
+    par = Parametros(**valores)
+    for campo in ("phi", "custo_fixo", "custo_distancia", "custo_hora", "tolerancia"):
+        v = getattr(par, campo)
+        if isinstance(v, bool) or not isinstance(v, (int, float)) or not math.isfinite(v) or v < 0:
+            raise ValueError(f"parametros_avaliacao.{campo}: esperado numero finito nao negativo")
+    if par.alpha is not None and (isinstance(par.alpha, bool) or not isinstance(par.alpha, (int, float))
+                                  or not math.isfinite(par.alpha) or par.alpha < 1):
+        raise ValueError("parametros_avaliacao.alpha: esperado null ou numero >= 1")
+    if par.politica not in (CEDO, BORDO, OTIMO):
+        raise ValueError("parametros_avaliacao.politica: escolha cedo, bordo ou otimo")
+    return par

@@ -1,0 +1,63 @@
+{
+  "instancia": "dados/cenario_concorrente_q10.json",
+  "pedidos": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12
+  ],
+  "m": 12,
+  "capacidades": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10
+  ],
+  "sementes": [
+    7,
+    42,
+    2026,
+    314,
+    2718
+  ],
+  "referencia": "empirica",
+  "cache_agendas": true,
+  "coletas_antes_de_qualquer_entrega": true,
+  "parametros_avaliacao": {
+    "phi": 1.0,
+    "alpha": 2.0,
+    "politica": "otimo"
+  },
+  "algoritmos": {
+    "sa": {
+      "temp_inicial": 3.0,
+      "temp_final": 0.5,
+      "fator_resfriamento": 0.6,
+      "iter_por_temp": 10
+    },
+    "ga": {
+      "tamanho_populacao": 6,
+      "geracoes": 6
+    },
+    "grasp": {
+      "max_iteracoes": 4,
+      "max_passos_busca_local": 3
+    }
+  },
+  "saida": "resultados/comparacao_q1_10",
+  "observacao": "Analise exploratoria controlada com 12 pedidos concorrentes. Referencia empirica por Q, sem prova de otimalidade. Esforcos distintos entre metodos; cinco sementes nao bastam para ranking definitivo."
+}

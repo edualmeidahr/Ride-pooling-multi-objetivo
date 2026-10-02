@@ -23,7 +23,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
-from .avaliador import Avaliador, Parametros
+from .avaliador import Parametros
 from .instancia import Instancia
 from .solucao import Rota, Solucao
 

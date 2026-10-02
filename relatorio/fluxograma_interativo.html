@@ -1,0 +1,111 @@
+<div id="rp-flow-explorer">
+  <style>
+    #rp-flow-explorer .flow-heading {display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:18px}
+    #rp-flow-explorer .flow-paths {display:flex;gap:8px;flex-wrap:wrap;margin-bottom:24px}
+    #rp-flow-explorer .flow-layout {display:grid;grid-template-columns:minmax(0,0.9fr) minmax(0,1.1fr);gap:28px;align-items:start}
+    #rp-flow-explorer .flow-list {display:grid;gap:6px;min-width:0}
+    #rp-flow-explorer .flow-phase {margin:12px 0 4px;color:var(--muted-foreground)}
+    #rp-flow-explorer .flow-node-content {display:flex;align-items:center;gap:12px;white-space:normal;text-align:start}
+    #rp-flow-explorer .flow-node-label {display:grid;gap:3px;min-width:0}
+    #rp-flow-explorer .flow-arrow {text-align:center;color:var(--muted-foreground)}
+    #rp-flow-explorer .flow-detail-copy {display:grid;gap:18px}
+    #rp-flow-explorer .flow-detail-copy p {margin:6px 0 0}
+    #rp-flow-explorer .flow-files {display:flex;gap:6px;flex-wrap:wrap;overflow-wrap:anywhere}
+    #rp-flow-explorer .flow-files code {white-space:normal;overflow-wrap:anywhere}
+    #rp-flow-explorer .flow-detail-top {display:flex;align-items:center;gap:10px;margin-bottom:12px}
+    #rp-flow-explorer .flow-detail-top h3 {margin:0}
+    #rp-flow-explorer .flow-status {margin-top:20px;color:var(--muted-foreground)}
+    @media(max-width:570px){#rp-flow-explorer .flow-layout{grid-template-columns:minmax(0,1fr);gap:20px}}
+  </style>
+  <div class="flow-heading"><h2>Da entrada à fronteira de Pareto</h2><span class="viz-badge">Ride-pooling</span></div>
+  <div class="flow-paths" role="group" aria-label="Caminho de execução">
+    <button type="button" class="btn" data-path="q" aria-pressed="true">Estudo de capacidade</button>
+    <button type="button" class="btn" data-path="meta" aria-pressed="false">Metaheurísticas</button>
+    <button type="button" class="btn" data-path="ref" aria-pressed="false">Gabarito exato</button>
+  </div>
+  <div class="flow-layout">
+    <div class="flow-list" aria-label="Etapas clicáveis do fluxo"></div>
+    <section class="card" aria-label="Descrição da etapa selecionada">
+      <div class="flow-detail-top"><span class="viz-badge" data-step-number>01</span><h3 data-step-title>Dados de entrada</h3></div>
+      <div class="flow-detail-copy" aria-live="polite">
+        <div><span class="text-small text-muted">ENTRADA</span><p data-step-input></p></div>
+        <div><span class="text-small text-muted">O QUE ACONTECE</span><p data-step-description></p></div>
+        <div><span class="text-small text-muted">SAÍDA</span><p data-step-output></p></div>
+        <div><span class="text-small text-muted">NO CÓDIGO</span><div class="flow-files" data-step-files></div></div>
+      </div>
+    </section>
+  </div>
+  <div class="flow-status text-small" data-flow-status></div>
+  <script>
+  (() => {
+    const root = document.getElementById('rp-flow-explorer');
+    const step = (title, subtitle, phase, input, description, output, files) => ({title,subtitle,phase,input,description,output,files});
+    const flows = {
+      q: [
+        step('Dados de entrada','Rede, frota e solicitações','Preparar','Arquivo de instância, em JSON urbano ou texto clássico.','O leitor transforma as paradas e os pedidos em uma instância DARP. No JSON urbano, verifica IDs, demandas inteiras, janelas e conexão da rede. Cada pedido ganha um nó de coleta e um de entrega, mesmo quando vários pedidos compartilham uma parada.','Instância com distâncias, tempos, pedidos, capacidade e frota.',['instancia.py','rede.py']),
+        step('Recorte do experimento','Pedidos, frota e tolerância','Preparar','Instância carregada e argumentos de capacidade_q.py.','Seleciona os pedidos e renumera os nós. Fixa m, alpha, phi=1 e o agendamento OTIMO. Por padrão usa os pedidos 13–17 da pr01, m=5 e alpha=2. Esse script usa parâmetros experimentais próprios; não herda phi do JSON.','Um conjunto fixo de viagens para todas as capacidades.',['capacidade_q.py','instancia.py']),
+        step('Cenário de capacidade','Um cenário para cada Q','Resolver','Instância reduzida e próximo valor de Q.','Cria uma cópia com a capacidade selecionada, preservando os demais parâmetros. Q mede passageiros simultâneos. Quando Q alcança a demanda total, a capacidade deixa de restringir as rotas e a fronteira correspondente pode ser reutilizada do cache.','Cenário para Q ou uma fronteira equivalente já calculada.',['cenarios.py','capacidade_q.py']),
+        step('Rotas possíveis','Enumeração com podas','Resolver','Pedidos do cenário e até m veículos.','Enumera ordens de coleta e entrega por subconjunto. Preserva o par no mesmo veículo, coleta antes da entrega e poda excesso de capacidade ou janelas impossíveis. Este caminho é limitado a seis pedidos porque o número de combinações cresce rapidamente.','Rotas candidatas para os subconjuntos de pedidos.',['exato.py']),
+        step('Horários e objetivos','Agendamento por programação linear','Resolver','Uma sequência candidata por rota.','A programação linear escolhe os horários que minimizam o tempo perdido para aquela ordem de visitas. Verifica janelas, capacidade, duração e limite a bordo. Calcula distância e o desvio mais espera dos passageiros. Sem SciPy, OTIMO informa erro.','Rotas viáveis com f1 e f2; rotas inviáveis descartadas.',['avaliador.py']),
+        step('Fronteira de Pareto','Combinar rotas e filtrar','Conferir','Alternativas viáveis de cada subconjunto.','Combina os subconjuntos para atender todos os pedidos com até m veículos. Elimina alternativas dominadas. Reavalia cada solução completa e verifica que os pontos viáveis com Q menor sejam igualados ou dominados quando Q aumenta.','Fronteira validada para cada capacidade, ou cenário inviável.',['exato.py','pareto.py','capacidade_q.py']),
+        step('Resultados e comparação','Guardar e resumir','Conferir','Fronteiras de todos os valores de Q.','capacidade_q.py grava objetivos em CSV e parâmetros, rotas e horários em JSON. Em uma execução separada, resumir_capacidade.py lê os JSONs, conta fronteiras distintas e produz resumos e um gráfico dos extremos.','fronteiras.json, fronteiras.csv, resumo.csv e gráfico comparativo.',['capacidade_q.py','resumir_capacidade.py'])
+      ],
+      meta: [
+        step('Entrada e parâmetros','Escolher o problema','Preparar','Instância JSON ou clássica e semente aleatória.','O comparador resolve o caminho do arquivo e carrega a instância. No JSON, também lê parametros_avaliacao: phi, alpha, política e custos. A opção --politica pode substituir a política do arquivo. Para texto clássico, o padrão continua BORDO.','Instância e avaliador configurados.',['comparar_metaheuristicas.py','instancia.py']),
+        step('Escolha do método','SA, GA ou GRASP','Preparar','Nomes dos algoritmos solicitados.','Uma fábrica instancia cada método. SA explora vizinhos com temperatura; GA evolui uma população; GRASP alterna construção randomizada e busca local. Os métodos têm critérios de parada próprios.','Métodos independentes com a mesma instância.',['metaheuristicas/__init__.py','sa.py','ga.py','grasp.py']),
+        step('Construção e movimentos','Produzir novas rotas','Resolver','Solução inicial ou população corrente.','Insere pedidos usando custos marginais normalizados e uma lista restrita de candidatos. Os vizinhos movem pares, trocam pedidos ou reordenam rotas preservando precedência. No GA, o cruzamento usa ambos os pais. Estrutura válida ainda não garante viabilidade temporal.','Soluções candidatas para avaliação.',['operadores.py','ga.py']),
+        step('Avaliação','Restrições e qualidade','Resolver','Conjunto de rotas candidatas.','Verifica cobertura, pares e precedência. Agenda cada rota com a política escolhida e calcula f1=phi×distância e f2=desvio+espera, ponderados pelos passageiros. As violações influenciam a busca; somente soluções viáveis entram no arquivo de Pareto.','Objetivos e diagnóstico de viabilidade.',['solucao.py','avaliador.py']),
+        step('Busca e arquivo Pareto','Explorar sem perder alternativas','Resolver','Candidatos avaliados.','SA decide aceitação pela energia e temperatura; GA seleciona por ranking e diversidade; GRASP busca melhoria local. O arquivo externo retém alternativas viáveis não dominadas e copia suas rotas. O processo se repete até a parada do método.','Fronteira aproximada e histórico de execução.',['base.py','sa.py','ga.py','grasp.py','pareto.py']),
+        step('Comparação dos métodos','Extremos e hipervolume','Conferir','Resultado de cada algoritmo.','O comparador mostra extremos, cardinalidade e tempo. Calcula hipervolume com uma referência de normalização comum aos métodos daquela execução. Pode gerar um gráfico. Os contadores ainda não incluem toda avaliação interna: não certificam igualdade de orçamento.','Fronteiras no terminal e gráfico opcional.',['comparar_metaheuristicas.py','pareto.py'])
+      ],
+      ref: [
+        step('Referência histórica','pr01 reduzida','Preparar','Arquivos pr01 e pr01.res.','Recorta os pedidos 1–5, todos de volta, e permite cinco veículos. Mantém Q=6 e o limite a bordo do arquivo para reproduzir o experimento histórico, separado do estudo principal de capacidade.','Instância pequena de referência.',['fase2_fronteira.py','instancia.py','leitor_res.py']),
+        step('Enumeração com OTIMO','Escolher rotas e horários','Resolver','Instância reduzida.','Enumera as rotas, resolve o agendamento por programação linear e combina subconjuntos. A fronteira é exata nos horários e na sequência dentro desse modelo e dessa instância.','Quatro pontos de referência.',['exato.py','avaliador.py']),
+        step('Comparação com BORDO','Medir efeito do agendamento','Resolver','Mesma instância, com política heurística de horários.','Repete a enumeração usando BORDO. A sequência é explorada, mas os horários seguem uma heurística. Compara dominância e hipervolume contra OTIMO para mostrar a distorção que a política pode introduzir.','Fronteira heurística e diferença de qualidade.',['fase2_fronteira.py','avaliador.py','pareto.py']),
+        step('Solver independente','Gurobi, quando disponível','Resolver','Modelo MIP, dependência e licença do Gurobi.','O método epsilon-restrito resolve o modelo matemático sem usar o avaliador durante a otimização. Depois, as rotas e horários extraídos são conferidos pelo avaliador. Se o solver estiver indisponível, a execução informa isso e segue com a enumeração.','Pontos independentes ou indisponibilidade explícita.',['mip.py','fase2_fronteira.py']),
+        step('Conferência do gabarito','Resultados esperados e extremos','Conferir','Fronteiras calculadas e quatro pontos históricos.','Confere os pontos históricos com tolerância 0,001 e compara com o solver se ele executou. Também reagênda as rotas publicadas da pr01 completa e calcula uma referência individual. Esses exemplos não provam extremos globais para todas as frotas.','Conferências de regressão e referências reproduzidas.',['fase2_fronteira.py','avaliador.py']),
+        step('Registro dos resultados','CSV e figura','Conferir','Resultados das conferências.','Grava os dois CSVs e o gráfico em resultados. O arquivo só inclui a série do solver quando ele realmente executou. O programa termina com um código indicando se as conferências passaram.','Artefatos da Fase 2 para comparação futura.',['fase2_fronteira.py'])
+      ]
+    };
+    let path='q', selected=0;
+    const list=root.querySelector('.flow-list');
+    const buttons=[...root.querySelectorAll('[data-path]')];
+    function showDetails(){
+      const data=flows[path][selected];
+      root.querySelector('[data-step-number]').textContent=String(selected+1).padStart(2,'0');
+      root.querySelector('[data-step-title]').textContent=data.title;
+      root.querySelector('[data-step-input]').textContent=data.input;
+      root.querySelector('[data-step-description]').textContent=data.description;
+      root.querySelector('[data-step-output]').textContent=data.output;
+      const files=root.querySelector('[data-step-files]'); files.replaceChildren();
+      data.files.forEach(file=>{const tag=document.createElement('code');tag.textContent=file;files.append(tag)});
+      list.querySelectorAll('[data-step]').forEach(b=>b.setAttribute('aria-pressed',String(Number(b.dataset.step)===selected)));
+      root.querySelector('[data-flow-status]').textContent=`${selected+1} de ${flows[path].length} · ${data.phase}`;
+    }
+    function render(){
+      buttons.forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.path===path)));
+      list.replaceChildren();let phase='';
+      flows[path].forEach((data,index)=>{
+        if(index){const arrow=document.createElement('div');arrow.className='flow-arrow';arrow.textContent='↓';arrow.setAttribute('aria-hidden','true');list.append(arrow)}
+        if(data.phase!==phase){phase=data.phase;const heading=document.createElement('div');heading.className='flow-phase text-small';heading.textContent=phase;list.append(heading)}
+        const button=document.createElement('button');button.type='button';button.className='btn btn-block';button.dataset.step=String(index);
+        const content=document.createElement('span');content.className='flow-node-content';
+        const num=document.createElement('span');num.className='tabular-nums';num.textContent=String(index+1).padStart(2,'0');
+        const labels=document.createElement('span');labels.className='flow-node-label';
+        const title=document.createElement('span');title.textContent=data.title;
+        const subtitle=document.createElement('span');subtitle.className='text-small';subtitle.textContent=data.subtitle;
+        labels.append(title,subtitle);content.append(num,labels);button.append(content);list.append(button);
+        button.addEventListener('click',()=>{selected=index;showDetails();save()});
+      });showDetails();
+    }
+    function restore(state){
+      const saved=state?.privateContent;
+      if(saved && flows[saved.path]){path=saved.path;selected=Number.isInteger(saved.step)&&saved.step>=0&&saved.step<flows[path].length?saved.step:0;}
+    }
+    function save(){if(window.openai?.setWidgetState){window.openai.setWidgetState({modelContent:{fluxo:path,etapa:flows[path][selected].title},privateContent:{path,step:selected}}).catch(()=>{})}}
+    buttons.forEach(b=>b.addEventListener('click',()=>{path=b.dataset.path;selected=0;render();save()}));
+    restore(window.openai?.widgetState);render();
+    window.addEventListener('openai:set_globals',event=>{if(event.detail?.globals?.widgetState){restore(event.detail.globals.widgetState);render()}});
+  })();
+  </script>
+</div>

@@ -14,9 +14,8 @@ internas a uma rota. Logo o problema se decompoe em duas etapas.
    fixando sempre a menor solicitacao pendente para nao gerar a mesma particao
    em ordens diferentes.
 
-O resultado e exato dentro da politica de agendamento do avaliador. A fronteira
-verdadeira, que escolhe tambem os instantes de atendimento de forma otima, exige
-o modelo matematico do modulo mip.
+Com OTIMO, a enumeracao e exata tambem nos horarios (PL por rota). Com BORDO
+ou CEDO, a exatidao vale apenas dentro da politica heuristica escolhida.
 """
 
 from __future__ import annotations

@@ -9,6 +9,7 @@ from .instancia import (
     No,
     ler_instancia,
     ler_instancia_json,
+    ler_parametros_json,
     reduzir,
     salvar_instancia_json,
 )
@@ -39,6 +40,7 @@ __all__ = [
     "No",
     "ler_instancia",
     "ler_instancia_json",
+    "ler_parametros_json",
     "salvar_instancia_json",
     "reduzir",
     "SolucaoPublicada",

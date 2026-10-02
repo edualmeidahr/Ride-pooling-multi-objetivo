@@ -8,7 +8,7 @@ import time
 
 from ..avaliador import Avaliador
 from ..instancia import Instancia
-from ..solucao import Solucao, solucao_individual
+from ..solucao import solucao_individual
 from .base import ArquivoPareto, Metaheuristica, ResultadoOtimizacao
 from .operadores import construcao_gulosa_randomizada, perturbar_solucao
 
@@ -94,6 +94,9 @@ class SimulatedAnnealing(Metaheuristica):
                     "trajetoria": idx_peso,
                     "temperatura": T,
                     "tamanho_pareto": len(arquivo),
+                    "fronteira": [(p[0], p[1]) for p in arquivo.pontos],
+                    "agendamentos": getattr(av, "agendamentos", None),
+                    "tempo": time.time() - inicio,
                 })
                 T *= self.fator_resfriamento
 

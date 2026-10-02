@@ -1,0 +1,15 @@
+{
+  "instancia": "dados/exemplo_instancia.json",
+  "pedidos": [1, 2, 3],
+  "m": 3,
+  "capacidades": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20],
+  "sementes": [7, 42, 2026],
+  "parametros_avaliacao": {"phi": 1.0, "alpha": 2.0, "politica": "otimo"},
+  "algoritmos": {
+    "sa": {"temp_inicial": 3.0, "temp_final": 0.5, "fator_resfriamento": 0.6, "iter_por_temp": 10},
+    "ga": {"tamanho_populacao": 8, "geracoes": 8},
+    "grasp": {"max_iteracoes": 8, "max_passos_busca_local": 3}
+  },
+  "saida": "resultados/comparacao_exemplo",
+  "observacao": "Campanha exploratoria com tres pedidos e tres sementes; orcamentos proprios de cada metodo. Nao e ranking definitivo."
+}

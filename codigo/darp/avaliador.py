@@ -160,7 +160,7 @@ class Avaliador:
 
         for no in seq:
             trecho = inst.tempo(anterior, no)
-            ag.distancia += trecho
+            ag.distancia += inst.dist(anterior, no)
             chegada = instante + trecho
 
             dados = inst.nos[no]
@@ -176,7 +176,7 @@ class Avaliador:
             instante = inicio + dados.s
             anterior = no
 
-        ag.distancia += inst.tempo(anterior, inst.deposito_fim)
+        ag.distancia += inst.dist(anterior, inst.deposito_fim)
         ag.retorno = instante + inst.tempo(anterior, inst.deposito_fim)
         self._calcular_bordo(ag)
         return ag
@@ -316,7 +316,7 @@ class Avaliador:
 
         for no in seq:
             trecho = inst.tempo(anterior, no)
-            ag.distancia += trecho
+            ag.distancia += inst.dist(anterior, no)
             ag.B[no] = B[no]
             ag.espera[no] = B[no] - (instante + trecho)
             a_bordo += inst.nos[no].q
@@ -324,7 +324,7 @@ class Avaliador:
             instante = B[no] + inst.nos[no].s
             anterior = no
 
-        ag.distancia += inst.tempo(anterior, inst.deposito_fim)
+        ag.distancia += inst.dist(anterior, inst.deposito_fim)
         ag.retorno = instante + inst.tempo(anterior, inst.deposito_fim)
         self._calcular_bordo(ag)
         return ag
@@ -343,8 +343,8 @@ class Avaliador:
         try:
             import numpy as np
             from scipy.optimize import linprog
-        except ImportError:
-            return self._agendar_bordo(seq, partida)
+        except ImportError as erro:
+            raise RuntimeError("A politica OTIMO exige numpy e scipy; instale as dependencias do projeto.") from erro
 
         inst = self.inst
         ini, fim = inst.deposito_ini, inst.deposito_fim

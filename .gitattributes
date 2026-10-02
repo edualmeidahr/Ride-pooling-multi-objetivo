@@ -1,0 +1,3 @@
+# SVGs gerados pelo Matplotlib preservam o espacamento do exportador.
+# A verificacao de espacos em branco continua ativa no codigo e na documentacao.
+resultados/**/graficos/*.svg -whitespace

@@ -21,6 +21,7 @@ tempo a bordo.
 from __future__ import annotations
 
 import csv
+import os
 import sys
 import time
 from pathlib import Path
@@ -36,8 +37,9 @@ RAIZ = Path(__file__).resolve().parents[2]
 DADOS = RAIZ / "dados"
 SAIDA = RAIZ / "resultados"
 SAIDA.mkdir(exist_ok=True)
+os.environ.setdefault("MPLCONFIGDIR", str(RAIZ / ".cache/matplotlib"))
 
-PEDIDOS = [1, 2, 3, 4, 5]   # 5 solicitacoes: 2 de volta e 3 de ida em pr01
+PEDIDOS = [1, 2, 3, 4, 5]   # gabarito legado: cinco solicitacoes de volta
 TOL = 1e-3
 
 
@@ -139,6 +141,12 @@ except Exception as erro:
 print("\n4. Conferencia cruzada")
 pontos_otimo = [(f1, f2) for f1, f2, _ in frente_otimo]
 pontos_bordo = [(f1, f2) for f1, f2, _ in frente_bordo]
+esperados = [(47.0253, 89.4142), (47.6721, 70.2116),
+             (49.1145, 39.1136), (49.9657, 0.0)]
+conferir("reproduz os quatro pontos do gabarito historico",
+         len(pontos_otimo) == len(esperados) and all(
+             max(abs(a[0] - b[0]), abs(a[1] - b[1])) <= TOL
+             for a, b in zip(sorted(pontos_otimo), esperados)))
 
 if frente_mip:
     mesmo_tamanho = len(frente_mip) == len(pontos_otimo)

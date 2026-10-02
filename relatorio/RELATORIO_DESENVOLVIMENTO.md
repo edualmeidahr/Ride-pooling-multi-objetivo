@@ -1,5 +1,13 @@
 # Relatório de Desenvolvimento
 
+> Atualização em 01/10/2026: o protocolo atual está em
+> [MODELO_EXPERIMENTAL.md](MODELO_EXPERIMENTAL.md). As fases abaixo são o histórico
+> até a Fase 2; já existem SA, GA e GRASP exploratórios e rede fixa. A análise
+> atual varia Q=1..20 mantendo o escopo de passageiros. Foram corrigidas a
+> inserção na construção, a precedência do fallback e a participação do segundo
+> pai no cruzamento; o GA também passou a usar crowding na seleção ambiental.
+> A política OTIMO agora exige SciPy explicitamente, sem substituição silenciosa.
+
 **Projeto:** Ride-Pooling vs. Transporte Individual — formulação multiobjetivo entre emissões de CO₂ e tempo perdido pelo usuário  
 **Disciplina:** Tópicos Especiais em Sistemas Inteligentes — Otimização Multiobjetivo  
 **Escopo deste documento:** registrar o que foi feito em cada fase do desenvolvimento, com ênfase nos problemas encontrados e nas decisões técnicas. Não substitui o relatório acadêmico (`relatorio/main.pdf`); complementa-o com o diário de engenharia.

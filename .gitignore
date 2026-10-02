@@ -1,0 +1,54 @@
+# Ambientes Python locais e bytecode
+/.venv/
+/venv/
+/env/
+__pycache__/
+*.py[cod]
+
+# Caches, cobertura e artefatos de empacotamento
+.cache/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.eggs/
+*.egg-info/
+/build/
+/dist/
+/.coverage
+/.coverage.*
+/htmlcov/
+/coverage.xml
+
+# Configuracoes locais que podem conter credenciais
+.env
+.env.*
+!.env.example
+!.env.template
+
+# Arquivos auxiliares do LaTeX; fontes e PDFs finais sao versionados
+/relatorio/**/*.aux
+/relatorio/**/*.log
+/relatorio/**/*.out
+/relatorio/**/*.toc
+/relatorio/**/*.lof
+/relatorio/**/*.lot
+/relatorio/**/*.bbl
+/relatorio/**/*.blg
+/relatorio/**/*.fls
+/relatorio/**/*.fdb_latexmk
+/relatorio/**/*.synctex.gz
+/relatorio/**/*.nav
+/relatorio/**/*.snm
+/relatorio/**/*.vrb
+/relatorio/**/*.xdv
+/relatorio/**/*.dvi
+/relatorio/**/*.run.xml
+
+# Logs locais do solver e metadados do sistema operacional
+/gurobi.log
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# dados/, experimentos/, resultados/, relatorios e figuras sao evidencias
+# intencionais do projeto e permanecem no controle de versao.

@@ -4,7 +4,6 @@ from __future__ import annotations
 
 import random
 import time
-from typing import Sequence
 
 from ..avaliador import Avaliador
 from ..instancia import Instancia
@@ -13,10 +12,8 @@ from ..solucao import Rota, Solucao, solucao_individual
 from .base import ArquivoPareto, Metaheuristica, ResultadoOtimizacao
 from .operadores import (
     construcao_gulosa_randomizada,
-    encontrar_rota_de_requisicao,
     inserir_requisicao,
     perturbar_solucao,
-    remover_requisicao,
 )
 
 
@@ -50,6 +47,10 @@ class AlgoritmoGenetico(Metaheuristica):
         if rng.random() > self.prob_crossover:
             return pai1.copiar()
 
+        pai1, pai2 = pai1.copiar(), pai2.copiar()
+        pai1.rotas.extend(Rota() for _ in range(inst.m - len(pai1.rotas)))
+        pai2.rotas.extend(Rota() for _ in range(inst.m - len(pai2.rotas)))
+
         # Copia uma rota aleatoria do pai 1
         k_selecionado = rng.randint(0, inst.m - 1)
         rota_herdada = pai1.rotas[k_selecionado].copiar()
@@ -58,6 +59,13 @@ class AlgoritmoGenetico(Metaheuristica):
         filho_rotas[k_selecionado] = rota_herdada
 
         atendidos = {inst.solicitacao_de(no) for no in rota_herdada.sequencia}
+        # Preserva a ordem e a atribuicao do segundo pai nas demais rotas.
+        for k, rota in enumerate(pai2.rotas):
+            if k == k_selecionado:
+                continue
+            filho_rotas[k] = Rota([no for no in rota.sequencia
+                                   if inst.solicitacao_de(no) not in atendidos])
+        atendidos = {inst.solicitacao_de(no) for r in filho_rotas for no in r.sequencia}
         faltando = [i for i in inst.coletas if i not in atendidos]
         rng.shuffle(faltando)
 
@@ -87,6 +95,21 @@ class AlgoritmoGenetico(Metaheuristica):
         if erros:
             return pai1.copiar()
         return sol_temp
+
+    @staticmethod
+    def _crowding(frente, populacao):
+        """Distancia normalizada entre vizinhos em cada objetivo."""
+        dist = {i: 0.0 for i in frente}
+        for objetivo in (1, 2):
+            ordem = sorted(frente, key=lambda i: populacao[i][objetivo])
+            amplitude = populacao[ordem[-1]][objetivo] - populacao[ordem[0]][objetivo]
+            if amplitude <= 0:
+                continue
+            dist[ordem[0]] = dist[ordem[-1]] = float("inf")
+            for p in range(1, len(ordem) - 1):
+                dist[ordem[p]] += (populacao[ordem[p + 1]][objetivo]
+                                   - populacao[ordem[p - 1]][objetivo]) / amplitude
+        return dist
 
     def _classificar_frentes(
         self,
@@ -198,8 +221,10 @@ class AlgoritmoGenetico(Metaheuristica):
                     for idx in frente:
                         nova_pop.append(uniao[idx][0])
                 else:
-                    # Preenche o restante aleatoriamente dentre a ultima frente
+                    # Desempate aleatorio, seguido de diversidade por crowding.
                     rng.shuffle(frente)
+                    distancias = self._crowding(frente, uniao)
+                    frente.sort(key=lambda i: distancias[i], reverse=True)
                     faltam = self.tamanho_populacao - len(nova_pop)
                     for idx in frente[:faltam]:
                         nova_pop.append(uniao[idx][0])
@@ -209,6 +234,9 @@ class AlgoritmoGenetico(Metaheuristica):
             historico.append({
                 "geracao": gen,
                 "tamanho_pareto": len(arquivo),
+                "fronteira": [(p[0], p[1]) for p in arquivo.pontos],
+                "agendamentos": getattr(av, "agendamentos", None),
+                "tempo": time.time() - inicio,
             })
 
         duracao = time.time() - inicio

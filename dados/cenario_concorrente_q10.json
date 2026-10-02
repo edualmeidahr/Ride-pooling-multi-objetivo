@@ -1,0 +1,291 @@
+{
+  "versao_formato": 1,
+  "nome": "Corredor-concorrente-12-passageiros",
+  "descricao": "Cenario sintetico controlado: 12 pedidos unitarios concorrentes, quatro origens e quatro destinos. Sem calibracao real. Q pertence a configuracao experimental.",
+  "unidades": {
+    "distancia": "km",
+    "tempo": "min",
+    "demanda": "passageiros"
+  },
+  "m": 12,
+  "T_max": 240.0,
+  "L_arquivo": 120.0,
+  "deposito_origem_id": 0,
+  "deposito_destino_id": 0,
+  "janela_deposito_ini": [
+    0.0,
+    300.0
+  ],
+  "janela_deposito_fim": [
+    0.0,
+    300.0
+  ],
+  "parametros_avaliacao": {
+    "phi": 1.0,
+    "alpha": 2.0,
+    "politica": "otimo"
+  },
+  "rede": {
+    "direcionado": false,
+    "nos_fixos": [
+      {
+        "id": 0,
+        "nome": "Garagem",
+        "x": 0,
+        "y": 0,
+        "s_embarque": 0,
+        "s_desembarque": 0
+      },
+      {
+        "id": 1,
+        "nome": "Parada 1",
+        "x": -1,
+        "y": 0,
+        "s_embarque": 0.2,
+        "s_desembarque": 0.2
+      },
+      {
+        "id": 2,
+        "nome": "Parada 2",
+        "x": 0,
+        "y": 1,
+        "s_embarque": 0.2,
+        "s_desembarque": 0.2
+      },
+      {
+        "id": 3,
+        "nome": "Parada 3",
+        "x": 1,
+        "y": 0,
+        "s_embarque": 0.2,
+        "s_desembarque": 0.2
+      },
+      {
+        "id": 4,
+        "nome": "Parada 4",
+        "x": 0,
+        "y": -1,
+        "s_embarque": 0.2,
+        "s_desembarque": 0.2
+      },
+      {
+        "id": 5,
+        "nome": "Parada 5",
+        "x": 20,
+        "y": 0,
+        "s_embarque": 0.2,
+        "s_desembarque": 0.2
+      },
+      {
+        "id": 6,
+        "nome": "Parada 6",
+        "x": 22,
+        "y": 0,
+        "s_embarque": 0.2,
+        "s_desembarque": 0.2
+      },
+      {
+        "id": 7,
+        "nome": "Parada 7",
+        "x": 20,
+        "y": 2,
+        "s_embarque": 0.2,
+        "s_desembarque": 0.2
+      },
+      {
+        "id": 8,
+        "nome": "Parada 8",
+        "x": 23,
+        "y": -2,
+        "s_embarque": 0.2,
+        "s_desembarque": 0.2
+      },
+      {
+        "id": 9,
+        "nome": "Parada 9",
+        "x": 24,
+        "y": 3,
+        "s_embarque": 0.2,
+        "s_desembarque": 0.2
+      }
+    ],
+    "arestas": [
+      {
+        "origem": 0,
+        "destino": 1,
+        "distancia": 1,
+        "tempo": 2
+      },
+      {
+        "origem": 0,
+        "destino": 2,
+        "distancia": 1,
+        "tempo": 2
+      },
+      {
+        "origem": 0,
+        "destino": 3,
+        "distancia": 1,
+        "tempo": 2
+      },
+      {
+        "origem": 0,
+        "destino": 4,
+        "distancia": 1,
+        "tempo": 2
+      },
+      {
+        "origem": 0,
+        "destino": 5,
+        "distancia": 20,
+        "tempo": 40
+      },
+      {
+        "origem": 5,
+        "destino": 6,
+        "distancia": 2,
+        "tempo": 4
+      },
+      {
+        "origem": 5,
+        "destino": 7,
+        "distancia": 2,
+        "tempo": 4
+      },
+      {
+        "origem": 6,
+        "destino": 8,
+        "distancia": 3,
+        "tempo": 6
+      },
+      {
+        "origem": 7,
+        "destino": 9,
+        "distancia": 5,
+        "tempo": 10
+      }
+    ]
+  },
+  "requisicoes": [
+    {
+      "id": 201,
+      "origem_id": 1,
+      "destino_id": 6,
+      "q": 1,
+      "e_coleta": 30.0,
+      "l_coleta": 50.0,
+      "e_entrega": 0.0,
+      "l_entrega": 1440.0
+    },
+    {
+      "id": 202,
+      "origem_id": 2,
+      "destino_id": 7,
+      "q": 1,
+      "e_coleta": 31.0,
+      "l_coleta": 50.0,
+      "e_entrega": 0.0,
+      "l_entrega": 1440.0
+    },
+    {
+      "id": 203,
+      "origem_id": 3,
+      "destino_id": 8,
+      "q": 1,
+      "e_coleta": 32.0,
+      "l_coleta": 50.0,
+      "e_entrega": 0.0,
+      "l_entrega": 1440.0
+    },
+    {
+      "id": 204,
+      "origem_id": 4,
+      "destino_id": 9,
+      "q": 1,
+      "e_coleta": 30.0,
+      "l_coleta": 50.0,
+      "e_entrega": 0.0,
+      "l_entrega": 1440.0
+    },
+    {
+      "id": 205,
+      "origem_id": 1,
+      "destino_id": 7,
+      "q": 1,
+      "e_coleta": 31.0,
+      "l_coleta": 50.0,
+      "e_entrega": 0.0,
+      "l_entrega": 1440.0
+    },
+    {
+      "id": 206,
+      "origem_id": 2,
+      "destino_id": 8,
+      "q": 1,
+      "e_coleta": 32.0,
+      "l_coleta": 50.0,
+      "e_entrega": 0.0,
+      "l_entrega": 1440.0
+    },
+    {
+      "id": 207,
+      "origem_id": 3,
+      "destino_id": 9,
+      "q": 1,
+      "e_coleta": 30.0,
+      "l_coleta": 50.0,
+      "e_entrega": 0.0,
+      "l_entrega": 1440.0
+    },
+    {
+      "id": 208,
+      "origem_id": 4,
+      "destino_id": 6,
+      "q": 1,
+      "e_coleta": 31.0,
+      "l_coleta": 50.0,
+      "e_entrega": 0.0,
+      "l_entrega": 1440.0
+    },
+    {
+      "id": 209,
+      "origem_id": 1,
+      "destino_id": 8,
+      "q": 1,
+      "e_coleta": 32.0,
+      "l_coleta": 50.0,
+      "e_entrega": 0.0,
+      "l_entrega": 1440.0
+    },
+    {
+      "id": 210,
+      "origem_id": 2,
+      "destino_id": 9,
+      "q": 1,
+      "e_coleta": 30.0,
+      "l_coleta": 50.0,
+      "e_entrega": 0.0,
+      "l_entrega": 1440.0
+    },
+    {
+      "id": 211,
+      "origem_id": 3,
+      "destino_id": 6,
+      "q": 1,
+      "e_coleta": 31.0,
+      "l_coleta": 50.0,
+      "e_entrega": 0.0,
+      "l_entrega": 1440.0
+    },
+    {
+      "id": 212,
+      "origem_id": 4,
+      "destino_id": 7,
+      "q": 1,
+      "e_coleta": 32.0,
+      "l_coleta": 50.0,
+      "e_entrega": 0.0,
+      "l_entrega": 1440.0
+    }
+  ]
+}

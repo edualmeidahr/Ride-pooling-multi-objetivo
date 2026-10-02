@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import random
-from typing import Sequence
 
 from ..avaliador import Avaliador
 from ..instancia import Instancia
@@ -33,6 +32,10 @@ def inserir_requisicao(
     inst: Instancia,
 ) -> Rota:
     """Insere a coleta e a entrega de req_id na rota respeitando pos_coleta <= pos_entrega."""
+    if not 0 <= pos_coleta <= pos_entrega <= len(rota.sequencia):
+        raise ValueError("posicoes devem satisfazer 0 <= coleta <= entrega <= tamanho")
+    if req_id in rota.sequencia or inst.entrega_de(req_id) in rota.sequencia:
+        raise ValueError("solicitacao ja presente na rota")
     seq = list(rota.sequencia)
     seq.insert(pos_coleta, req_id)
     seq.insert(pos_entrega + 1, inst.entrega_de(req_id))
@@ -53,6 +56,7 @@ def mover_requisicao(
         return sol.copiar()
 
     nova_sol = sol.copiar()
+    nova_sol.rotas.extend(Rota() for _ in range(inst.m - len(nova_sol.rotas)))
     if origem_idx == rota_destino_idx:
         rota_sem = remover_requisicao(nova_sol.rotas[origem_idx], req_id, inst)
         nova_rota = inserir_requisicao(rota_sem, req_id, pos_coleta, pos_entrega, inst)
@@ -130,6 +134,9 @@ def perturbar_solucao(
     if inst.n <= 1:
         return sol.copiar()
 
+    sol = sol.copiar()
+    sol.rotas.extend(Rota() for _ in range(inst.m - len(sol.rotas)))
+
     tipo_movimento = rng.choice(["relocate", "relocate_intra", "swap", "2opt"])
 
     if tipo_movimento == "relocate":
@@ -176,8 +183,10 @@ def perturbar_solucao(
     # Fallback seguro
     req = rng.choice(list(inst.coletas))
     r_dest = rng.randint(0, inst.m - 1)
-    tam = len(sol.rotas[r_dest].sequencia)
-    return mover_requisicao(sol, inst, req, r_dest, rng.randint(0, tam), rng.randint(0, tam))
+    origem = encontrar_rota_de_requisicao(sol, inst, req)
+    tam = len(sol.rotas[r_dest].sequencia) - (2 if origem == r_dest else 0)
+    pos_c = rng.randint(0, tam)
+    return mover_requisicao(sol, inst, req, r_dest, pos_c, rng.randint(pos_c, tam))
 
 
 def construcao_gulosa_randomizada(
@@ -187,7 +196,13 @@ def construcao_gulosa_randomizada(
     peso_f1: float = 0.5,
     rng: random.Random | None = None,
 ) -> Solucao:
-    """Constroi solucao via insercao com Lista Restrita de Candidatos (RCL)."""
+    """Insere pedidos ausentes usando custos marginais normalizados e RCL.
+
+    Preserva a estrutura. Se a construcao ficar bloqueada, retorna a solucao
+    individual, cuja viabilidade temporal deve ser conferida pelo chamador.
+    """
+    if not 0 <= alpha <= 1 or not 0 <= peso_f1 <= 1:
+        raise ValueError("alpha e peso_f1 devem pertencer a [0, 1]")
     if rng is None:
         rng = random.Random()
 
@@ -200,6 +215,11 @@ def construcao_gulosa_randomizada(
 
     while pendentes:
         candidatos = []
+        custos_base = []
+        for rota in sol.rotas:
+            ag, _ = av.avaliar_rota(rota)
+            d, e, _ = av.contribuicao(ag)
+            custos_base.append((av.par.phi * ag.distancia, d + e))
 
         for req in pendentes:
             for k in range(inst.m):
@@ -207,18 +227,25 @@ def construcao_gulosa_randomizada(
                 # Testa amostras de posicoes de insercao
                 for pos_c in range(tam + 1):
                     for pos_e in range(pos_c, tam + 1):
-                        sol_teste = mover_requisicao(sol, inst, req, k, pos_c, pos_e)
+                        sol_teste = sol.copiar()
+                        sol_teste.rotas[k] = inserir_requisicao(sol.rotas[k], req, pos_c, pos_e, inst)
                         # Avalia rota k modificada
                         ag, viol = av.avaliar_rota(sol_teste.rotas[k])
                         if not viol:
                             desvio, espera, _ = av.contribuicao(ag)
-                            custo = peso_f1 * ag.distancia + (1.0 - peso_f1) * (desvio + espera)
-                            candidatos.append((custo, req, k, pos_c, pos_e, sol_teste))
+                            delta1 = av.par.phi * ag.distancia - custos_base[k][0]
+                            delta2 = desvio + espera - custos_base[k][1]
+                            candidatos.append((delta1, delta2, req, sol_teste))
 
         if not candidatos:
             # Se restricoes impedem insercao estrita, recorre a solucao_individual
             return solucao_individual(inst)
 
+        minimo1, maximo1 = min(c[0] for c in candidatos), max(c[0] for c in candidatos)
+        minimo2, maximo2 = min(c[1] for c in candidatos), max(c[1] for c in candidatos)
+        candidatos = [(peso_f1 * (d1 - minimo1) / max(1e-12, maximo1 - minimo1)
+                       + (1 - peso_f1) * (d2 - minimo2) / max(1e-12, maximo2 - minimo2), req, teste)
+                      for d1, d2, req, teste in candidatos]
         candidatos.sort(key=lambda c: c[0])
         c_min = candidatos[0][0]
         c_max = candidatos[-1][0]
@@ -227,7 +254,7 @@ def construcao_gulosa_randomizada(
         rcl = [c for c in candidatos if c[0] <= limite]
         escolhido = rng.choice(rcl)
 
-        sol = escolhido[5]
+        sol = escolhido[2]
         pendentes.remove(escolhido[1])
 
     # Validacao final de estrutura
