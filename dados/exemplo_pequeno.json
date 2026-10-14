@@ -1,0 +1,34 @@
+{
+  "versao_formato": 1,
+  "nome": "Exemplo didatico com dois pedidos",
+  "descricao": "Dados sinteticos: duas pessoas indo de bairros proximos ao mesmo destino.",
+  "unidades": {"distancia": "km", "tempo": "min", "demanda": "passageiros"},
+  "m": 2,
+  "T_max": 180,
+  "L_arquivo": 120,
+  "deposito_origem_id": 0,
+  "deposito_destino_id": 0,
+  "janela_deposito_ini": [0, 240],
+  "janela_deposito_fim": [0, 240],
+  "parametros_avaliacao": {"phi": 1, "alpha": 2, "politica": "otimo"},
+  "rede": {
+    "direcionado": false,
+    "nos_fixos": [
+      {"id": 0, "nome": "Garagem", "x": 0, "y": 0, "s_embarque": 0, "s_desembarque": 0},
+      {"id": 1, "nome": "Bairro A", "x": 1, "y": 0, "s_embarque": 0.5, "s_desembarque": 0.5},
+      {"id": 2, "nome": "Bairro B", "x": 3, "y": 0, "s_embarque": 0.5, "s_desembarque": 0.5},
+      {"id": 3, "nome": "Campus", "x": 23, "y": 0, "s_embarque": 0.5, "s_desembarque": 0.5}
+    ],
+    "arestas": [
+      {"origem": 0, "destino": 1, "distancia": 1, "tempo": 2},
+      {"origem": 1, "destino": 2, "distancia": 2, "tempo": 4},
+      {"origem": 2, "destino": 3, "distancia": 20, "tempo": 40}
+    ]
+  },
+  "requisicoes": [
+    {"id": 101, "origem_id": 1, "destino_id": 3, "q": 1,
+     "e_coleta": 30, "l_coleta": 35, "e_entrega": 0, "l_entrega": 1440},
+    {"id": 102, "origem_id": 2, "destino_id": 3, "q": 1,
+     "e_coleta": 31, "l_coleta": 36, "e_entrega": 0, "l_entrega": 1440}
+  ]
+}

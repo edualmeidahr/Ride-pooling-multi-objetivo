@@ -1,0 +1,1247 @@
+{
+  "unidade_f1": "g_CO2",
+  "config": {
+    "descricao": "Hipotese sintetica por categorias de veiculo. Valores em g CO2/km, nao medidos nem transcritos das referencias.",
+    "escopo": "CO2 operacional estimado; sem ciclo de vida, partida a frio ou marcha lenta explicitos",
+    "veiculos": [
+      {
+        "tipo": "automovel",
+        "q_min": 1,
+        "q_max": 4,
+        "phi_g_km": 180
+      },
+      {
+        "tipo": "veiculo_familiar",
+        "q_min": 5,
+        "q_max": 6,
+        "phi_g_km": 250
+      },
+      {
+        "tipo": "van",
+        "q_min": 7,
+        "q_max": 10,
+        "phi_g_km": 350
+      },
+      {
+        "tipo": "micro_onibus",
+        "q_min": 11,
+        "q_max": 20,
+        "phi_g_km": 500
+      }
+    ],
+    "ruas": {
+      "seed": 20261004,
+      "fator_min": 1.0,
+      "fator_max": 1.15
+    },
+    "referencias": [
+      "https://www.gov.br/inmetro/pt-br/assuntos/avaliacao-da-conformidade/programa-brasileiro-de-etiquetagem/tabelas-de-eficiencia-energetica/veiculos-automotivos-pbe-veicular",
+      "https://www.gov.uk/government/publications/greenhouse-gas-reporting-conversion-factors-2026",
+      "https://www.hbefa.net/en/methodology"
+    ],
+    "capacidades": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10
+    ]
+  },
+  "fatores_arestas": [
+    {
+      "origem": 0,
+      "destino": 1,
+      "distancia": 1,
+      "fator": 1.0261911810049624
+    },
+    {
+      "origem": 0,
+      "destino": 2,
+      "distancia": 1,
+      "fator": 1.1131858132438102
+    },
+    {
+      "origem": 0,
+      "destino": 3,
+      "distancia": 1,
+      "fator": 1.0589275311020288
+    },
+    {
+      "origem": 0,
+      "destino": 4,
+      "distancia": 1,
+      "fator": 1.078472381298301
+    },
+    {
+      "origem": 0,
+      "destino": 5,
+      "distancia": 20,
+      "fator": 1.1241815184167718
+    },
+    {
+      "origem": 5,
+      "destino": 6,
+      "distancia": 2,
+      "fator": 1.1058529224299884
+    },
+    {
+      "origem": 5,
+      "destino": 7,
+      "distancia": 2,
+      "fator": 1.0190121350541779
+    },
+    {
+      "origem": 6,
+      "destino": 8,
+      "distancia": 3,
+      "fator": 1.021728427647295
+    },
+    {
+      "origem": 7,
+      "destino": 9,
+      "distancia": 5,
+      "fator": 1.0590293402935602
+    }
+  ],
+  "matriz_ambiental": [
+    {
+      "origem": 0,
+      "destino": 0,
+      "caminho": [
+        0
+      ],
+      "distancia": 0.0,
+      "distancia_ponderada": 0.0
+    },
+    {
+      "origem": 0,
+      "destino": 1,
+      "caminho": [
+        0,
+        1
+      ],
+      "distancia": 1.0,
+      "distancia_ponderada": 1.0261911810049624
+    },
+    {
+      "origem": 0,
+      "destino": 2,
+      "caminho": [
+        0,
+        2
+      ],
+      "distancia": 1.0,
+      "distancia_ponderada": 1.1131858132438102
+    },
+    {
+      "origem": 0,
+      "destino": 3,
+      "caminho": [
+        0,
+        3
+      ],
+      "distancia": 1.0,
+      "distancia_ponderada": 1.0589275311020288
+    },
+    {
+      "origem": 0,
+      "destino": 4,
+      "caminho": [
+        0,
+        4
+      ],
+      "distancia": 1.0,
+      "distancia_ponderada": 1.078472381298301
+    },
+    {
+      "origem": 0,
+      "destino": 5,
+      "caminho": [
+        0,
+        5
+      ],
+      "distancia": 20.0,
+      "distancia_ponderada": 22.483630368335437
+    },
+    {
+      "origem": 0,
+      "destino": 6,
+      "caminho": [
+        0,
+        5,
+        6
+      ],
+      "distancia": 22.0,
+      "distancia_ponderada": 24.695336213195414
+    },
+    {
+      "origem": 0,
+      "destino": 7,
+      "caminho": [
+        0,
+        5,
+        7
+      ],
+      "distancia": 22.0,
+      "distancia_ponderada": 24.521654638443792
+    },
+    {
+      "origem": 0,
+      "destino": 8,
+      "caminho": [
+        0,
+        5,
+        6,
+        8
+      ],
+      "distancia": 25.0,
+      "distancia_ponderada": 27.7605214961373
+    },
+    {
+      "origem": 0,
+      "destino": 9,
+      "caminho": [
+        0,
+        5,
+        7,
+        9
+      ],
+      "distancia": 27.0,
+      "distancia_ponderada": 29.816801339911592
+    },
+    {
+      "origem": 1,
+      "destino": 0,
+      "caminho": [
+        1,
+        0
+      ],
+      "distancia": 1.0,
+      "distancia_ponderada": 1.0261911810049624
+    },
+    {
+      "origem": 1,
+      "destino": 1,
+      "caminho": [
+        1
+      ],
+      "distancia": 0.0,
+      "distancia_ponderada": 0.0
+    },
+    {
+      "origem": 1,
+      "destino": 2,
+      "caminho": [
+        1,
+        0,
+        2
+      ],
+      "distancia": 2.0,
+      "distancia_ponderada": 2.1393769942487726
+    },
+    {
+      "origem": 1,
+      "destino": 3,
+      "caminho": [
+        1,
+        0,
+        3
+      ],
+      "distancia": 2.0,
+      "distancia_ponderada": 2.085118712106991
+    },
+    {
+      "origem": 1,
+      "destino": 4,
+      "caminho": [
+        1,
+        0,
+        4
+      ],
+      "distancia": 2.0,
+      "distancia_ponderada": 2.1046635623032635
+    },
+    {
+      "origem": 1,
+      "destino": 5,
+      "caminho": [
+        1,
+        0,
+        5
+      ],
+      "distancia": 21.0,
+      "distancia_ponderada": 23.509821549340398
+    },
+    {
+      "origem": 1,
+      "destino": 6,
+      "caminho": [
+        1,
+        0,
+        5,
+        6
+      ],
+      "distancia": 23.0,
+      "distancia_ponderada": 25.721527394200375
+    },
+    {
+      "origem": 1,
+      "destino": 7,
+      "caminho": [
+        1,
+        0,
+        5,
+        7
+      ],
+      "distancia": 23.0,
+      "distancia_ponderada": 25.547845819448753
+    },
+    {
+      "origem": 1,
+      "destino": 8,
+      "caminho": [
+        1,
+        0,
+        5,
+        6,
+        8
+      ],
+      "distancia": 26.0,
+      "distancia_ponderada": 28.786712677142262
+    },
+    {
+      "origem": 1,
+      "destino": 9,
+      "caminho": [
+        1,
+        0,
+        5,
+        7,
+        9
+      ],
+      "distancia": 28.0,
+      "distancia_ponderada": 30.842992520916553
+    },
+    {
+      "origem": 2,
+      "destino": 0,
+      "caminho": [
+        2,
+        0
+      ],
+      "distancia": 1.0,
+      "distancia_ponderada": 1.1131858132438102
+    },
+    {
+      "origem": 2,
+      "destino": 1,
+      "caminho": [
+        2,
+        0,
+        1
+      ],
+      "distancia": 2.0,
+      "distancia_ponderada": 2.1393769942487726
+    },
+    {
+      "origem": 2,
+      "destino": 2,
+      "caminho": [
+        2
+      ],
+      "distancia": 0.0,
+      "distancia_ponderada": 0.0
+    },
+    {
+      "origem": 2,
+      "destino": 3,
+      "caminho": [
+        2,
+        0,
+        3
+      ],
+      "distancia": 2.0,
+      "distancia_ponderada": 2.172113344345839
+    },
+    {
+      "origem": 2,
+      "destino": 4,
+      "caminho": [
+        2,
+        0,
+        4
+      ],
+      "distancia": 2.0,
+      "distancia_ponderada": 2.191658194542111
+    },
+    {
+      "origem": 2,
+      "destino": 5,
+      "caminho": [
+        2,
+        0,
+        5
+      ],
+      "distancia": 21.0,
+      "distancia_ponderada": 23.596816181579246
+    },
+    {
+      "origem": 2,
+      "destino": 6,
+      "caminho": [
+        2,
+        0,
+        5,
+        6
+      ],
+      "distancia": 23.0,
+      "distancia_ponderada": 25.808522026439224
+    },
+    {
+      "origem": 2,
+      "destino": 7,
+      "caminho": [
+        2,
+        0,
+        5,
+        7
+      ],
+      "distancia": 23.0,
+      "distancia_ponderada": 25.6348404516876
+    },
+    {
+      "origem": 2,
+      "destino": 8,
+      "caminho": [
+        2,
+        0,
+        5,
+        6,
+        8
+      ],
+      "distancia": 26.0,
+      "distancia_ponderada": 28.87370730938111
+    },
+    {
+      "origem": 2,
+      "destino": 9,
+      "caminho": [
+        2,
+        0,
+        5,
+        7,
+        9
+      ],
+      "distancia": 28.0,
+      "distancia_ponderada": 30.929987153155402
+    },
+    {
+      "origem": 3,
+      "destino": 0,
+      "caminho": [
+        3,
+        0
+      ],
+      "distancia": 1.0,
+      "distancia_ponderada": 1.0589275311020288
+    },
+    {
+      "origem": 3,
+      "destino": 1,
+      "caminho": [
+        3,
+        0,
+        1
+      ],
+      "distancia": 2.0,
+      "distancia_ponderada": 2.085118712106991
+    },
+    {
+      "origem": 3,
+      "destino": 2,
+      "caminho": [
+        3,
+        0,
+        2
+      ],
+      "distancia": 2.0,
+      "distancia_ponderada": 2.172113344345839
+    },
+    {
+      "origem": 3,
+      "destino": 3,
+      "caminho": [
+        3
+      ],
+      "distancia": 0.0,
+      "distancia_ponderada": 0.0
+    },
+    {
+      "origem": 3,
+      "destino": 4,
+      "caminho": [
+        3,
+        0,
+        4
+      ],
+      "distancia": 2.0,
+      "distancia_ponderada": 2.13739991240033
+    },
+    {
+      "origem": 3,
+      "destino": 5,
+      "caminho": [
+        3,
+        0,
+        5
+      ],
+      "distancia": 21.0,
+      "distancia_ponderada": 23.542557899437465
+    },
+    {
+      "origem": 3,
+      "destino": 6,
+      "caminho": [
+        3,
+        0,
+        5,
+        6
+      ],
+      "distancia": 23.0,
+      "distancia_ponderada": 25.754263744297443
+    },
+    {
+      "origem": 3,
+      "destino": 7,
+      "caminho": [
+        3,
+        0,
+        5,
+        7
+      ],
+      "distancia": 23.0,
+      "distancia_ponderada": 25.58058216954582
+    },
+    {
+      "origem": 3,
+      "destino": 8,
+      "caminho": [
+        3,
+        0,
+        5,
+        6,
+        8
+      ],
+      "distancia": 26.0,
+      "distancia_ponderada": 28.81944902723933
+    },
+    {
+      "origem": 3,
+      "destino": 9,
+      "caminho": [
+        3,
+        0,
+        5,
+        7,
+        9
+      ],
+      "distancia": 28.0,
+      "distancia_ponderada": 30.87572887101362
+    },
+    {
+      "origem": 4,
+      "destino": 0,
+      "caminho": [
+        4,
+        0
+      ],
+      "distancia": 1.0,
+      "distancia_ponderada": 1.078472381298301
+    },
+    {
+      "origem": 4,
+      "destino": 1,
+      "caminho": [
+        4,
+        0,
+        1
+      ],
+      "distancia": 2.0,
+      "distancia_ponderada": 2.1046635623032635
+    },
+    {
+      "origem": 4,
+      "destino": 2,
+      "caminho": [
+        4,
+        0,
+        2
+      ],
+      "distancia": 2.0,
+      "distancia_ponderada": 2.191658194542111
+    },
+    {
+      "origem": 4,
+      "destino": 3,
+      "caminho": [
+        4,
+        0,
+        3
+      ],
+      "distancia": 2.0,
+      "distancia_ponderada": 2.13739991240033
+    },
+    {
+      "origem": 4,
+      "destino": 4,
+      "caminho": [
+        4
+      ],
+      "distancia": 0.0,
+      "distancia_ponderada": 0.0
+    },
+    {
+      "origem": 4,
+      "destino": 5,
+      "caminho": [
+        4,
+        0,
+        5
+      ],
+      "distancia": 21.0,
+      "distancia_ponderada": 23.562102749633738
+    },
+    {
+      "origem": 4,
+      "destino": 6,
+      "caminho": [
+        4,
+        0,
+        5,
+        6
+      ],
+      "distancia": 23.0,
+      "distancia_ponderada": 25.773808594493715
+    },
+    {
+      "origem": 4,
+      "destino": 7,
+      "caminho": [
+        4,
+        0,
+        5,
+        7
+      ],
+      "distancia": 23.0,
+      "distancia_ponderada": 25.600127019742093
+    },
+    {
+      "origem": 4,
+      "destino": 8,
+      "caminho": [
+        4,
+        0,
+        5,
+        6,
+        8
+      ],
+      "distancia": 26.0,
+      "distancia_ponderada": 28.838993877435602
+    },
+    {
+      "origem": 4,
+      "destino": 9,
+      "caminho": [
+        4,
+        0,
+        5,
+        7,
+        9
+      ],
+      "distancia": 28.0,
+      "distancia_ponderada": 30.895273721209893
+    },
+    {
+      "origem": 5,
+      "destino": 0,
+      "caminho": [
+        5,
+        0
+      ],
+      "distancia": 20.0,
+      "distancia_ponderada": 22.483630368335437
+    },
+    {
+      "origem": 5,
+      "destino": 1,
+      "caminho": [
+        5,
+        0,
+        1
+      ],
+      "distancia": 21.0,
+      "distancia_ponderada": 23.509821549340398
+    },
+    {
+      "origem": 5,
+      "destino": 2,
+      "caminho": [
+        5,
+        0,
+        2
+      ],
+      "distancia": 21.0,
+      "distancia_ponderada": 23.596816181579246
+    },
+    {
+      "origem": 5,
+      "destino": 3,
+      "caminho": [
+        5,
+        0,
+        3
+      ],
+      "distancia": 21.0,
+      "distancia_ponderada": 23.542557899437465
+    },
+    {
+      "origem": 5,
+      "destino": 4,
+      "caminho": [
+        5,
+        0,
+        4
+      ],
+      "distancia": 21.0,
+      "distancia_ponderada": 23.562102749633738
+    },
+    {
+      "origem": 5,
+      "destino": 5,
+      "caminho": [
+        5
+      ],
+      "distancia": 0.0,
+      "distancia_ponderada": 0.0
+    },
+    {
+      "origem": 5,
+      "destino": 6,
+      "caminho": [
+        5,
+        6
+      ],
+      "distancia": 2.0,
+      "distancia_ponderada": 2.211705844859977
+    },
+    {
+      "origem": 5,
+      "destino": 7,
+      "caminho": [
+        5,
+        7
+      ],
+      "distancia": 2.0,
+      "distancia_ponderada": 2.0380242701083557
+    },
+    {
+      "origem": 5,
+      "destino": 8,
+      "caminho": [
+        5,
+        6,
+        8
+      ],
+      "distancia": 5.0,
+      "distancia_ponderada": 5.276891127801862
+    },
+    {
+      "origem": 5,
+      "destino": 9,
+      "caminho": [
+        5,
+        7,
+        9
+      ],
+      "distancia": 7.0,
+      "distancia_ponderada": 7.333170971576157
+    },
+    {
+      "origem": 6,
+      "destino": 0,
+      "caminho": [
+        6,
+        5,
+        0
+      ],
+      "distancia": 22.0,
+      "distancia_ponderada": 24.695336213195414
+    },
+    {
+      "origem": 6,
+      "destino": 1,
+      "caminho": [
+        6,
+        5,
+        0,
+        1
+      ],
+      "distancia": 23.0,
+      "distancia_ponderada": 25.721527394200375
+    },
+    {
+      "origem": 6,
+      "destino": 2,
+      "caminho": [
+        6,
+        5,
+        0,
+        2
+      ],
+      "distancia": 23.0,
+      "distancia_ponderada": 25.808522026439224
+    },
+    {
+      "origem": 6,
+      "destino": 3,
+      "caminho": [
+        6,
+        5,
+        0,
+        3
+      ],
+      "distancia": 23.0,
+      "distancia_ponderada": 25.754263744297443
+    },
+    {
+      "origem": 6,
+      "destino": 4,
+      "caminho": [
+        6,
+        5,
+        0,
+        4
+      ],
+      "distancia": 23.0,
+      "distancia_ponderada": 25.773808594493715
+    },
+    {
+      "origem": 6,
+      "destino": 5,
+      "caminho": [
+        6,
+        5
+      ],
+      "distancia": 2.0,
+      "distancia_ponderada": 2.211705844859977
+    },
+    {
+      "origem": 6,
+      "destino": 6,
+      "caminho": [
+        6
+      ],
+      "distancia": 0.0,
+      "distancia_ponderada": 0.0
+    },
+    {
+      "origem": 6,
+      "destino": 7,
+      "caminho": [
+        6,
+        5,
+        7
+      ],
+      "distancia": 4.0,
+      "distancia_ponderada": 4.249730114968333
+    },
+    {
+      "origem": 6,
+      "destino": 8,
+      "caminho": [
+        6,
+        8
+      ],
+      "distancia": 3.0,
+      "distancia_ponderada": 3.0651852829418855
+    },
+    {
+      "origem": 6,
+      "destino": 9,
+      "caminho": [
+        6,
+        5,
+        7,
+        9
+      ],
+      "distancia": 9.0,
+      "distancia_ponderada": 9.544876816436133
+    },
+    {
+      "origem": 7,
+      "destino": 0,
+      "caminho": [
+        7,
+        5,
+        0
+      ],
+      "distancia": 22.0,
+      "distancia_ponderada": 24.521654638443792
+    },
+    {
+      "origem": 7,
+      "destino": 1,
+      "caminho": [
+        7,
+        5,
+        0,
+        1
+      ],
+      "distancia": 23.0,
+      "distancia_ponderada": 25.547845819448753
+    },
+    {
+      "origem": 7,
+      "destino": 2,
+      "caminho": [
+        7,
+        5,
+        0,
+        2
+      ],
+      "distancia": 23.0,
+      "distancia_ponderada": 25.6348404516876
+    },
+    {
+      "origem": 7,
+      "destino": 3,
+      "caminho": [
+        7,
+        5,
+        0,
+        3
+      ],
+      "distancia": 23.0,
+      "distancia_ponderada": 25.58058216954582
+    },
+    {
+      "origem": 7,
+      "destino": 4,
+      "caminho": [
+        7,
+        5,
+        0,
+        4
+      ],
+      "distancia": 23.0,
+      "distancia_ponderada": 25.600127019742093
+    },
+    {
+      "origem": 7,
+      "destino": 5,
+      "caminho": [
+        7,
+        5
+      ],
+      "distancia": 2.0,
+      "distancia_ponderada": 2.0380242701083557
+    },
+    {
+      "origem": 7,
+      "destino": 6,
+      "caminho": [
+        7,
+        5,
+        6
+      ],
+      "distancia": 4.0,
+      "distancia_ponderada": 4.249730114968333
+    },
+    {
+      "origem": 7,
+      "destino": 7,
+      "caminho": [
+        7
+      ],
+      "distancia": 0.0,
+      "distancia_ponderada": 0.0
+    },
+    {
+      "origem": 7,
+      "destino": 8,
+      "caminho": [
+        7,
+        5,
+        6,
+        8
+      ],
+      "distancia": 7.0,
+      "distancia_ponderada": 7.314915397910219
+    },
+    {
+      "origem": 7,
+      "destino": 9,
+      "caminho": [
+        7,
+        9
+      ],
+      "distancia": 5.0,
+      "distancia_ponderada": 5.295146701467801
+    },
+    {
+      "origem": 8,
+      "destino": 0,
+      "caminho": [
+        8,
+        6,
+        5,
+        0
+      ],
+      "distancia": 25.0,
+      "distancia_ponderada": 27.7605214961373
+    },
+    {
+      "origem": 8,
+      "destino": 1,
+      "caminho": [
+        8,
+        6,
+        5,
+        0,
+        1
+      ],
+      "distancia": 26.0,
+      "distancia_ponderada": 28.786712677142262
+    },
+    {
+      "origem": 8,
+      "destino": 2,
+      "caminho": [
+        8,
+        6,
+        5,
+        0,
+        2
+      ],
+      "distancia": 26.0,
+      "distancia_ponderada": 28.87370730938111
+    },
+    {
+      "origem": 8,
+      "destino": 3,
+      "caminho": [
+        8,
+        6,
+        5,
+        0,
+        3
+      ],
+      "distancia": 26.0,
+      "distancia_ponderada": 28.81944902723933
+    },
+    {
+      "origem": 8,
+      "destino": 4,
+      "caminho": [
+        8,
+        6,
+        5,
+        0,
+        4
+      ],
+      "distancia": 26.0,
+      "distancia_ponderada": 28.838993877435602
+    },
+    {
+      "origem": 8,
+      "destino": 5,
+      "caminho": [
+        8,
+        6,
+        5
+      ],
+      "distancia": 5.0,
+      "distancia_ponderada": 5.276891127801862
+    },
+    {
+      "origem": 8,
+      "destino": 6,
+      "caminho": [
+        8,
+        6
+      ],
+      "distancia": 3.0,
+      "distancia_ponderada": 3.0651852829418855
+    },
+    {
+      "origem": 8,
+      "destino": 7,
+      "caminho": [
+        8,
+        6,
+        5,
+        7
+      ],
+      "distancia": 7.0,
+      "distancia_ponderada": 7.314915397910218
+    },
+    {
+      "origem": 8,
+      "destino": 8,
+      "caminho": [
+        8
+      ],
+      "distancia": 0.0,
+      "distancia_ponderada": 0.0
+    },
+    {
+      "origem": 8,
+      "destino": 9,
+      "caminho": [
+        8,
+        6,
+        5,
+        7,
+        9
+      ],
+      "distancia": 12.0,
+      "distancia_ponderada": 12.61006209937802
+    },
+    {
+      "origem": 9,
+      "destino": 0,
+      "caminho": [
+        9,
+        7,
+        5,
+        0
+      ],
+      "distancia": 27.0,
+      "distancia_ponderada": 29.816801339911592
+    },
+    {
+      "origem": 9,
+      "destino": 1,
+      "caminho": [
+        9,
+        7,
+        5,
+        0,
+        1
+      ],
+      "distancia": 28.0,
+      "distancia_ponderada": 30.842992520916553
+    },
+    {
+      "origem": 9,
+      "destino": 2,
+      "caminho": [
+        9,
+        7,
+        5,
+        0,
+        2
+      ],
+      "distancia": 28.0,
+      "distancia_ponderada": 30.929987153155402
+    },
+    {
+      "origem": 9,
+      "destino": 3,
+      "caminho": [
+        9,
+        7,
+        5,
+        0,
+        3
+      ],
+      "distancia": 28.0,
+      "distancia_ponderada": 30.87572887101362
+    },
+    {
+      "origem": 9,
+      "destino": 4,
+      "caminho": [
+        9,
+        7,
+        5,
+        0,
+        4
+      ],
+      "distancia": 28.0,
+      "distancia_ponderada": 30.895273721209893
+    },
+    {
+      "origem": 9,
+      "destino": 5,
+      "caminho": [
+        9,
+        7,
+        5
+      ],
+      "distancia": 7.0,
+      "distancia_ponderada": 7.333170971576157
+    },
+    {
+      "origem": 9,
+      "destino": 6,
+      "caminho": [
+        9,
+        7,
+        5,
+        6
+      ],
+      "distancia": 9.0,
+      "distancia_ponderada": 9.544876816436133
+    },
+    {
+      "origem": 9,
+      "destino": 7,
+      "caminho": [
+        9,
+        7
+      ],
+      "distancia": 5.0,
+      "distancia_ponderada": 5.295146701467801
+    },
+    {
+      "origem": 9,
+      "destino": 8,
+      "caminho": [
+        9,
+        7,
+        5,
+        6,
+        8
+      ],
+      "distancia": 12.0,
+      "distancia_ponderada": 12.61006209937802
+    },
+    {
+      "origem": 9,
+      "destino": 9,
+      "caminho": [
+        9
+      ],
+      "distancia": 0.0,
+      "distancia_ponderada": 0.0
+    }
+  ],
+  "phi_por_q": {
+    "1": 180.0,
+    "2": 180.0,
+    "3": 180.0,
+    "4": 180.0,
+    "5": 250.0,
+    "6": 250.0,
+    "7": 350.0,
+    "8": 350.0,
+    "9": 350.0,
+    "10": 350.0
+  }
+}

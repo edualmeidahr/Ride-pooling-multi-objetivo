@@ -17,6 +17,7 @@ Capacidades maiores que a demanda total tornam-se redundantes. Patamares antes d
 ## Configuração e dados reproduzíveis
 
 Configuração completa, versões, hash da entrada, hash dos fontes, rotas, horários e checkpoints: [execucoes.json](execucoes.json).
+Soluções reais com objetivos pareados e critério explícito de equilíbrio: [RESUMO_SOLUCOES.md](RESUMO_SOLUCOES.md). Os extremos de distância e tempo não devem ser combinados como se fossem uma única solução.
 Métricas por capacidade/método/semente: [metricas.csv](metricas.csv).
 
 ## Resumo observado por capacidade

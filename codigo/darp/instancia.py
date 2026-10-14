@@ -55,6 +55,13 @@ class Instancia:
     # Rede de nos fixos e requisicoes mapeadas (quando aplicavel)
     rede: Rede | None = None
     requisicoes: list[Requisicao] = field(default_factory=list, repr=False)
+    matriz_ambiental: dict[tuple[int, int], float] | None = field(default=None, repr=False)
+
+    def dist_ambiental(self, i: int, j: int) -> float:
+        """Km ponderados das ruas no caminho fisico, sem alterar distancia/tempo."""
+        if self.matriz_ambiental is None:
+            return self.dist(i, j)
+        return self.matriz_ambiental[(self.nos[i].id_fixo, self.nos[j].id_fixo)]
 
     # Derivados no __post_init__.
     tipo: dict[int, str] = field(default_factory=dict, repr=False)
@@ -257,7 +264,8 @@ def reduzir(inst: Instancia, pedidos: list[int], m: int | None = None) -> Instan
 
     return Instancia(nome=f"{inst.nome}-r{k}", m=m if m is not None else inst.m,
                      n=k, T_max=inst.T_max, Q=inst.Q, L_arquivo=inst.L_arquivo,
-                     nos=nos, formato=inst.formato, rede=inst.rede, requisicoes=reqs)
+                     nos=nos, formato=inst.formato, rede=inst.rede, requisicoes=reqs,
+                     matriz_ambiental=inst.matriz_ambiental)
 
 
 def salvar_instancia_json(inst: Instancia, caminho: str | Path) -> None:

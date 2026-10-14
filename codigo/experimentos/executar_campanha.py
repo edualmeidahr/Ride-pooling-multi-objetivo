@@ -1,12 +1,12 @@
 """Executa Q x sementes x metodos, com referencia exata ou empirica e registro reproduzivel."""
 import argparse
-import csv
 import hashlib
 import importlib.metadata
 import json
 import platform
 import sys
 import time
+from dataclasses import replace
 from copy import deepcopy
 from pathlib import Path
 
@@ -16,6 +16,8 @@ from darp.cenarios import cenario_capacidade
 from darp.exato import fronteira_exata
 from darp.instancia import reduzir
 from darp.pareto import normalizar, hipervolume, filtrar
+from darp.emissoes import preparar_ambiente, phi_para_q
+from resumir_campanha import gerar_resumos
 
 
 class AvaliadorInstrumentado(Avaliador):
@@ -76,7 +78,12 @@ def main():
     par = Parametros(**config["parametros_avaliacao"])
     if par.politica != "otimo":
         parser.error("campanha com gabarito exige politica otimo para todos os metodos")
-    if par.phi != 1:
+    ambiental = config.get("modelo_emissoes")
+    ambiente = None
+    if ambiental:
+        inst, ambiente = preparar_ambiente(inst, json.loads(caminho.read_text(encoding="utf-8")),
+                                          {**ambiental, "capacidades": capacidades})
+    if par.phi != 1 and not ambiental:
         parser.error("graficos desta campanha usam distancia: mantenha phi=1")
     saida = raiz / config["saida"]
     saida.mkdir(parents=True, exist_ok=True)
@@ -86,6 +93,9 @@ def main():
                 "fontes_sha256": {str(p.relative_to(raiz)): hashlib.sha256(p.read_bytes()).hexdigest()
                                   for p in (raiz / "codigo").rglob("*.py")},
                 "tipo_referencia": tipo_referencia, "referencias": {}, "execucoes": []}
+    if ambiente:
+        registro["ambiente_emissoes"] = ambiente
+        (saida / "ambiente_emissoes.json").write_text(json.dumps(ambiente, indent=2), encoding="utf-8")
     demanda = sum(inst.nos[i].q for i in inst.coletas)
     if config.get("coletas_antes_de_qualquer_entrega", False):
         registro["concorrencia"] = {"passageiros": demanda, "fim_coletas": fim_coletas,
@@ -93,16 +103,19 @@ def main():
     cache, anterior = {}, []
     for Q in capacidades:
         atual = cenario_capacidade(inst, Q)
+        if ambiental:
+            par = replace(par, phi=phi_para_q(ambiental, Q))
         efetivo = min(Q, demanda)
-        if tipo_referencia == "exata" and efetivo not in cache:
+        chave_exata = (efetivo, par.phi)
+        if tipo_referencia == "exata" and chave_exata not in cache:
             t0 = time.perf_counter()
             frente = fronteira_exata(atual, Avaliador(atual, par))
-            cache[efetivo] = {"pontos": [[f1, f2] for f1, f2, _ in frente],
+            cache[chave_exata] = {"pontos": [[f1, f2] for f1, f2, _ in frente],
                               "tempo_enumeracao": time.perf_counter() - t0,
                               "rotas": [[r.sequencia for r in sol.rotas] for _, _, sol in frente]}
         if tipo_referencia == "exata":
-            referencia = cache[efetivo]
-            for a in anterior:
+            referencia = cache[chave_exata]
+            for a in (anterior if not ambiental else []):
                 if not any(p[0] <= a[0] + 1e-6 and p[1] <= a[1] + 1e-6 for p in referencia["pontos"]):
                     raise AssertionError("fronteira exata viola inclusao por capacidade")
             anterior = referencia["pontos"]
@@ -110,6 +123,9 @@ def main():
         for nome, parametros in config["algoritmos"].items():
             for seed in sementes:
                 av = AvaliadorInstrumentado(atual, par, cache_agendas=config.get("cache_agendas", False))
+                av.limite_pedidos_construcao = config.get("construcao", {}).get("limite_pedidos_candidatos")
+                av.limite_posicoes_construcao = config.get("construcao", {}).get("limite_posicoes_insercao")
+                av.coletas_concorrentes = config.get("coletas_antes_de_qualquer_entrega", False)
                 metodo = obter_metaheuristica(nome, seed=seed, **parametros)
                 t0 = time.perf_counter()
                 res = metodo.otimizar(atual, av)
@@ -122,6 +138,7 @@ def main():
                     if not calculado.viavel or abs(calculado.f1 - f1) > 1e-6 or abs(calculado.f2 - f2) > 1e-6:
                         raise AssertionError("fronteira retornou ponto inconsistente")
                     pontos.append({"f1": f1, "f2": f2, "rotas": [r.sequencia for r in sol.rotas],
+                                   "distancia": calculado.distancia,
                                    "agendas": [{"B": a.B, "partida": a.partida, "carga": a.carga} for a in calculado.agendas],
                                    "desvio": calculado.f2_desvio, "espera": calculado.f2_espera,
                                    "veiculos_usados": calculado.veiculos_usados,
@@ -129,6 +146,7 @@ def main():
                 if not pontos:
                     raise AssertionError(f"nenhuma solucao viavel: Q={Q}, metodo={nome}, seed={seed}")
                 registro["execucoes"].append({"Q": Q, "metodo": nome, "seed": seed,
+                    "phi_g_km": par.phi,
                     "tempo_busca": tempo_busca, "agendamentos": calls,
                     "resolucoes_agendamento": av.resolucoes_agendamento, "cache_hits": av.cache_hits,
                     "avaliacoes_reportadas_metodo": res.avaliacoes, "pontos": pontos, "historico": res.historico})
@@ -147,7 +165,6 @@ def main():
                                 "referencia_hv": [1.1, 1.1]}
     def hv(pontos):
         return hipervolume(normalizar(pontos, todos), referencia=(1.1, 1.1))
-    linhas = []
     for r in registro["execucoes"]:
         pts = [(p["f1"], p["f2"]) for p in r["pontos"]]
         exatos = registro["referencias"][str(r["Q"])]["pontos"]
@@ -169,15 +186,9 @@ def main():
         r["metricas"] = metricas
         for h in r["historico"]:
             h["hv_relativo"] = hv(h["fronteira"]) / hv_exato if hv_exato else None
-        linhas.append({"Q": r["Q"], "metodo": r["metodo"], "seed": r["seed"],
-                       "tempo_busca": r["tempo_busca"], "agendamentos": r["agendamentos"], **metricas})
-        linhas[-1].update(resolucoes_agendamento=r["resolucoes_agendamento"], cache_hits=r["cache_hits"])
     (saida / "execucoes.json").write_text(json.dumps(registro, indent=2), encoding="utf-8")
-    with (saida / "metricas.csv").open("w", newline="", encoding="utf-8") as f:
-        writer = csv.DictWriter(f, fieldnames=list(linhas[0]))
-        writer.writeheader()
-        writer.writerows(linhas)
-    print(f"Campanha completa: {len(linhas)} execucoes em {saida}")
+    gerar_resumos(saida, registro)
+    print(f"Campanha completa: {len(registro['execucoes'])} execucoes em {saida}")
 
 
 if __name__ == "__main__":

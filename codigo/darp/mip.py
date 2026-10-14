@@ -143,7 +143,7 @@ def construir(inst: Instancia, par: Parametros, silencioso: bool = True):
     # Espera no embarque, parcela de f_2.
     mod.addConstrs((esp[i] >= B[i] - inst.rho[i] for i in P), "espera")
 
-    f1 = par.phi * gp.quicksum(inst.dist(i, j) * x[i, j, k] for (i, j) in arcos for k in K)
+    f1 = par.phi * gp.quicksum(inst.dist_ambiental(i, j) * x[i, j, k] for (i, j) in arcos for k in K)
     f2 = gp.quicksum(inst.nos[i].q * ((R[i] - inst.t_direto(i)) + esp[i]) for i in P)
 
     mod._vars = dict(x=x, y=y, B=B, Bini=Bini, Bfim=Bfim, w=w, R=R, esp=esp,

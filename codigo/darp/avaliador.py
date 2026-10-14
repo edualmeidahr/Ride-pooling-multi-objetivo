@@ -4,7 +4,7 @@ O avaliador e a peca compartilhada por todas as metaheuristicas do projeto:
 recebe uma solucao como conjunto de rotas, calcula os instantes de atendimento,
 verifica a viabilidade e devolve os dois objetivos
 
-    f_1  emissao de CO2, igual a phi vezes a distancia total percorrida
+    f_1  emissao de CO2, phi vezes a soma das distancias ponderadas pelas ruas
     f_2  tempo perdido pelo usuario, em passageiro-minuto, somando o desvio
          de rota (R_i - t_direto_i) e a espera no embarque (B_i - rho_i)
 
@@ -59,8 +59,9 @@ class Parametros:
     phi: float = 1.0
     """Fator de emissao em g CO2 por unidade de distancia.
 
-    Com phi = 1 o objetivo f_1 coincide numericamente com a distancia total,
-    conveniente para validacao contra valores publicados.
+    Sem matriz ambiental e com phi = 1, f_1 coincide com a distancia total.
+    No modo ambiental, phi corresponde ao tipo de veiculo da execucao;
+    os multiplicadores das ruas ficam na matriz ambiental da instancia.
     """
 
     alpha: float | None = None
@@ -501,6 +502,13 @@ class Avaliador:
             bordo += ag.R.get(no, 0.0)
         return desvio, espera, bordo
 
+    def emissao_rota(self, rota: Rota) -> float:
+        if not rota.usada:
+            return 0.0
+        caminho = [self.inst.deposito_ini] + rota.sequencia + [self.inst.deposito_fim]
+        return self.par.phi * sum(self.inst.dist_ambiental(a, b)
+                                  for a, b in zip(caminho, caminho[1:]))
+
     def avaliar_rota(self, rota: Rota, partida: float | None = None,
                      politica: str | None = None) -> tuple[AgendaRota, list[str]]:
         """Agenda e verifica uma rota isolada, sem exigir cobertura global.
@@ -527,6 +535,7 @@ class Avaliador:
             res.violacoes.extend(self._violacoes(k, ag))
 
             res.distancia += ag.distancia
+            res.f1 += self.emissao_rota(rota)
             res.veiculos_usados += 1
             res.custo += (par.custo_fixo
                           + par.custo_distancia * ag.distancia
@@ -538,7 +547,6 @@ class Avaliador:
             res.tempo_bordo += bordo
             res.espera_bruta += sum(ag.espera.values())
 
-        res.f1 = par.phi * res.distancia
         res.f2 = res.f2_desvio + res.f2_espera
         return res
 
@@ -561,6 +569,7 @@ class Avaliador:
             res.agendas.append(ag)
             res.violacoes.extend(self._violacoes(k, ag))
             res.distancia += ag.distancia
+            res.f1 += self.emissao_rota(rota)
             res.veiculos_usados += 1
             res.espera_bruta += sum(ag.espera.values())
 
@@ -569,6 +578,5 @@ class Avaliador:
             res.f2_espera += espera
             res.tempo_bordo += bordo
 
-        res.f1 = par.phi * res.distancia
         res.f2 = res.f2_desvio + res.f2_espera
         return res

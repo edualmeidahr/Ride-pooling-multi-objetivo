@@ -24,8 +24,11 @@ from .metaheuristicas import (
 )
 from .rede import NoFixo, Rede, Requisicao, criar_instancia_rede
 from .solucao import Rota, Solucao, solucao_individual
+from .heuristicas import HeuristicaGulosa, ResultadoHeuristica
 
 __all__ = [
+    "HeuristicaGulosa",
+    "ResultadoHeuristica",
     "BORDO",
     "CEDO",
     "OTIMO",

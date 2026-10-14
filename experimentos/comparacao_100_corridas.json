@@ -1,0 +1,192 @@
+{
+  "instancia": "dados/cenario_100_corridas.json",
+  "pedidos": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19,
+    20,
+    21,
+    22,
+    23,
+    24,
+    25,
+    26,
+    27,
+    28,
+    29,
+    30,
+    31,
+    32,
+    33,
+    34,
+    35,
+    36,
+    37,
+    38,
+    39,
+    40,
+    41,
+    42,
+    43,
+    44,
+    45,
+    46,
+    47,
+    48,
+    49,
+    50,
+    51,
+    52,
+    53,
+    54,
+    55,
+    56,
+    57,
+    58,
+    59,
+    60,
+    61,
+    62,
+    63,
+    64,
+    65,
+    66,
+    67,
+    68,
+    69,
+    70,
+    71,
+    72,
+    73,
+    74,
+    75,
+    76,
+    77,
+    78,
+    79,
+    80,
+    81,
+    82,
+    83,
+    84,
+    85,
+    86,
+    87,
+    88,
+    89,
+    90,
+    91,
+    92,
+    93,
+    94,
+    95,
+    96,
+    97,
+    98,
+    99,
+    100
+  ],
+  "m": 100,
+  "capacidades": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10
+  ],
+  "sementes": [
+    42
+  ],
+  "referencia": "empirica",
+  "cache_agendas": true,
+  "coletas_antes_de_qualquer_entrega": true,
+  "parametros_avaliacao": {
+    "phi": 1.0,
+    "alpha": 2.0,
+    "politica": "otimo"
+  },
+  "algoritmos": {
+    "sa": {
+      "temp_inicial": 3.0,
+      "temp_final": 0.5,
+      "fator_resfriamento": 0.6,
+      "iter_por_temp": 10
+    },
+    "ga": {
+      "tamanho_populacao": 6,
+      "geracoes": 6
+    },
+    "grasp": {
+      "max_iteracoes": 4,
+      "max_passos_busca_local": 3
+    }
+  },
+  "saida": "resultados/comparacao_100_corridas",
+  "observacao": "100 pedidos, Q=1..10, uma execucao por SA/GA/GRASP/gulosa. Construcao sequencial para escala; parametros exploratorios, sem ranking nem referencia exata.",
+  "modelo_emissoes": {
+    "descricao": "Hipotese sintetica por categorias de veiculo. Valores em g CO2/km, nao medidos nem transcritos das referencias.",
+    "escopo": "CO2 operacional estimado; sem ciclo de vida, partida a frio ou marcha lenta explicitos",
+    "veiculos": [
+      {
+        "tipo": "automovel",
+        "q_min": 1,
+        "q_max": 4,
+        "phi_g_km": 180
+      },
+      {
+        "tipo": "veiculo_familiar",
+        "q_min": 5,
+        "q_max": 6,
+        "phi_g_km": 250
+      },
+      {
+        "tipo": "van",
+        "q_min": 7,
+        "q_max": 10,
+        "phi_g_km": 350
+      },
+      {
+        "tipo": "micro_onibus",
+        "q_min": 11,
+        "q_max": 20,
+        "phi_g_km": 500
+      }
+    ],
+    "ruas": {
+      "seed": 20261004,
+      "fator_min": 1.0,
+      "fator_max": 1.15
+    },
+    "referencias": [
+      "https://www.gov.br/inmetro/pt-br/assuntos/avaliacao-da-conformidade/programa-brasileiro-de-etiquetagem/tabelas-de-eficiencia-energetica/veiculos-automotivos-pbe-veicular",
+      "https://www.gov.uk/government/publications/greenhouse-gas-reporting-conversion-factors-2026",
+      "https://www.hbefa.net/en/methodology"
+    ]
+  },
+  "construcao": {
+    "limite_pedidos_candidatos": 1,
+    "limite_posicoes_insercao": 8,
+    "descricao": "Construcao escalavel: proximo pedido por horario desejado; todos os veiculos com capacidade disponivel e ate 8 pares de posicoes por rota, espalhados deterministicamente. Todos os 100 pedidos sao atendidos. Nao usa a construcao exaustiva do piloto de 12."
+  }
+}

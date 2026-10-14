@@ -9,6 +9,16 @@ from ..instancia import Instancia
 from ..solucao import Rota, Solucao, solucao_individual
 
 
+def posicoes_insercao(tamanho, limite=None):
+    """Pares de posicoes; perfil limitado usa amostra deterministica espalhada."""
+    if limite is not None and (type(limite) is not int or limite < 2):
+        raise ValueError("limite de posicoes deve ser inteiro >= 2")
+    pares = [(c, e) for c in range(tamanho + 1) for e in range(c, tamanho + 1)]
+    if limite is None or len(pares) <= limite:
+        return pares
+    return [pares[round(i*(len(pares)-1)/(limite-1))] for i in range(limite)]
+
+
 def encontrar_rota_de_requisicao(sol: Solucao, inst: Instancia, req_id: int) -> int | None:
     """Encontra o indice da rota que contem a solicitacao req_id."""
     for idx, rota in enumerate(sol.rotas):
@@ -219,23 +229,37 @@ def construcao_gulosa_randomizada(
         for rota in sol.rotas:
             ag, _ = av.avaliar_rota(rota)
             d, e, _ = av.contribuicao(ag)
-            custos_base.append((av.par.phi * ag.distancia, d + e))
+            custos_base.append((av.emissao_rota(rota), d + e))
 
-        for req in pendentes:
+        limite_pedidos = getattr(av, "limite_pedidos_construcao", None)
+        pool = pendentes[:limite_pedidos] if limite_pedidos else pendentes
+        for req in pool:
             for k in range(inst.m):
                 tam = len(sol.rotas[k].sequencia)
+                if getattr(av, "coletas_concorrentes", False) and sum(inst.nos[i].q for i in sol.rotas[k].sequencia if i <= inst.n) + inst.nos[req].q > inst.Q:
+                    continue
                 # Testa amostras de posicoes de insercao
-                for pos_c in range(tam + 1):
-                    for pos_e in range(pos_c, tam + 1):
-                        sol_teste = sol.copiar()
-                        sol_teste.rotas[k] = inserir_requisicao(sol.rotas[k], req, pos_c, pos_e, inst)
+                for pos_c, pos_e in posicoes_insercao(tam, getattr(av, "limite_posicoes_construcao", None)):
+                        rota_teste = inserir_requisicao(sol.rotas[k], req, pos_c, pos_e, inst)
+                        if limite_pedidos:
+                            carga, instante, ultimo = 0, inst.nos[inst.deposito_ini].e, inst.deposito_ini
+                            impossivel = False
+                            for no in rota_teste.sequencia:
+                                carga += inst.nos[no].q
+                                atendimento = max(instante + inst.tempo(ultimo, no), inst.nos[no].e)
+                                if not 0 <= carga <= inst.Q or atendimento > inst.nos[no].l + av.par.tolerancia:
+                                    impossivel = True
+                                    break
+                                instante, ultimo = atendimento + inst.nos[no].s, no
+                            if impossivel:
+                                continue
                         # Avalia rota k modificada
-                        ag, viol = av.avaliar_rota(sol_teste.rotas[k])
+                        ag, viol = av.avaliar_rota(rota_teste)
                         if not viol:
                             desvio, espera, _ = av.contribuicao(ag)
-                            delta1 = av.par.phi * ag.distancia - custos_base[k][0]
+                            delta1 = av.emissao_rota(rota_teste) - custos_base[k][0]
                             delta2 = desvio + espera - custos_base[k][1]
-                            candidatos.append((delta1, delta2, req, sol_teste))
+                            candidatos.append((delta1, delta2, req, k, rota_teste))
 
         if not candidatos:
             # Se restricoes impedem insercao estrita, recorre a solucao_individual
@@ -244,8 +268,8 @@ def construcao_gulosa_randomizada(
         minimo1, maximo1 = min(c[0] for c in candidatos), max(c[0] for c in candidatos)
         minimo2, maximo2 = min(c[1] for c in candidatos), max(c[1] for c in candidatos)
         candidatos = [(peso_f1 * (d1 - minimo1) / max(1e-12, maximo1 - minimo1)
-                       + (1 - peso_f1) * (d2 - minimo2) / max(1e-12, maximo2 - minimo2), req, teste)
-                      for d1, d2, req, teste in candidatos]
+                       + (1 - peso_f1) * (d2 - minimo2) / max(1e-12, maximo2 - minimo2), req, k, teste)
+                      for d1, d2, req, k, teste in candidatos]
         candidatos.sort(key=lambda c: c[0])
         c_min = candidatos[0][0]
         c_max = candidatos[-1][0]
@@ -254,7 +278,7 @@ def construcao_gulosa_randomizada(
         rcl = [c for c in candidatos if c[0] <= limite]
         escolhido = rng.choice(rcl)
 
-        sol = escolhido[2]
+        sol.rotas[escolhido[2]] = escolhido[3]
         pendentes.remove(escolhido[1])
 
     # Validacao final de estrutura

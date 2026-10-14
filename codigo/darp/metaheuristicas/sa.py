@@ -9,6 +9,7 @@ import time
 from ..avaliador import Avaliador
 from ..instancia import Instancia
 from ..solucao import solucao_individual
+from ..emissoes import escalas_busca
 from .base import ArquivoPareto, Metaheuristica, ResultadoOtimizacao
 from .operadores import construcao_gulosa_randomizada, perturbar_solucao
 
@@ -52,6 +53,7 @@ class SimulatedAnnealing(Metaheuristica):
         total_iter = 0
         total_avals = 1
         historico = []
+        escalas = escalas_busca(inst, av) if inst.matriz_ambiental is not None else None
 
         # Executa uma trajetoria de resfriamento para cada vetor de pesos de exploracao
         for idx_peso, (w1, w2) in enumerate(self.pesos):
@@ -65,6 +67,8 @@ class SimulatedAnnealing(Metaheuristica):
             # Normalizacao da energia pelo ponto base para manter escalas balanceadas
             ref_f1 = max(1.0, aval_base.f1)
             ref_f2 = max(1.0, aval_base.f2)
+            if escalas:
+                ref_f1, ref_f2 = escalas
 
             def energia(f1: float, f2: float, violacoes: int) -> float:
                 penalidade = violacoes * 1000.0

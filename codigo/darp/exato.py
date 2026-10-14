@@ -91,7 +91,7 @@ def frentes_por_subconjunto(inst: Instancia, av: Avaliador,
                 if violacoes:
                     continue
                 desvio, espera, _ = av.contribuicao(ag)
-                pontos.append((av.par.phi * ag.distancia, desvio + espera, tuple(seq)))
+                pontos.append((av.emissao_rota(Rota(list(seq))), desvio + espera, tuple(seq)))
             if pontos:
                 frentes[_mascara(pedidos)] = pareto.filtrar(pontos)
 

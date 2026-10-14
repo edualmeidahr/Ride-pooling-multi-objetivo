@@ -1,0 +1,5307 @@
+{
+  "metodo": "heuristica_gulosa",
+  "config": {
+    "instancia": "dados/cenario_concorrente_q10.json",
+    "pedidos": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12
+    ],
+    "m": 12,
+    "capacidades": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10
+    ],
+    "sementes": [
+      42
+    ],
+    "referencia": "empirica",
+    "cache_agendas": true,
+    "coletas_antes_de_qualquer_entrega": true,
+    "parametros_avaliacao": {
+      "phi": 1.0,
+      "alpha": 2.0,
+      "politica": "otimo"
+    },
+    "algoritmos": {
+      "sa": {
+        "temp_inicial": 3.0,
+        "temp_final": 0.5,
+        "fator_resfriamento": 0.6,
+        "iter_por_temp": 10
+      },
+      "ga": {
+        "tamanho_populacao": 6,
+        "geracoes": 6
+      },
+      "grasp": {
+        "max_iteracoes": 4,
+        "max_passos_busca_local": 3
+      }
+    },
+    "saida": "resultados/comparacao_emissoes_q1_10",
+    "observacao": "CO2 sintetico com perfis por Q e fatores de rua fixos. Uma semente; sem estimativa de variabilidade ou prova de otimalidade.",
+    "modelo_emissoes": {
+      "descricao": "Hipotese sintetica por categorias de veiculo. Valores em g CO2/km, nao medidos nem transcritos das referencias.",
+      "escopo": "CO2 operacional estimado; sem ciclo de vida, partida a frio ou marcha lenta explicitos",
+      "veiculos": [
+        {
+          "tipo": "automovel",
+          "q_min": 1,
+          "q_max": 4,
+          "phi_g_km": 180
+        },
+        {
+          "tipo": "veiculo_familiar",
+          "q_min": 5,
+          "q_max": 6,
+          "phi_g_km": 250
+        },
+        {
+          "tipo": "van",
+          "q_min": 7,
+          "q_max": 10,
+          "phi_g_km": 350
+        },
+        {
+          "tipo": "micro_onibus",
+          "q_min": 11,
+          "q_max": 20,
+          "phi_g_km": 500
+        }
+      ],
+      "ruas": {
+        "seed": 20261004,
+        "fator_min": 1.0,
+        "fator_max": 1.15
+      },
+      "referencias": [
+        "https://www.gov.br/inmetro/pt-br/assuntos/avaliacao-da-conformidade/programa-brasileiro-de-etiquetagem/tabelas-de-eficiencia-energetica/veiculos-automotivos-pbe-veicular",
+        "https://www.gov.uk/government/publications/greenhouse-gas-reporting-conversion-factors-2026",
+        "https://www.hbefa.net/en/methodology"
+      ]
+    }
+  },
+  "peso_emissao": 0.5,
+  "peso_tempo": 0.5,
+  "input_sha256": "9f016b7832486e41e1fa32a350cda6fe46b8f1c862ab5acddbfd6e0434a2a63f",
+  "fontes_sha256": {
+    "codigo\\darp\\avaliador.py": "77da91df6d734aef10fb46c47a4e73f3a48caa0d59946f0c25cae9c95925da28",
+    "codigo\\darp\\cenarios.py": "44f429ff347bc1ee4d13ee647e399eff17ff0e072b20b1ca18783a2560e0db29",
+    "codigo\\darp\\emissoes.py": "7f35765d0692090df7a68b915788392ff5bd1cb532edb5d828f7549dd9694319",
+    "codigo\\darp\\exato.py": "3c7489792398595721361815e63a5a3ca7c7ceaf447cb5945cf6948fc237b452",
+    "codigo\\darp\\instancia.py": "1fbd76f510282dd1f03d80f0058827bd4806cad98a3b27c6f98060b97a743f74",
+    "codigo\\darp\\leitor_res.py": "0578e52baa34539f62b0360be4adf7801faf7ad68143a4e28c6b5ae05b7a6a1f",
+    "codigo\\darp\\mip.py": "cd84754e25bc57bbb576723a3bd91574491190b9d2b796ebb710bc5552d722b2",
+    "codigo\\darp\\pareto.py": "39d4dabdc9c98fbe63395bc633ce6f3fa75353cbeb081caa3d810b9af57b415c",
+    "codigo\\darp\\rede.py": "3230e2bf5140058577186fef158e99a8154f3f1c36511ca8ba83e598728f767d",
+    "codigo\\darp\\solucao.py": "bef5ba603b198a8e32ce0cf716dd5e9c9475532048eafb4a93d447c6bf1866f3",
+    "codigo\\darp\\__init__.py": "62e0e338c3a66b8e3b083283b6108b01a2d8b1099373b57c9fad7103a2437c79",
+    "codigo\\experimentos\\capacidade_q.py": "85d7096b191131af21a01f48bd1762687cced49e49114a6b9421af377b6b9ec8",
+    "codigo\\experimentos\\comparar_metaheuristicas.py": "26c1590517e768e5419f4e5bb3538ad5af68325c3ab1042d6e8a1e40bba9379c",
+    "codigo\\experimentos\\conferir_registros_campanha.py": "42c4a33d26b2a640b95e1ffdab8b4656b6014030dd80c08eb99dbf0332f01d28",
+    "codigo\\experimentos\\executar_campanha.py": "d50acbeb0e3100cddf5fa678d77fe29f53a9b6aa1631a1be874bc5b09fc750ce",
+    "codigo\\experimentos\\executar_heuristica.py": "0d958afd6e033c221734157b4b04c56ffbcb9d07856966337afa77be3f62c29e",
+    "codigo\\experimentos\\fase2_fronteira.py": "6394787245c6abd42db7de064ca88f5a88eac1aeac42a82d74147024f9731a56",
+    "codigo\\experimentos\\gerar_graficos_campanha.py": "3d29958f5efadb35a2a46792ef395dcdc55b1359a2ab130f1a492adacf90bee5",
+    "codigo\\experimentos\\preparar_cenario_q10.py": "549b28b30c0e6bdc561d4a5223ac0e2ecbce1862ef6823b06c6e01b15a402dec",
+    "codigo\\experimentos\\preparar_experimentos_emissoes.py": "7436f9768f583b38a4cba86d266276534eb2bb4b280f98a402e5aed259ef98bb",
+    "codigo\\experimentos\\resumir_campanha.py": "38e03fe3df6b949e39e45743f72765ab7a529b2c349f7da344d1094dfa1ad780",
+    "codigo\\experimentos\\resumir_capacidade.py": "aafcbe1f77cda8fc5c34823103ff11d91251bf6bfe97856ea57de5db4b9e1813",
+    "codigo\\experimentos\\validar_cenario_q10.py": "50d82862215d7603cde78b4499d88e90273e07b9b0e812fcbeb45fe85443c136",
+    "codigo\\experimentos\\validar_emissoes.py": "2afc2a0435809161035c5a3d913bc1a83658b3f832e472a57414bd0da5dfe021",
+    "codigo\\experimentos\\validar_entrada_json.py": "ca563708a7c387ae00efedc99ff8571f1a54eea8245e70ad7a998866acf9ac7d",
+    "codigo\\experimentos\\validar_fase1.py": "034e2b3dd43104cb273e682465a4df978bec7f8c75dbb8b5a4880d01de302e32",
+    "codigo\\experimentos\\validar_heuristica.py": "b7ae28bc9c771134e923957f69da2c332bd083b1b4ffb941f4ee216b33a4abfe",
+    "codigo\\experimentos\\validar_novo_modelo.py": "962ba12de42882af61c249cea2f5bbb566b809d547a63d717c1c2f4c8396c5cd",
+    "codigo\\experimentos\\validar_operadores.py": "7ff05e8cbba78a677897b245c6f8e7312b223d056ddac95f5790678e5cde00fb",
+    "codigo\\experimentos\\validar_resumos.py": "a50608acf7868ea711ccf1fa65caf21fd3e8ddadae89cad4f63b8b2caacecd1a",
+    "codigo\\darp\\heuristicas\\gulosa.py": "4edc99c9727a0f21eefff99a763909c00792286440707c6caaa8a13fb077eb2e",
+    "codigo\\darp\\heuristicas\\__init__.py": "0788551ddb8d89bf64ed5c9bf0800a597e5e948cd0aa00d428b1fc6fc71adc01",
+    "codigo\\darp\\metaheuristicas\\base.py": "396ae9c1f6648b206a6dbaac359d2db0b780838d3fcdeba31dd8463b7b457bf3",
+    "codigo\\darp\\metaheuristicas\\ga.py": "8078b68457009fab21556532df42213aa601f0aaac339d060933456211acbe6c",
+    "codigo\\darp\\metaheuristicas\\grasp.py": "2c5ea650177b06d11a28addc8013298c44f1f4150123d8c13bcd33ef76bf96c9",
+    "codigo\\darp\\metaheuristicas\\operadores.py": "0f0d967b0834176704cb34281bade0e3ff8b5d4984174c4d08c4bee830c1fb0a",
+    "codigo\\darp\\metaheuristicas\\sa.py": "a916bfc9cb6ffa1e5ddc368c47633f68460cecc23f94d3250a710a93e92f5974",
+    "codigo\\darp\\metaheuristicas\\__init__.py": "d41a3c58ad9323b2f5ab2dd66ccb6a1092441635cebc4d6366591174c3bcbe67"
+  },
+  "unidade_f1": "g_CO2",
+  "ambiente_emissoes": {
+    "unidade_f1": "g_CO2",
+    "config": {
+      "descricao": "Hipotese sintetica por categorias de veiculo. Valores em g CO2/km, nao medidos nem transcritos das referencias.",
+      "escopo": "CO2 operacional estimado; sem ciclo de vida, partida a frio ou marcha lenta explicitos",
+      "veiculos": [
+        {
+          "tipo": "automovel",
+          "q_min": 1,
+          "q_max": 4,
+          "phi_g_km": 180
+        },
+        {
+          "tipo": "veiculo_familiar",
+          "q_min": 5,
+          "q_max": 6,
+          "phi_g_km": 250
+        },
+        {
+          "tipo": "van",
+          "q_min": 7,
+          "q_max": 10,
+          "phi_g_km": 350
+        },
+        {
+          "tipo": "micro_onibus",
+          "q_min": 11,
+          "q_max": 20,
+          "phi_g_km": 500
+        }
+      ],
+      "ruas": {
+        "seed": 20261004,
+        "fator_min": 1.0,
+        "fator_max": 1.15
+      },
+      "referencias": [
+        "https://www.gov.br/inmetro/pt-br/assuntos/avaliacao-da-conformidade/programa-brasileiro-de-etiquetagem/tabelas-de-eficiencia-energetica/veiculos-automotivos-pbe-veicular",
+        "https://www.gov.uk/government/publications/greenhouse-gas-reporting-conversion-factors-2026",
+        "https://www.hbefa.net/en/methodology"
+      ],
+      "capacidades": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ]
+    },
+    "fatores_arestas": [
+      {
+        "origem": 0,
+        "destino": 1,
+        "distancia": 1,
+        "fator": 1.0261911810049624
+      },
+      {
+        "origem": 0,
+        "destino": 2,
+        "distancia": 1,
+        "fator": 1.1131858132438102
+      },
+      {
+        "origem": 0,
+        "destino": 3,
+        "distancia": 1,
+        "fator": 1.0589275311020288
+      },
+      {
+        "origem": 0,
+        "destino": 4,
+        "distancia": 1,
+        "fator": 1.078472381298301
+      },
+      {
+        "origem": 0,
+        "destino": 5,
+        "distancia": 20,
+        "fator": 1.1241815184167718
+      },
+      {
+        "origem": 5,
+        "destino": 6,
+        "distancia": 2,
+        "fator": 1.1058529224299884
+      },
+      {
+        "origem": 5,
+        "destino": 7,
+        "distancia": 2,
+        "fator": 1.0190121350541779
+      },
+      {
+        "origem": 6,
+        "destino": 8,
+        "distancia": 3,
+        "fator": 1.021728427647295
+      },
+      {
+        "origem": 7,
+        "destino": 9,
+        "distancia": 5,
+        "fator": 1.0590293402935602
+      }
+    ],
+    "matriz_ambiental": [
+      {
+        "origem": 0,
+        "destino": 0,
+        "caminho": [
+          0
+        ],
+        "distancia": 0.0,
+        "distancia_ponderada": 0.0
+      },
+      {
+        "origem": 0,
+        "destino": 1,
+        "caminho": [
+          0,
+          1
+        ],
+        "distancia": 1.0,
+        "distancia_ponderada": 1.0261911810049624
+      },
+      {
+        "origem": 0,
+        "destino": 2,
+        "caminho": [
+          0,
+          2
+        ],
+        "distancia": 1.0,
+        "distancia_ponderada": 1.1131858132438102
+      },
+      {
+        "origem": 0,
+        "destino": 3,
+        "caminho": [
+          0,
+          3
+        ],
+        "distancia": 1.0,
+        "distancia_ponderada": 1.0589275311020288
+      },
+      {
+        "origem": 0,
+        "destino": 4,
+        "caminho": [
+          0,
+          4
+        ],
+        "distancia": 1.0,
+        "distancia_ponderada": 1.078472381298301
+      },
+      {
+        "origem": 0,
+        "destino": 5,
+        "caminho": [
+          0,
+          5
+        ],
+        "distancia": 20.0,
+        "distancia_ponderada": 22.483630368335437
+      },
+      {
+        "origem": 0,
+        "destino": 6,
+        "caminho": [
+          0,
+          5,
+          6
+        ],
+        "distancia": 22.0,
+        "distancia_ponderada": 24.695336213195414
+      },
+      {
+        "origem": 0,
+        "destino": 7,
+        "caminho": [
+          0,
+          5,
+          7
+        ],
+        "distancia": 22.0,
+        "distancia_ponderada": 24.521654638443792
+      },
+      {
+        "origem": 0,
+        "destino": 8,
+        "caminho": [
+          0,
+          5,
+          6,
+          8
+        ],
+        "distancia": 25.0,
+        "distancia_ponderada": 27.7605214961373
+      },
+      {
+        "origem": 0,
+        "destino": 9,
+        "caminho": [
+          0,
+          5,
+          7,
+          9
+        ],
+        "distancia": 27.0,
+        "distancia_ponderada": 29.816801339911592
+      },
+      {
+        "origem": 1,
+        "destino": 0,
+        "caminho": [
+          1,
+          0
+        ],
+        "distancia": 1.0,
+        "distancia_ponderada": 1.0261911810049624
+      },
+      {
+        "origem": 1,
+        "destino": 1,
+        "caminho": [
+          1
+        ],
+        "distancia": 0.0,
+        "distancia_ponderada": 0.0
+      },
+      {
+        "origem": 1,
+        "destino": 2,
+        "caminho": [
+          1,
+          0,
+          2
+        ],
+        "distancia": 2.0,
+        "distancia_ponderada": 2.1393769942487726
+      },
+      {
+        "origem": 1,
+        "destino": 3,
+        "caminho": [
+          1,
+          0,
+          3
+        ],
+        "distancia": 2.0,
+        "distancia_ponderada": 2.085118712106991
+      },
+      {
+        "origem": 1,
+        "destino": 4,
+        "caminho": [
+          1,
+          0,
+          4
+        ],
+        "distancia": 2.0,
+        "distancia_ponderada": 2.1046635623032635
+      },
+      {
+        "origem": 1,
+        "destino": 5,
+        "caminho": [
+          1,
+          0,
+          5
+        ],
+        "distancia": 21.0,
+        "distancia_ponderada": 23.509821549340398
+      },
+      {
+        "origem": 1,
+        "destino": 6,
+        "caminho": [
+          1,
+          0,
+          5,
+          6
+        ],
+        "distancia": 23.0,
+        "distancia_ponderada": 25.721527394200375
+      },
+      {
+        "origem": 1,
+        "destino": 7,
+        "caminho": [
+          1,
+          0,
+          5,
+          7
+        ],
+        "distancia": 23.0,
+        "distancia_ponderada": 25.547845819448753
+      },
+      {
+        "origem": 1,
+        "destino": 8,
+        "caminho": [
+          1,
+          0,
+          5,
+          6,
+          8
+        ],
+        "distancia": 26.0,
+        "distancia_ponderada": 28.786712677142262
+      },
+      {
+        "origem": 1,
+        "destino": 9,
+        "caminho": [
+          1,
+          0,
+          5,
+          7,
+          9
+        ],
+        "distancia": 28.0,
+        "distancia_ponderada": 30.842992520916553
+      },
+      {
+        "origem": 2,
+        "destino": 0,
+        "caminho": [
+          2,
+          0
+        ],
+        "distancia": 1.0,
+        "distancia_ponderada": 1.1131858132438102
+      },
+      {
+        "origem": 2,
+        "destino": 1,
+        "caminho": [
+          2,
+          0,
+          1
+        ],
+        "distancia": 2.0,
+        "distancia_ponderada": 2.1393769942487726
+      },
+      {
+        "origem": 2,
+        "destino": 2,
+        "caminho": [
+          2
+        ],
+        "distancia": 0.0,
+        "distancia_ponderada": 0.0
+      },
+      {
+        "origem": 2,
+        "destino": 3,
+        "caminho": [
+          2,
+          0,
+          3
+        ],
+        "distancia": 2.0,
+        "distancia_ponderada": 2.172113344345839
+      },
+      {
+        "origem": 2,
+        "destino": 4,
+        "caminho": [
+          2,
+          0,
+          4
+        ],
+        "distancia": 2.0,
+        "distancia_ponderada": 2.191658194542111
+      },
+      {
+        "origem": 2,
+        "destino": 5,
+        "caminho": [
+          2,
+          0,
+          5
+        ],
+        "distancia": 21.0,
+        "distancia_ponderada": 23.596816181579246
+      },
+      {
+        "origem": 2,
+        "destino": 6,
+        "caminho": [
+          2,
+          0,
+          5,
+          6
+        ],
+        "distancia": 23.0,
+        "distancia_ponderada": 25.808522026439224
+      },
+      {
+        "origem": 2,
+        "destino": 7,
+        "caminho": [
+          2,
+          0,
+          5,
+          7
+        ],
+        "distancia": 23.0,
+        "distancia_ponderada": 25.6348404516876
+      },
+      {
+        "origem": 2,
+        "destino": 8,
+        "caminho": [
+          2,
+          0,
+          5,
+          6,
+          8
+        ],
+        "distancia": 26.0,
+        "distancia_ponderada": 28.87370730938111
+      },
+      {
+        "origem": 2,
+        "destino": 9,
+        "caminho": [
+          2,
+          0,
+          5,
+          7,
+          9
+        ],
+        "distancia": 28.0,
+        "distancia_ponderada": 30.929987153155402
+      },
+      {
+        "origem": 3,
+        "destino": 0,
+        "caminho": [
+          3,
+          0
+        ],
+        "distancia": 1.0,
+        "distancia_ponderada": 1.0589275311020288
+      },
+      {
+        "origem": 3,
+        "destino": 1,
+        "caminho": [
+          3,
+          0,
+          1
+        ],
+        "distancia": 2.0,
+        "distancia_ponderada": 2.085118712106991
+      },
+      {
+        "origem": 3,
+        "destino": 2,
+        "caminho": [
+          3,
+          0,
+          2
+        ],
+        "distancia": 2.0,
+        "distancia_ponderada": 2.172113344345839
+      },
+      {
+        "origem": 3,
+        "destino": 3,
+        "caminho": [
+          3
+        ],
+        "distancia": 0.0,
+        "distancia_ponderada": 0.0
+      },
+      {
+        "origem": 3,
+        "destino": 4,
+        "caminho": [
+          3,
+          0,
+          4
+        ],
+        "distancia": 2.0,
+        "distancia_ponderada": 2.13739991240033
+      },
+      {
+        "origem": 3,
+        "destino": 5,
+        "caminho": [
+          3,
+          0,
+          5
+        ],
+        "distancia": 21.0,
+        "distancia_ponderada": 23.542557899437465
+      },
+      {
+        "origem": 3,
+        "destino": 6,
+        "caminho": [
+          3,
+          0,
+          5,
+          6
+        ],
+        "distancia": 23.0,
+        "distancia_ponderada": 25.754263744297443
+      },
+      {
+        "origem": 3,
+        "destino": 7,
+        "caminho": [
+          3,
+          0,
+          5,
+          7
+        ],
+        "distancia": 23.0,
+        "distancia_ponderada": 25.58058216954582
+      },
+      {
+        "origem": 3,
+        "destino": 8,
+        "caminho": [
+          3,
+          0,
+          5,
+          6,
+          8
+        ],
+        "distancia": 26.0,
+        "distancia_ponderada": 28.81944902723933
+      },
+      {
+        "origem": 3,
+        "destino": 9,
+        "caminho": [
+          3,
+          0,
+          5,
+          7,
+          9
+        ],
+        "distancia": 28.0,
+        "distancia_ponderada": 30.87572887101362
+      },
+      {
+        "origem": 4,
+        "destino": 0,
+        "caminho": [
+          4,
+          0
+        ],
+        "distancia": 1.0,
+        "distancia_ponderada": 1.078472381298301
+      },
+      {
+        "origem": 4,
+        "destino": 1,
+        "caminho": [
+          4,
+          0,
+          1
+        ],
+        "distancia": 2.0,
+        "distancia_ponderada": 2.1046635623032635
+      },
+      {
+        "origem": 4,
+        "destino": 2,
+        "caminho": [
+          4,
+          0,
+          2
+        ],
+        "distancia": 2.0,
+        "distancia_ponderada": 2.191658194542111
+      },
+      {
+        "origem": 4,
+        "destino": 3,
+        "caminho": [
+          4,
+          0,
+          3
+        ],
+        "distancia": 2.0,
+        "distancia_ponderada": 2.13739991240033
+      },
+      {
+        "origem": 4,
+        "destino": 4,
+        "caminho": [
+          4
+        ],
+        "distancia": 0.0,
+        "distancia_ponderada": 0.0
+      },
+      {
+        "origem": 4,
+        "destino": 5,
+        "caminho": [
+          4,
+          0,
+          5
+        ],
+        "distancia": 21.0,
+        "distancia_ponderada": 23.562102749633738
+      },
+      {
+        "origem": 4,
+        "destino": 6,
+        "caminho": [
+          4,
+          0,
+          5,
+          6
+        ],
+        "distancia": 23.0,
+        "distancia_ponderada": 25.773808594493715
+      },
+      {
+        "origem": 4,
+        "destino": 7,
+        "caminho": [
+          4,
+          0,
+          5,
+          7
+        ],
+        "distancia": 23.0,
+        "distancia_ponderada": 25.600127019742093
+      },
+      {
+        "origem": 4,
+        "destino": 8,
+        "caminho": [
+          4,
+          0,
+          5,
+          6,
+          8
+        ],
+        "distancia": 26.0,
+        "distancia_ponderada": 28.838993877435602
+      },
+      {
+        "origem": 4,
+        "destino": 9,
+        "caminho": [
+          4,
+          0,
+          5,
+          7,
+          9
+        ],
+        "distancia": 28.0,
+        "distancia_ponderada": 30.895273721209893
+      },
+      {
+        "origem": 5,
+        "destino": 0,
+        "caminho": [
+          5,
+          0
+        ],
+        "distancia": 20.0,
+        "distancia_ponderada": 22.483630368335437
+      },
+      {
+        "origem": 5,
+        "destino": 1,
+        "caminho": [
+          5,
+          0,
+          1
+        ],
+        "distancia": 21.0,
+        "distancia_ponderada": 23.509821549340398
+      },
+      {
+        "origem": 5,
+        "destino": 2,
+        "caminho": [
+          5,
+          0,
+          2
+        ],
+        "distancia": 21.0,
+        "distancia_ponderada": 23.596816181579246
+      },
+      {
+        "origem": 5,
+        "destino": 3,
+        "caminho": [
+          5,
+          0,
+          3
+        ],
+        "distancia": 21.0,
+        "distancia_ponderada": 23.542557899437465
+      },
+      {
+        "origem": 5,
+        "destino": 4,
+        "caminho": [
+          5,
+          0,
+          4
+        ],
+        "distancia": 21.0,
+        "distancia_ponderada": 23.562102749633738
+      },
+      {
+        "origem": 5,
+        "destino": 5,
+        "caminho": [
+          5
+        ],
+        "distancia": 0.0,
+        "distancia_ponderada": 0.0
+      },
+      {
+        "origem": 5,
+        "destino": 6,
+        "caminho": [
+          5,
+          6
+        ],
+        "distancia": 2.0,
+        "distancia_ponderada": 2.211705844859977
+      },
+      {
+        "origem": 5,
+        "destino": 7,
+        "caminho": [
+          5,
+          7
+        ],
+        "distancia": 2.0,
+        "distancia_ponderada": 2.0380242701083557
+      },
+      {
+        "origem": 5,
+        "destino": 8,
+        "caminho": [
+          5,
+          6,
+          8
+        ],
+        "distancia": 5.0,
+        "distancia_ponderada": 5.276891127801862
+      },
+      {
+        "origem": 5,
+        "destino": 9,
+        "caminho": [
+          5,
+          7,
+          9
+        ],
+        "distancia": 7.0,
+        "distancia_ponderada": 7.333170971576157
+      },
+      {
+        "origem": 6,
+        "destino": 0,
+        "caminho": [
+          6,
+          5,
+          0
+        ],
+        "distancia": 22.0,
+        "distancia_ponderada": 24.695336213195414
+      },
+      {
+        "origem": 6,
+        "destino": 1,
+        "caminho": [
+          6,
+          5,
+          0,
+          1
+        ],
+        "distancia": 23.0,
+        "distancia_ponderada": 25.721527394200375
+      },
+      {
+        "origem": 6,
+        "destino": 2,
+        "caminho": [
+          6,
+          5,
+          0,
+          2
+        ],
+        "distancia": 23.0,
+        "distancia_ponderada": 25.808522026439224
+      },
+      {
+        "origem": 6,
+        "destino": 3,
+        "caminho": [
+          6,
+          5,
+          0,
+          3
+        ],
+        "distancia": 23.0,
+        "distancia_ponderada": 25.754263744297443
+      },
+      {
+        "origem": 6,
+        "destino": 4,
+        "caminho": [
+          6,
+          5,
+          0,
+          4
+        ],
+        "distancia": 23.0,
+        "distancia_ponderada": 25.773808594493715
+      },
+      {
+        "origem": 6,
+        "destino": 5,
+        "caminho": [
+          6,
+          5
+        ],
+        "distancia": 2.0,
+        "distancia_ponderada": 2.211705844859977
+      },
+      {
+        "origem": 6,
+        "destino": 6,
+        "caminho": [
+          6
+        ],
+        "distancia": 0.0,
+        "distancia_ponderada": 0.0
+      },
+      {
+        "origem": 6,
+        "destino": 7,
+        "caminho": [
+          6,
+          5,
+          7
+        ],
+        "distancia": 4.0,
+        "distancia_ponderada": 4.249730114968333
+      },
+      {
+        "origem": 6,
+        "destino": 8,
+        "caminho": [
+          6,
+          8
+        ],
+        "distancia": 3.0,
+        "distancia_ponderada": 3.0651852829418855
+      },
+      {
+        "origem": 6,
+        "destino": 9,
+        "caminho": [
+          6,
+          5,
+          7,
+          9
+        ],
+        "distancia": 9.0,
+        "distancia_ponderada": 9.544876816436133
+      },
+      {
+        "origem": 7,
+        "destino": 0,
+        "caminho": [
+          7,
+          5,
+          0
+        ],
+        "distancia": 22.0,
+        "distancia_ponderada": 24.521654638443792
+      },
+      {
+        "origem": 7,
+        "destino": 1,
+        "caminho": [
+          7,
+          5,
+          0,
+          1
+        ],
+        "distancia": 23.0,
+        "distancia_ponderada": 25.547845819448753
+      },
+      {
+        "origem": 7,
+        "destino": 2,
+        "caminho": [
+          7,
+          5,
+          0,
+          2
+        ],
+        "distancia": 23.0,
+        "distancia_ponderada": 25.6348404516876
+      },
+      {
+        "origem": 7,
+        "destino": 3,
+        "caminho": [
+          7,
+          5,
+          0,
+          3
+        ],
+        "distancia": 23.0,
+        "distancia_ponderada": 25.58058216954582
+      },
+      {
+        "origem": 7,
+        "destino": 4,
+        "caminho": [
+          7,
+          5,
+          0,
+          4
+        ],
+        "distancia": 23.0,
+        "distancia_ponderada": 25.600127019742093
+      },
+      {
+        "origem": 7,
+        "destino": 5,
+        "caminho": [
+          7,
+          5
+        ],
+        "distancia": 2.0,
+        "distancia_ponderada": 2.0380242701083557
+      },
+      {
+        "origem": 7,
+        "destino": 6,
+        "caminho": [
+          7,
+          5,
+          6
+        ],
+        "distancia": 4.0,
+        "distancia_ponderada": 4.249730114968333
+      },
+      {
+        "origem": 7,
+        "destino": 7,
+        "caminho": [
+          7
+        ],
+        "distancia": 0.0,
+        "distancia_ponderada": 0.0
+      },
+      {
+        "origem": 7,
+        "destino": 8,
+        "caminho": [
+          7,
+          5,
+          6,
+          8
+        ],
+        "distancia": 7.0,
+        "distancia_ponderada": 7.314915397910219
+      },
+      {
+        "origem": 7,
+        "destino": 9,
+        "caminho": [
+          7,
+          9
+        ],
+        "distancia": 5.0,
+        "distancia_ponderada": 5.295146701467801
+      },
+      {
+        "origem": 8,
+        "destino": 0,
+        "caminho": [
+          8,
+          6,
+          5,
+          0
+        ],
+        "distancia": 25.0,
+        "distancia_ponderada": 27.7605214961373
+      },
+      {
+        "origem": 8,
+        "destino": 1,
+        "caminho": [
+          8,
+          6,
+          5,
+          0,
+          1
+        ],
+        "distancia": 26.0,
+        "distancia_ponderada": 28.786712677142262
+      },
+      {
+        "origem": 8,
+        "destino": 2,
+        "caminho": [
+          8,
+          6,
+          5,
+          0,
+          2
+        ],
+        "distancia": 26.0,
+        "distancia_ponderada": 28.87370730938111
+      },
+      {
+        "origem": 8,
+        "destino": 3,
+        "caminho": [
+          8,
+          6,
+          5,
+          0,
+          3
+        ],
+        "distancia": 26.0,
+        "distancia_ponderada": 28.81944902723933
+      },
+      {
+        "origem": 8,
+        "destino": 4,
+        "caminho": [
+          8,
+          6,
+          5,
+          0,
+          4
+        ],
+        "distancia": 26.0,
+        "distancia_ponderada": 28.838993877435602
+      },
+      {
+        "origem": 8,
+        "destino": 5,
+        "caminho": [
+          8,
+          6,
+          5
+        ],
+        "distancia": 5.0,
+        "distancia_ponderada": 5.276891127801862
+      },
+      {
+        "origem": 8,
+        "destino": 6,
+        "caminho": [
+          8,
+          6
+        ],
+        "distancia": 3.0,
+        "distancia_ponderada": 3.0651852829418855
+      },
+      {
+        "origem": 8,
+        "destino": 7,
+        "caminho": [
+          8,
+          6,
+          5,
+          7
+        ],
+        "distancia": 7.0,
+        "distancia_ponderada": 7.314915397910218
+      },
+      {
+        "origem": 8,
+        "destino": 8,
+        "caminho": [
+          8
+        ],
+        "distancia": 0.0,
+        "distancia_ponderada": 0.0
+      },
+      {
+        "origem": 8,
+        "destino": 9,
+        "caminho": [
+          8,
+          6,
+          5,
+          7,
+          9
+        ],
+        "distancia": 12.0,
+        "distancia_ponderada": 12.61006209937802
+      },
+      {
+        "origem": 9,
+        "destino": 0,
+        "caminho": [
+          9,
+          7,
+          5,
+          0
+        ],
+        "distancia": 27.0,
+        "distancia_ponderada": 29.816801339911592
+      },
+      {
+        "origem": 9,
+        "destino": 1,
+        "caminho": [
+          9,
+          7,
+          5,
+          0,
+          1
+        ],
+        "distancia": 28.0,
+        "distancia_ponderada": 30.842992520916553
+      },
+      {
+        "origem": 9,
+        "destino": 2,
+        "caminho": [
+          9,
+          7,
+          5,
+          0,
+          2
+        ],
+        "distancia": 28.0,
+        "distancia_ponderada": 30.929987153155402
+      },
+      {
+        "origem": 9,
+        "destino": 3,
+        "caminho": [
+          9,
+          7,
+          5,
+          0,
+          3
+        ],
+        "distancia": 28.0,
+        "distancia_ponderada": 30.87572887101362
+      },
+      {
+        "origem": 9,
+        "destino": 4,
+        "caminho": [
+          9,
+          7,
+          5,
+          0,
+          4
+        ],
+        "distancia": 28.0,
+        "distancia_ponderada": 30.895273721209893
+      },
+      {
+        "origem": 9,
+        "destino": 5,
+        "caminho": [
+          9,
+          7,
+          5
+        ],
+        "distancia": 7.0,
+        "distancia_ponderada": 7.333170971576157
+      },
+      {
+        "origem": 9,
+        "destino": 6,
+        "caminho": [
+          9,
+          7,
+          5,
+          6
+        ],
+        "distancia": 9.0,
+        "distancia_ponderada": 9.544876816436133
+      },
+      {
+        "origem": 9,
+        "destino": 7,
+        "caminho": [
+          9,
+          7
+        ],
+        "distancia": 5.0,
+        "distancia_ponderada": 5.295146701467801
+      },
+      {
+        "origem": 9,
+        "destino": 8,
+        "caminho": [
+          9,
+          7,
+          5,
+          6,
+          8
+        ],
+        "distancia": 12.0,
+        "distancia_ponderada": 12.61006209937802
+      },
+      {
+        "origem": 9,
+        "destino": 9,
+        "caminho": [
+          9
+        ],
+        "distancia": 0.0,
+        "distancia_ponderada": 0.0
+      }
+    ],
+    "phi_por_q": {
+      "1": 180.0,
+      "2": 180.0,
+      "3": 180.0,
+      "4": 180.0,
+      "5": 250.0,
+      "6": 250.0,
+      "7": 350.0,
+      "8": 350.0,
+      "9": 350.0,
+      "10": 350.0
+    }
+  },
+  "execucoes": [
+    {
+      "Q": 1,
+      "status": "concluida",
+      "phi_g_km": 180.0,
+      "ponto": {
+        "f1": 119956.77784188418,
+        "f2": 0.0,
+        "distancia": 600.0,
+        "espera": 0.0,
+        "desvio": 0.0,
+        "veiculos_usados": 12,
+        "carga_maxima": 1.0,
+        "rotas": [
+          [
+            5,
+            17
+          ],
+          [
+            12,
+            24
+          ],
+          [
+            2,
+            14
+          ],
+          [
+            1,
+            13
+          ],
+          [
+            11,
+            23
+          ],
+          [
+            8,
+            20
+          ],
+          [
+            9,
+            21
+          ],
+          [
+            3,
+            15
+          ],
+          [
+            6,
+            18
+          ],
+          [
+            7,
+            19
+          ],
+          [
+            4,
+            16
+          ],
+          [
+            10,
+            22
+          ]
+        ],
+        "agendas": [
+          {
+            "B": {
+              "5": 31.0,
+              "17": 77.2
+            },
+            "partida": 29.0,
+            "carga": {
+              "5": 1.0,
+              "17": 0.0
+            }
+          },
+          {
+            "B": {
+              "12": 32.0,
+              "24": 78.2
+            },
+            "partida": 30.0,
+            "carga": {
+              "12": 1.0,
+              "24": 0.0
+            }
+          },
+          {
+            "B": {
+              "2": 31.0,
+              "14": 77.2
+            },
+            "partida": 29.0,
+            "carga": {
+              "2": 1.0,
+              "14": 0.0
+            }
+          },
+          {
+            "B": {
+              "1": 30.0,
+              "13": 76.2
+            },
+            "partida": 28.0,
+            "carga": {
+              "1": 1.0,
+              "13": 0.0
+            }
+          },
+          {
+            "B": {
+              "11": 31.0,
+              "23": 77.2
+            },
+            "partida": 29.0,
+            "carga": {
+              "11": 1.0,
+              "23": 0.0
+            }
+          },
+          {
+            "B": {
+              "8": 31.0,
+              "20": 77.2
+            },
+            "partida": 29.0,
+            "carga": {
+              "8": 1.0,
+              "20": 0.0
+            }
+          },
+          {
+            "B": {
+              "9": 32.0,
+              "21": 84.2
+            },
+            "partida": 30.0,
+            "carga": {
+              "9": 1.0,
+              "21": 0.0
+            }
+          },
+          {
+            "B": {
+              "3": 32.0,
+              "15": 84.2
+            },
+            "partida": 30.0,
+            "carga": {
+              "3": 1.0,
+              "15": 0.0
+            }
+          },
+          {
+            "B": {
+              "6": 32.0,
+              "18": 84.2
+            },
+            "partida": 30.0,
+            "carga": {
+              "6": 1.0,
+              "18": 0.0
+            }
+          },
+          {
+            "B": {
+              "7": 30.0,
+              "19": 86.2
+            },
+            "partida": 28.0,
+            "carga": {
+              "7": 1.0,
+              "19": 0.0
+            }
+          },
+          {
+            "B": {
+              "4": 30.0,
+              "16": 86.2
+            },
+            "partida": 28.0,
+            "carga": {
+              "4": 1.0,
+              "16": 0.0
+            }
+          },
+          {
+            "B": {
+              "10": 30.0,
+              "22": 86.2
+            },
+            "partida": 28.0,
+            "carga": {
+              "10": 1.0,
+              "22": 0.0
+            }
+          }
+        ]
+      },
+      "pedidos_pendentes": [],
+      "tempo_execucao": 1.6508909999975003,
+      "candidatos_testados": 2366,
+      "avaliacoes_rotas": 12,
+      "historico": [
+        {
+          "etapa": 1,
+          "pedido_interno": 5,
+          "veiculo_indice": 0,
+          "posicao_coleta": 0,
+          "posicao_entrega_antes_da_insercao": 0,
+          "acrescimo_f1": 9197.224495001552,
+          "acrescimo_f2": 0.0,
+          "nota_insercao": 0.0,
+          "candidatos_viaveis": 144,
+          "faixas_normalizacao": [
+            [
+              9197.224495001552,
+              11134.795375135946
+            ],
+            [
+              0.0,
+              0.0
+            ]
+          ]
+        },
+        {
+          "etapa": 2,
+          "pedido_interno": 12,
+          "veiculo_indice": 1,
+          "posicao_coleta": 0,
+          "posicao_entrega_antes_da_insercao": 0,
+          "acrescimo_f1": 9216.045727107154,
+          "acrescimo_f2": 0.0,
+          "nota_insercao": 0.0,
+          "candidatos_viaveis": 121,
+          "faixas_normalizacao": [
+            [
+              9216.045727107154,
+              11134.795375135946
+            ],
+            [
+              0.0,
+              0.0
+            ]
+          ]
+        },
+        {
+          "etapa": 3,
+          "pedido_interno": 2,
+          "veiculo_indice": 2,
+          "posicao_coleta": 0,
+          "posicao_entrega_antes_da_insercao": 0,
+          "acrescimo_f1": 9228.542562607536,
+          "acrescimo_f2": 0.0,
+          "nota_insercao": 0.0,
+          "candidatos_viaveis": 100,
+          "faixas_normalizacao": [
+            [
+              9228.542562607536,
+              11134.795375135946
+            ],
+            [
+              0.0,
+              0.0
+            ]
+          ]
+        },
+        {
+          "etapa": 4,
+          "pedido_interno": 1,
+          "veiculo_indice": 3,
+          "posicao_coleta": 0,
+          "posicao_entrega_antes_da_insercao": 0,
+          "acrescimo_f1": 9259.749861912134,
+          "acrescimo_f2": 0.0,
+          "nota_insercao": 0.0,
+          "candidatos_viaveis": 81,
+          "faixas_normalizacao": [
+            [
+              9259.749861912134,
+              11134.795375135946
+            ],
+            [
+              0.0,
+              0.0
+            ]
+          ]
+        },
+        {
+          "etapa": 5,
+          "pedido_interno": 11,
+          "veiculo_indice": 4,
+          "posicao_coleta": 0,
+          "posicao_entrega_antes_da_insercao": 0,
+          "acrescimo_f1": 9271.534947947079,
+          "acrescimo_f2": 0.0,
+          "nota_insercao": 0.0,
+          "candidatos_viaveis": 64,
+          "faixas_normalizacao": [
+            [
+              9271.534947947079,
+              11134.795375135946
+            ],
+            [
+              0.0,
+              0.0
+            ]
+          ]
+        },
+        {
+          "etapa": 6,
+          "pedido_interno": 8,
+          "veiculo_indice": 5,
+          "posicao_coleta": 0,
+          "posicao_entrega_antes_da_insercao": 0,
+          "acrescimo_f1": 9278.571094017738,
+          "acrescimo_f2": 0.0,
+          "nota_insercao": 0.0,
+          "candidatos_viaveis": 49,
+          "faixas_normalizacao": [
+            [
+              9278.571094017738,
+              11134.795375135946
+            ],
+            [
+              0.0,
+              0.0
+            ]
+          ]
+        },
+        {
+          "etapa": 7,
+          "pedido_interno": 9,
+          "veiculo_indice": 6,
+          "posicao_coleta": 0,
+          "posicao_entrega_antes_da_insercao": 0,
+          "acrescimo_f1": 10363.216563771215,
+          "acrescimo_f2": 0.0,
+          "nota_insercao": 0.0,
+          "candidatos_viaveis": 36,
+          "faixas_normalizacao": [
+            [
+              10363.216563771215,
+              11134.795375135946
+            ],
+            [
+              0.0,
+              0.0
+            ]
+          ]
+        },
+        {
+          "etapa": 8,
+          "pedido_interno": 3,
+          "veiculo_indice": 7,
+          "posicao_coleta": 0,
+          "posicao_entrega_antes_da_insercao": 0,
+          "acrescimo_f1": 10375.00164980616,
+          "acrescimo_f2": 0.0,
+          "nota_insercao": 0.0,
+          "candidatos_viaveis": 25,
+          "faixas_normalizacao": [
+            [
+              10375.00164980616,
+              11134.795375135946
+            ],
+            [
+              0.0,
+              0.0
+            ]
+          ]
+        },
+        {
+          "etapa": 9,
+          "pedido_interno": 6,
+          "veiculo_indice": 8,
+          "posicao_coleta": 0,
+          "posicao_entrega_antes_da_insercao": 0,
+          "acrescimo_f1": 10394.5346313772,
+          "acrescimo_f2": 0.0,
+          "nota_insercao": 0.0,
+          "candidatos_viaveis": 16,
+          "faixas_normalizacao": [
+            [
+              10394.5346313772,
+              11134.795375135946
+            ],
+            [
+              0.0,
+              0.0
+            ]
+          ]
+        },
+        {
+          "etapa": 10,
+          "pedido_interno": 7,
+          "veiculo_indice": 9,
+          "posicao_coleta": 0,
+          "posicao_entrega_antes_da_insercao": 0,
+          "acrescimo_f1": 11115.262393564903,
+          "acrescimo_f2": 0.0,
+          "nota_insercao": 0.0,
+          "candidatos_viaveis": 9,
+          "faixas_normalizacao": [
+            [
+              11115.262393564903,
+              11134.795375135946
+            ],
+            [
+              0.0,
+              0.0
+            ]
+          ]
+        },
+        {
+          "etapa": 11,
+          "pedido_interno": 4,
+          "veiculo_indice": 10,
+          "posicao_coleta": 0,
+          "posicao_entrega_antes_da_insercao": 0,
+          "acrescimo_f1": 11122.298539635562,
+          "acrescimo_f2": 0.0,
+          "nota_insercao": 0.0,
+          "candidatos_viaveis": 4,
+          "faixas_normalizacao": [
+            [
+              11122.298539635562,
+              11134.795375135946
+            ],
+            [
+              0.0,
+              0.0
+            ]
+          ]
+        },
+        {
+          "etapa": 12,
+          "pedido_interno": 10,
+          "veiculo_indice": 11,
+          "posicao_coleta": 0,
+          "posicao_entrega_antes_da_insercao": 0,
+          "acrescimo_f1": 11134.795375135946,
+          "acrescimo_f2": 0.0,
+          "nota_insercao": 0.0,
+          "candidatos_viaveis": 1,
+          "faixas_normalizacao": [
+            [
+              11134.795375135946,
+              11134.795375135946
+            ],
+            [
+              0.0,
+              0.0
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "Q": 2,
+      "status": "concluida",
+      "phi_g_km": 180.0,
+      "ponto": {
+        "f1": 63744.78528045914,
+        "f2": 28.400000000000034,
+        "distancia": 320.0,
+        "espera": 10.600000000000009,
+        "desvio": 17.800000000000026,
+        "veiculos_usados": 6,
+        "carga_maxima": 2.0,
+        "rotas": [
+          [
+            5,
+            12,
+            24,
+            17
+          ],
+          [
+            10,
+            2,
+            14,
+            22
+          ],
+          [
+            1,
+            9,
+            13,
+            21
+          ],
+          [
+            11,
+            3,
+            23,
+            15
+          ],
+          [
+            8,
+            6,
+            20,
+            18
+          ],
+          [
+            4,
+            7,
+            16,
+            19
+          ],
+          [],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        "agendas": [
+          {
+            "B": {
+              "5": 31.0,
+              "12": 35.2,
+              "24": 81.4,
+              "17": 81.60000000000001
+            },
+            "partida": 29.0,
+            "carga": {
+              "5": 1.0,
+              "12": 2.0,
+              "24": 1.0,
+              "17": 0.0
+            }
+          },
+          {
+            "B": {
+              "10": 30.0,
+              "2": 31.0,
+              "14": 77.2,
+              "22": 87.4
+            },
+            "partida": 28.0,
+            "carga": {
+              "10": 1.0,
+              "2": 2.0,
+              "14": 1.0,
+              "22": 0.0
+            }
+          },
+          {
+            "B": {
+              "1": 30.0,
+              "9": 32.0,
+              "13": 78.2,
+              "21": 84.4
+            },
+            "partida": 28.0,
+            "carga": {
+              "1": 1.0,
+              "9": 2.0,
+              "13": 1.0,
+              "21": 0.0
+            }
+          },
+          {
+            "B": {
+              "11": 31.0,
+              "3": 32.0,
+              "23": 78.2,
+              "15": 84.4
+            },
+            "partida": 29.0,
+            "carga": {
+              "11": 1.0,
+              "3": 2.0,
+              "23": 1.0,
+              "15": 0.0
+            }
+          },
+          {
+            "B": {
+              "8": 31.0,
+              "6": 35.2,
+              "20": 81.4,
+              "18": 87.60000000000001
+            },
+            "partida": 29.0,
+            "carga": {
+              "8": 1.0,
+              "6": 2.0,
+              "20": 1.0,
+              "18": 0.0
+            }
+          },
+          {
+            "B": {
+              "4": 30.0,
+              "7": 34.2,
+              "16": 90.4,
+              "19": 90.60000000000001
+            },
+            "partida": 28.0,
+            "carga": {
+              "4": 1.0,
+              "7": 2.0,
+              "16": 1.0,
+              "19": 0.0
+            }
+          }
+        ]
+      },
+      "pedidos_pendentes": [],
+      "tempo_execucao": 0.3863961999886669,
+      "candidatos_testados": 2866,
+      "avaliacoes_rotas": 156,
+      "historico": [
+        {
+          "etapa": 1,
+          "pedido_interno": 5,
+          "veiculo_indice": 0,
+          "posicao_coleta": 0,
+          "posicao_entrega_antes_da_insercao": 0,
+          "acrescimo_f1": 9197.224495001552,
+          "acrescimo_f2": 0.0,
+          "nota_insercao": 0.0,
+          "candidatos_viaveis": 144,
+          "faixas_normalizacao": [
+            [
+              9197.224495001552,
+              11134.795375135946
+            ],
+            [
+              0.0,
+              0.0
+            ]
+          ]
+        },
+        {
+          "etapa": 2,
+          "pedido_interno": 12,
+          "veiculo_indice": 0,
+          "posicao_coleta": 1,
+          "posicao_entrega_antes_da_insercao": 1,
+          "acrescimo_f1": 388.2500572673871,
+          "acrescimo_f2": 7.6000000000000085,
+          "nota_insercao": 0.12837837837837848,
+          "candidatos_viaveis": 165,
+          "faixas_normalizacao": [
+            [
+              388.2500572673871,
+              11134.795375135946
+            ],
+            [
+              0.0,
+              29.60000000000001
+            ]
+          ]
+        },
+        {
+          "etapa": 3,
+          "pedido_interno": 2,
+          "veiculo_indice": 1,
+          "posicao_coleta": 0,
+          "posicao_entrega_antes_da_insercao": 0,
+          "acrescimo_f1": 9228.542562607536,
+          "acrescimo_f2": 0.0,
+          "nota_insercao": 0.0,
+          "candidatos_viaveis": 110,
+          "faixas_normalizacao": [
+            [
+              9228.542562607536,
+              11134.795375135946
+            ],
+            [
+              0.0,
+              0.0
+            ]
+          ]
+        },
+        {
+          "etapa": 4,
+          "pedido_interno": 10,
+          "veiculo_indice": 1,
+          "posicao_coleta": 0,
+          "posicao_entrega_antes_da_insercao": 2,
+          "acrescimo_f1": 1906.2528125284098,
+          "acrescimo_f2": 1.2000000000000028,
+          "nota_insercao": 0.05741534791060792,
+          "candidatos_viaveis": 126,
+          "faixas_normalizacao": [
+            [
+              1165.6429293113797,
+              11134.795375135946
+            ],
+            [
+              0.0,
+              29.60000000000001
+            ]
+          ]
+        },
+        {
+          "etapa": 5,
+          "pedido_interno": 1,
+          "veiculo_indice": 2,
+          "posicao_coleta": 0,
+          "posicao_entrega_antes_da_insercao": 0,
+          "acrescimo_f1": 9259.749861912134,
+          "acrescimo_f2": 0.0,
+          "nota_insercao": 0.0,
+          "candidatos_viaveis": 80,
+          "faixas_normalizacao": [
+            [
+              9259.749861912134,
+              11122.298539635562
+            ],
+            [
+              0.0,
+              0.0
+            ]
+          ]
+        },
+        {
+          "etapa": 6,
+          "pedido_interno": 9,
+          "veiculo_indice": 2,
+          "posicao_coleta": 1,
+          "posicao_entrega_antes_da_insercao": 2,
+          "acrescimo_f1": 1103.4667018590808,
+          "acrescimo_f2": 2.200000000000003,
+          "nota_insercao": 0.06367568102840315,
+          "candidatos_viaveis": 91,
+          "faixas_normalizacao": [
+            [
+              381.2139111967317,
+              11122.298539635562
+            ],
+            [
+              0.0,
+              36.60000000000001
+            ]
+          ]
+        },
+        {
+          "etapa": 7,
+          "pedido_interno": 11,
+          "veiculo_indice": 3,
+          "posicao_coleta": 0,
+          "posicao_entrega_antes_da_insercao": 0,
+          "acrescimo_f1": 9271.534947947079,
+          "acrescimo_f2": 0.0,
+          "nota_insercao": 0.0,
+          "candidatos_viaveis": 54,
+          "faixas_normalizacao": [
+            [
+              9271.534947947079,
+              11122.298539635562
+            ],
+            [
+              0.0,
+              0.0
+            ]
+          ]
+        },
+        {
+          "etapa": 8,
+          "pedido_interno": 3,
+          "veiculo_indice": 3,
+          "posicao_coleta": 1,
+          "posicao_entrega_antes_da_insercao": 2,
+          "acrescimo_f1": 1103.4667018590808,
+          "acrescimo_f2": 1.2000000000000028,
+          "nota_insercao": 0.04927277260410923,
+          "candidatos_viaveis": 60,
+          "faixas_normalizacao": [
+            [
+              388.2500572673889,
+              11122.298539635562
+            ],
+            [
+              0.0,
+              37.60000000000001
+            ]
+          ]
+        },
+        {
+          "etapa": 9,
+          "pedido_interno": 8,
+          "veiculo_indice": 4,
+          "posicao_coleta": 0,
+          "posicao_entrega_antes_da_insercao": 0,
+          "acrescimo_f1": 9278.571094017738,
+          "acrescimo_f2": 0.0,
+          "nota_insercao": 0.0,
+          "candidatos_viaveis": 32,
+          "faixas_normalizacao": [
+            [
+              9278.571094017738,
+              11122.298539635562
+            ],
+            [
+              0.0,
+              0.0
+            ]
+          ]
+        },
+        {
+          "etapa": 10,
+          "pedido_interno": 6,
+          "veiculo_indice": 4,
+          "posicao_coleta": 1,
+          "posicao_entrega_antes_da_insercao": 2,
+          "acrescimo_f1": 1504.21359462685,
+          "acrescimo_f2": 7.6000000000000085,
+          "nota_insercao": 0.10106382978723413,
+          "candidatos_viaveis": 33,
+          "faixas_normalizacao": [
+            [
+              1504.21359462685,
+              11122.298539635562
+            ],
+            [
+              0.0,
+              37.60000000000001
+            ]
+          ]
+        },
+        {
+          "etapa": 11,
+          "pedido_interno": 7,
+          "veiculo_indice": 5,
+          "posicao_coleta": 0,
+          "posicao_entrega_antes_da_insercao": 0,
+          "acrescimo_f1": 11115.262393564903,
+          "acrescimo_f2": 0.0,
+          "nota_insercao": 0.0,
+          "candidatos_viaveis": 14,
+          "faixas_normalizacao": [
+            [
+              11115.262393564903,
+              11122.298539635562
+            ],
+            [
+              0.0,
+              0.0
+            ]
+          ]
+        },
+        {
+          "etapa": 12,
+          "pedido_interno": 4,
+          "veiculo_indice": 5,
+          "posicao_coleta": 0,
+          "posicao_entrega_antes_da_insercao": 1,
+          "acrescimo_f1": 388.2500572673889,
+          "acrescimo_f2": 8.600000000000009,
+          "nota_insercao": 0.5,
+          "candidatos_viaveis": 10,
+          "faixas_normalizacao": [
+            [
+              388.2500572673889,
+              11122.298539635562
+            ],
+            [
+              0.0,
+              8.600000000000009
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "Q": 3,
+      "status": "concluida",
+      "phi_g_km": 180.0,
+      "ponto": {
+        "f1": 44916.16572593929,
+        "f2": 64.2000000000001,
+        "distancia": 226.0,
+        "espera": 35.400000000000034,
+        "desvio": 28.800000000000068,
+        "veiculos_usados": 4,
+        "carga_maxima": 3.0,
+        "rotas": [
+          [
+            5,
+            4,
+            12,
+            24,
+            17,
+            16
+          ],
+          [
+            7,
+            10,
+            2,
+            14,
+            19,
+            22
+          ],
+          [
+            11,
+            1,
+            9,
+            23,
+            13,
+            21
+          ],
+          [
+            8,
+            6,
+            3,
+            20,
+            18,
+            15
+          ],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        "agendas": [
+          {
+            "B": {
+              "5": 31.0,
+              "4": 35.2,
+              "12": 35.400000000000006,
+              "24": 81.60000000000001,
+              "17": 81.80000000000001,
+              "16": 92.00000000000001
+            },
+            "partida": 29.0,
+            "carga": {
+              "5": 1.0,
+              "4": 2.0,
+              "12": 3.0,
+              "24": 2.0,
+              "17": 1.0,
+              "16": 0.0
+            }
+          },
+          {
+            "B": {
+              "7": 30.0,
+              "10": 34.2,
+              "2": 34.400000000000006,
+              "14": 80.60000000000001,
+              "19": 90.80000000000001,
+              "22": 91.00000000000001
+            },
+            "partida": 28.0,
+            "carga": {
+              "7": 1.0,
+              "10": 2.0,
+              "2": 3.0,
+              "14": 2.0,
+              "19": 1.0,
+              "22": 0.0
+            }
+          },
+          {
+            "B": {
+              "11": 31.0,
+              "1": 35.2,
+              "9": 35.400000000000006,
+              "23": 81.60000000000001,
+              "13": 81.80000000000001,
+              "21": 88.00000000000001
+            },
+            "partida": 29.0,
+            "carga": {
+              "11": 1.0,
+              "1": 2.0,
+              "9": 3.0,
+              "23": 2.0,
+              "13": 1.0,
+              "21": 0.0
+            }
+          },
+          {
+            "B": {
+              "8": 31.0,
+              "6": 35.2,
+              "3": 39.400000000000006,
+              "20": 85.60000000000001,
+              "18": 91.80000000000001,
+              "15": 92.00000000000001
+            },
+            "partida": 29.0,
+            "carga": {
+              "8": 1.0,
+              "6": 2.0,
+              "3": 3.0,
+              "20": 2.0,
+              "18": 1.0,
+              "15": 0.0
+            }
+          }
+        ]
+      },
+      "pedidos_pendentes": [],
+      "tempo_execucao": 0.721348199993372,
+      "candidatos_testados": 3318,
+      "avaliacoes_rotas": 314,
+      "historico": [
+        {
+          "etapa": 1,
+          "pedido_interno": 5,
+          "veiculo_indice": 0,
+          "posicao_coleta": 0,
+          "posicao_entrega_antes_da_insercao": 0,
+          "acrescimo_f1": 9197.224495001552,
+          "acrescimo_f2": 0.0,
+          "nota_insercao": 0.0,
+          "candidatos_viaveis": 144,
+          "faixas_normalizacao": [
+            [
+              9197.224495001552,
+              11134.795375135946
+            ],
+            [
+              0.0,
+              0.0
+            ]
+          ]
+        },
+        {
+          "etapa": 2,
+          "pedido_interno": 12,
+          "veiculo_indice": 0,
+          "posicao_coleta": 1,
+          "posicao_entrega_antes_da_insercao": 1,
+          "acrescimo_f1": 388.2500572673871,
+          "acrescimo_f2": 7.6000000000000085,
+          "nota_insercao": 0.12837837837837848,
+          "candidatos_viaveis": 165,
+          "faixas_normalizacao": [
+            [
+              388.2500572673871,
+              11134.795375135946
+            ],
+            [
+              0.0,
+              29.60000000000001
+            ]
+          ]
+        },
+        {
+          "etapa": 3,
+          "pedido_interno": 4,
+          "veiculo_indice": 0,
+          "posicao_coleta": 1,
+          "posicao_entrega_antes_da_insercao": 4,
+          "acrescimo_f1": 1906.2528125284098,
+          "acrescimo_f2": 6.200000000000017,
+          "nota_insercao": 0.12249245569108465,
+          "candidatos_viaveis": 200,
+          "faixas_normalizacao": [
+            [
+              400.746892767771,
+              11134.795375135946
+            ],
+            [
+              0.0,
+              59.20000000000002
+            ]
+          ]
+        },
+        {
+          "etapa": 4,
+          "pedido_interno": 2,
+          "veiculo_indice": 1,
+          "posicao_coleta": 0,
+          "posicao_entrega_antes_da_insercao": 0,
+          "acrescimo_f1": 9228.542562607536,
+          "acrescimo_f2": 0.0,
+          "nota_insercao": 0.0,
+          "candidatos_viaveis": 99,
+          "faixas_normalizacao": [
+            [
+              9228.542562607536,
+              11134.795375135946
+            ],
+            [
+              0.0,
+              0.0
+            ]
+          ]
+        },
+        {
+          "etapa": 5,
+          "pedido_interno": 10,
+          "veiculo_indice": 1,
+          "posicao_coleta": 0,
+          "posicao_entrega_antes_da_insercao": 2,
+          "acrescimo_f1": 1906.2528125284098,
+          "acrescimo_f2": 1.2000000000000028,
+          "nota_insercao": 0.05741534791060792,
+          "candidatos_viaveis": 112,
+          "faixas_normalizacao": [
+            [
+              1165.6429293113797,
+              11134.795375135946
+            ],
+            [
+              0.0,
+              29.60000000000001
+            ]
+          ]
+        },
+        {
+          "etapa": 6,
+          "pedido_interno": 7,
+          "veiculo_indice": 1,
+          "posicao_coleta": 0,
+          "posicao_entrega_antes_da_insercao": 3,
+          "acrescimo_f1": 381.2139111967299,
+          "acrescimo_f2": 11.600000000000023,
+          "nota_insercao": 0.09119496855345927,
+          "candidatos_viaveis": 133,
+          "faixas_normalizacao": [
+            [
+              381.2139111967299,
+              11115.262393564903
+            ],
+            [
+              0.0,
+              63.60000000000002
+            ]
+          ]
+        },
+        {
+          "etapa": 7,
+          "pedido_interno": 1,
+          "veiculo_indice": 2,
+          "posicao_coleta": 0,
+          "posicao_entrega_antes_da_insercao": 0,
+          "acrescimo_f1": 9259.749861912134,
+          "acrescimo_f2": 0.0,
+          "nota_insercao": 0.0,
+          "candidatos_viaveis": 60,
+          "faixas_normalizacao": [
+            [
+              9259.749861912134,
+              10394.5346313772
+            ],
+            [
+              0.0,
+              0.0
+            ]
+          ]
+        },
+        {
+          "etapa": 8,
+          "pedido_interno": 9,
+          "veiculo_indice": 2,
+          "posicao_coleta": 1,
+          "posicao_entrega_antes_da_insercao": 2,
+          "acrescimo_f1": 1103.4667018590808,
+          "acrescimo_f2": 2.200000000000003,
+          "nota_insercao": 0.08473716526177534,
+          "candidatos_viaveis": 65,
+          "faixas_normalizacao": [
+            [
+              381.2139111967317,
+              10394.5346313772
+            ],
+            [
+              0.0,
+              22.60000000000001
+            ]
+          ]
+        },
+        {
+          "etapa": 9,
+          "pedido_interno": 11,
+          "veiculo_indice": 2,
+          "posicao_coleta": 0,
+          "posicao_entrega_antes_da_insercao": 2,
+          "acrescimo_f1": 381.2139111967299,
+          "acrescimo_f2": 11.600000000000023,
+          "nota_insercao": 0.13302752293578002,
+          "candidatos_viaveis": 72,
+          "faixas_normalizacao": [
+            [
+              381.2139111967299,
+              10394.5346313772
+            ],
+            [
+              0.0,
+              43.60000000000002
+            ]
+          ]
+        },
+        {
+          "etapa": 10,
+          "pedido_interno": 8,
+          "veiculo_indice": 3,
+          "posicao_coleta": 0,
+          "posicao_entrega_antes_da_insercao": 0,
+          "acrescimo_f1": 9278.571094017738,
+          "acrescimo_f2": 0.0,
+          "nota_insercao": 0.0,
+          "candidatos_viaveis": 27,
+          "faixas_normalizacao": [
+            [
+              9278.571094017738,
+              10394.5346313772
+            ],
+            [
+              0.0,
+              0.0
+            ]
+          ]
+        },
+        {
+          "etapa": 11,
+          "pedido_interno": 3,
+          "veiculo_indice": 3,
+          "posicao_coleta": 1,
+          "posicao_entrega_antes_da_insercao": 2,
+          "acrescimo_f1": 1484.6806130558089,
+          "acrescimo_f2": 7.6000000000000085,
+          "nota_insercao": 0.17592592592592604,
+          "candidatos_viaveis": 24,
+          "faixas_normalizacao": [
+            [
+              1484.6806130558089,
+              10394.5346313772
+            ],
+            [
+              0.0,
+              21.60000000000001
+            ]
+          ]
+        },
+        {
+          "etapa": 12,
+          "pedido_interno": 6,
+          "veiculo_indice": 3,
+          "posicao_coleta": 1,
+          "posicao_entrega_antes_da_insercao": 3,
+          "acrescimo_f1": 400.746892767771,
+          "acrescimo_f2": 16.200000000000017,
+          "nota_insercao": 0.1875000000000001,
+          "candidatos_viaveis": 17,
+          "faixas_normalizacao": [
+            [
+              400.746892767771,
+              10394.5346313772
+            ],
+            [
+              0.0,
+              43.20000000000002
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "Q": 4,
+      "status": "concluida",
+      "phi_g_km": 180.0,
+      "ponto": {
+        "f1": 36088.02091664124,
+        "f2": 130.80000000000015,
+        "distancia": 182.0,
+        "espera": 59.60000000000005,
+        "desvio": 71.2000000000001,
+        "veiculos_usados": 3,
+        "carga_maxima": 4.0,
+        "rotas": [
+          [
+            7,
+            5,
+            4,
+            12,
+            24,
+            17,
+            19,
+            16
+          ],
+          [
+            1,
+            11,
+            10,
+            2,
+            23,
+            13,
+            14,
+            22
+          ],
+          [
+            8,
+            6,
+            3,
+            9,
+            20,
+            18,
+            15,
+            21
+          ],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        "agendas": [
+          {
+            "B": {
+              "7": 30.0,
+              "5": 34.2,
+              "4": 38.400000000000006,
+              "12": 38.60000000000001,
+              "24": 84.80000000000001,
+              "17": 85.00000000000001,
+              "19": 95.20000000000002,
+              "16": 95.40000000000002
+            },
+            "partida": 28.0,
+            "carga": {
+              "7": 1.0,
+              "5": 2.0,
+              "4": 3.0,
+              "12": 4.0,
+              "24": 3.0,
+              "17": 2.0,
+              "19": 1.0,
+              "16": 0.0
+            }
+          },
+          {
+            "B": {
+              "1": 30.0,
+              "11": 34.2,
+              "10": 38.400000000000006,
+              "2": 38.60000000000001,
+              "23": 84.80000000000001,
+              "13": 85.00000000000001,
+              "14": 93.20000000000002,
+              "22": 103.40000000000002
+            },
+            "partida": 28.0,
+            "carga": {
+              "1": 1.0,
+              "11": 2.0,
+              "10": 3.0,
+              "2": 4.0,
+              "23": 3.0,
+              "13": 2.0,
+              "14": 1.0,
+              "22": 0.0
+            }
+          },
+          {
+            "B": {
+              "8": 31.0,
+              "6": 35.2,
+              "3": 39.400000000000006,
+              "9": 43.60000000000001,
+              "20": 89.80000000000001,
+              "18": 96.00000000000001,
+              "15": 96.20000000000002,
+              "21": 96.40000000000002
+            },
+            "partida": 29.0,
+            "carga": {
+              "8": 1.0,
+              "6": 2.0,
+              "3": 3.0,
+              "9": 4.0,
+              "20": 3.0,
+              "18": 2.0,
+              "15": 1.0,
+              "21": 0.0
+            }
+          }
+        ]
+      },
+      "pedidos_pendentes": [],
+      "tempo_execucao": 1.0974514000117779,
+      "candidatos_testados": 3722,
+      "avaliacoes_rotas": 498,
+      "historico": [
+        {
+          "etapa": 1,
+          "pedido_interno": 5,
+          "veiculo_indice": 0,
+          "posicao_coleta": 0,
+          "posicao_entrega_antes_da_insercao": 0,
+          "acrescimo_f1": 9197.224495001552,
+          "acrescimo_f2": 0.0,
+          "nota_insercao": 0.0,
+          "candidatos_viaveis": 144,
+          "faixas_normalizacao": [
+            [
+              9197.224495001552,
+              11134.795375135946
+            ],
+            [
+              0.0,
+              0.0
+            ]
+          ]
+        },
+        {
+          "etapa": 2,
+          "pedido_interno": 12,
+          "veiculo_indice": 0,
+          "posicao_coleta": 1,
+          "posicao_entrega_antes_da_insercao": 1,
+          "acrescimo_f1": 388.2500572673871,
+          "acrescimo_f2": 7.6000000000000085,
+          "nota_insercao": 0.12837837837837848,
+          "candidatos_viaveis": 165,
+          "faixas_normalizacao": [
+            [
+              388.2500572673871,
+              11134.795375135946
+            ],
+            [
+              0.0,
+              29.60000000000001
+            ]
+          ]
+        },
+        {
+          "etapa": 3,
+          "pedido_interno": 4,
+          "veiculo_indice": 0,
+          "posicao_coleta": 1,
+          "posicao_entrega_antes_da_insercao": 4,
+          "acrescimo_f1": 1906.2528125284098,
+          "acrescimo_f2": 6.200000000000017,
+          "nota_insercao": 0.12249245569108465,
+          "candidatos_viaveis": 200,
+          "faixas_normalizacao": [
+            [
+              400.746892767771,
+              11134.795375135946
+            ],
+            [
+              0.0,
+              59.20000000000002
+            ]
+          ]
+        },
+        {
+          "etapa": 4,
+          "pedido_interno": 7,
+          "veiculo_indice": 0,
+          "posicao_coleta": 0,
+          "posicao_entrega_antes_da_insercao": 5,
+          "acrescimo_f1": 381.2139111967299,
+          "acrescimo_f2": 18.800000000000026,
+          "nota_insercao": 0.09325396825396837,
+          "candidatos_viaveis": 243,
+          "faixas_normalizacao": [
+            [
+              381.2139111967299,
+              11134.795375135946
+            ],
+            [
+              0.0,
+              100.80000000000001
+            ]
+          ]
+        },
+        {
+          "etapa": 5,
+          "pedido_interno": 2,
+          "veiculo_indice": 1,
+          "posicao_coleta": 0,
+          "posicao_entrega_antes_da_insercao": 0,
+          "acrescimo_f1": 9228.542562607536,
+          "acrescimo_f2": 0.0,
+          "nota_insercao": 0.0,
+          "candidatos_viaveis": 88,
+          "faixas_normalizacao": [
+            [
+              9228.542562607536,
+              11134.795375135946
+            ],
+            [
+              0.0,
+              0.0
+            ]
+          ]
+        },
+        {
+          "etapa": 6,
+          "pedido_interno": 10,
+          "veiculo_indice": 1,
+          "posicao_coleta": 0,
+          "posicao_entrega_antes_da_insercao": 2,
+          "acrescimo_f1": 1906.2528125284098,
+          "acrescimo_f2": 1.2000000000000028,
+          "nota_insercao": 0.05741534791060792,
+          "candidatos_viaveis": 98,
+          "faixas_normalizacao": [
+            [
+              1165.6429293113797,
+              11134.795375135946
+            ],
+            [
+              0.0,
+              29.60000000000001
+            ]
+          ]
+        },
+        {
+          "etapa": 7,
+          "pedido_interno": 1,
+          "veiculo_indice": 1,
+          "posicao_coleta": 0,
+          "posicao_entrega_antes_da_insercao": 2,
+          "acrescimo_f1": 1165.6429293113779,
+          "acrescimo_f2": 27.600000000000023,
+          "nota_insercao": 0.22402597402597413,
+          "candidatos_viaveis": 114,
+          "faixas_normalizacao": [
+            [
+              1165.6429293113779,
+              10394.5346313772
+            ],
+            [
+              0.0,
+              61.60000000000002
+            ]
+          ]
+        },
+        {
+          "etapa": 8,
+          "pedido_interno": 11,
+          "veiculo_indice": 1,
+          "posicao_coleta": 1,
+          "posicao_entrega_antes_da_insercao": 3,
+          "acrescimo_f1": 381.2139111967299,
+          "acrescimo_f2": 20.800000000000026,
+          "nota_insercao": 0.13032581453634098,
+          "candidatos_viaveis": 130,
+          "faixas_normalizacao": [
+            [
+              381.2139111967299,
+              10394.5346313772
+            ],
+            [
+              0.0,
+              79.80000000000001
+            ]
+          ]
+        },
+        {
+          "etapa": 9,
+          "pedido_interno": 8,
+          "veiculo_indice": 2,
+          "posicao_coleta": 0,
+          "posicao_entrega_antes_da_insercao": 0,
+          "acrescimo_f1": 9278.571094017738,
+          "acrescimo_f2": 0.0,
+          "nota_insercao": 0.0,
+          "candidatos_viaveis": 40,
+          "faixas_normalizacao": [
+            [
+              9278.571094017738,
+              10394.5346313772
+            ],
+            [
+              0.0,
+              0.0
+            ]
+          ]
+        },
+        {
+          "etapa": 10,
+          "pedido_interno": 9,
+          "veiculo_indice": 2,
+          "posicao_coleta": 1,
+          "posicao_entrega_antes_da_insercao": 2,
+          "acrescimo_f1": 1472.8955270208644,
+          "acrescimo_f2": 7.6000000000000085,
+          "nota_insercao": 0.17592592592592604,
+          "candidatos_viaveis": 39,
+          "faixas_normalizacao": [
+            [
+              1472.8955270208644,
+              10394.5346313772
+            ],
+            [
+              0.0,
+              21.60000000000001
+            ]
+          ]
+        },
+        {
+          "etapa": 11,
+          "pedido_interno": 3,
+          "veiculo_indice": 2,
+          "posicao_coleta": 1,
+          "posicao_entrega_antes_da_insercao": 3,
+          "acrescimo_f1": 381.2139111967317,
+          "acrescimo_f2": 16.200000000000017,
+          "nota_insercao": 0.1875000000000001,
+          "candidatos_viaveis": 36,
+          "faixas_normalizacao": [
+            [
+              381.2139111967317,
+              10394.5346313772
+            ],
+            [
+              0.0,
+              43.20000000000002
+            ]
+          ]
+        },
+        {
+          "etapa": 12,
+          "pedido_interno": 6,
+          "veiculo_indice": 2,
+          "posicao_coleta": 1,
+          "posicao_entrega_antes_da_insercao": 4,
+          "acrescimo_f1": 400.746892767771,
+          "acrescimo_f2": 24.800000000000026,
+          "nota_insercao": 0.19135802469135815,
+          "candidatos_viaveis": 25,
+          "faixas_normalizacao": [
+            [
+              400.746892767771,
+              10394.5346313772
+            ],
+            [
+              0.0,
+              64.80000000000003
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "Q": 5,
+      "status": "concluida",
+      "phi_g_km": 250.0,
+      "ponto": {
+        "f1": 50612.28455853028,
+        "f2": 129.20000000000016,
+        "distancia": 184.0,
+        "espera": 59.00000000000006,
+        "desvio": 70.20000000000012,
+        "veiculos_usados": 3,
+        "carga_maxima": 5.0,
+        "rotas": [
+          [
+            7,
+            2,
+            5,
+            4,
+            12,
+            14,
+            24,
+            17,
+            19,
+            16
+          ],
+          [
+            8,
+            11,
+            3,
+            1,
+            9,
+            20,
+            23,
+            13,
+            15,
+            21
+          ],
+          [
+            10,
+            6,
+            18,
+            22
+          ],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        "agendas": [
+          {
+            "B": {
+              "7": 30.0,
+              "2": 34.2,
+              "5": 38.400000000000006,
+              "4": 42.60000000000001,
+              "12": 42.80000000000001,
+              "14": 89.00000000000001,
+              "24": 89.20000000000002,
+              "17": 89.40000000000002,
+              "19": 99.60000000000002,
+              "16": 99.80000000000003
+            },
+            "partida": 28.0,
+            "carga": {
+              "7": 1.0,
+              "2": 2.0,
+              "5": 3.0,
+              "4": 4.0,
+              "12": 5.0,
+              "14": 4.0,
+              "24": 3.0,
+              "17": 2.0,
+              "19": 1.0,
+              "16": 0.0
+            }
+          },
+          {
+            "B": {
+              "8": 31.0,
+              "11": 35.2,
+              "3": 35.400000000000006,
+              "1": 39.60000000000001,
+              "9": 39.80000000000001,
+              "20": 86.00000000000001,
+              "23": 86.20000000000002,
+              "13": 86.40000000000002,
+              "15": 92.60000000000002,
+              "21": 92.80000000000003
+            },
+            "partida": 29.0,
+            "carga": {
+              "8": 1.0,
+              "11": 2.0,
+              "3": 3.0,
+              "1": 4.0,
+              "9": 5.0,
+              "20": 4.0,
+              "23": 3.0,
+              "13": 2.0,
+              "15": 1.0,
+              "21": 0.0
+            }
+          },
+          {
+            "B": {
+              "10": 30.0,
+              "6": 32.0,
+              "18": 84.2,
+              "22": 108.4
+            },
+            "partida": 28.0,
+            "carga": {
+              "10": 1.0,
+              "6": 2.0,
+              "18": 1.0,
+              "22": 0.0
+            }
+          }
+        ]
+      },
+      "pedidos_pendentes": [],
+      "tempo_execucao": 1.609070000005886,
+      "candidatos_testados": 4086,
+      "avaliacoes_rotas": 702,
+      "historico": [
+        {
+          "etapa": 1,
+          "pedido_interno": 5,
+          "veiculo_indice": 0,
+          "posicao_coleta": 0,
+          "posicao_entrega_antes_da_insercao": 0,
+          "acrescimo_f1": 12773.922909724377,
+          "acrescimo_f2": 0.0,
+          "nota_insercao": 0.0,
+          "candidatos_viaveis": 144,
+          "faixas_normalizacao": [
+            [
+              12773.922909724377,
+              15464.9935765777
+            ],
+            [
+              0.0,
+              0.0
+            ]
+          ]
+        },
+        {
+          "etapa": 2,
+          "pedido_interno": 12,
+          "veiculo_indice": 0,
+          "posicao_coleta": 1,
+          "posicao_entrega_antes_da_insercao": 1,
+          "acrescimo_f1": 539.2361906491496,
+          "acrescimo_f2": 7.6000000000000085,
+          "nota_insercao": 0.12837837837837848,
+          "candidatos_viaveis": 165,
+          "faixas_normalizacao": [
+            [
+              539.2361906491496,
+              15464.9935765777
+            ],
+            [
+              0.0,
+              29.60000000000001
+            ]
+          ]
+        },
+        {
+          "etapa": 3,
+          "pedido_interno": 4,
+          "veiculo_indice": 0,
+          "posicao_coleta": 1,
+          "posicao_entrega_antes_da_insercao": 4,
+          "acrescimo_f1": 2647.5733507339028,
+          "acrescimo_f2": 6.200000000000017,
+          "nota_insercao": 0.12249245569108463,
+          "candidatos_viaveis": 200,
+          "faixas_normalizacao": [
+            [
+              556.5929066219051,
+              15464.9935765777
+            ],
+            [
+              0.0,
+              59.20000000000002
+            ]
+          ]
+        },
+        {
+          "etapa": 4,
+          "pedido_interno": 7,
+          "veiculo_indice": 0,
+          "posicao_coleta": 0,
+          "posicao_entrega_antes_da_insercao": 5,
+          "acrescimo_f1": 529.4637655510123,
+          "acrescimo_f2": 18.800000000000026,
+          "nota_insercao": 0.09325396825396837,
+          "candidatos_viaveis": 243,
+          "faixas_normalizacao": [
+            [
+              529.4637655510123,
+              15464.9935765777
+            ],
+            [
+              0.0,
+              100.80000000000001
+            ]
+          ]
+        },
+        {
+          "etapa": 5,
+          "pedido_interno": 2,
+          "veiculo_indice": 0,
+          "posicao_coleta": 1,
+          "posicao_entrega_antes_da_insercao": 4,
+          "acrescimo_f1": 556.5929066219069,
+          "acrescimo_f2": 29.400000000000034,
+          "nota_insercao": 0.1047008547008548,
+          "candidatos_viaveis": 285,
+          "faixas_normalizacao": [
+            [
+              556.5929066219069,
+              15464.9935765777
+            ],
+            [
+              0.0,
+              140.40000000000003
+            ]
+          ]
+        },
+        {
+          "etapa": 6,
+          "pedido_interno": 1,
+          "veiculo_indice": 1,
+          "posicao_coleta": 0,
+          "posicao_entrega_antes_da_insercao": 0,
+          "acrescimo_f1": 12860.763697100188,
+          "acrescimo_f2": 0.0,
+          "nota_insercao": 0.0,
+          "candidatos_viaveis": 77,
+          "faixas_normalizacao": [
+            [
+              12860.763697100188,
+              15464.9935765777
+            ],
+            [
+              0.0,
+              0.0
+            ]
+          ]
+        },
+        {
+          "etapa": 7,
+          "pedido_interno": 9,
+          "veiculo_indice": 1,
+          "posicao_coleta": 1,
+          "posicao_entrega_antes_da_insercao": 2,
+          "acrescimo_f1": 1532.592641470943,
+          "acrescimo_f2": 2.200000000000003,
+          "nota_insercao": 0.0636366097143113,
+          "candidatos_viaveis": 84,
+          "faixas_normalizacao": [
+            [
+              529.4637655510141,
+              15464.9935765777
+            ],
+            [
+              0.0,
+              36.60000000000001
+            ]
+          ]
+        },
+        {
+          "etapa": 8,
+          "pedido_interno": 11,
+          "veiculo_indice": 1,
+          "posicao_coleta": 0,
+          "posicao_entrega_antes_da_insercao": 2,
+          "acrescimo_f1": 529.4637655510141,
+          "acrescimo_f2": 11.600000000000023,
+          "nota_insercao": 0.07474226804123724,
+          "candidatos_viaveis": 95,
+          "faixas_normalizacao": [
+            [
+              529.4637655510141,
+              15464.9935765777
+            ],
+            [
+              0.0,
+              77.60000000000002
+            ]
+          ]
+        },
+        {
+          "etapa": 9,
+          "pedido_interno": 3,
+          "veiculo_indice": 1,
+          "posicao_coleta": 1,
+          "posicao_entrega_antes_da_insercao": 5,
+          "acrescimo_f1": 0.0,
+          "acrescimo_f2": 8.000000000000014,
+          "nota_insercao": 0.03257328990228018,
+          "candidatos_viaveis": 104,
+          "faixas_normalizacao": [
+            [
+              0.0,
+              15464.9935765777
+            ],
+            [
+              0.0,
+              122.80000000000003
+            ]
+          ]
+        },
+        {
+          "etapa": 10,
+          "pedido_interno": 8,
+          "veiculo_indice": 1,
+          "posicao_coleta": 0,
+          "posicao_entrega_antes_da_insercao": 4,
+          "acrescimo_f1": 539.2361906491496,
+          "acrescimo_f2": 23.200000000000045,
+          "nota_insercao": 0.0706455542021926,
+          "candidatos_viaveis": 104,
+          "faixas_normalizacao": [
+            [
+              539.2361906491496,
+              15464.9935765777
+            ],
+            [
+              0.0,
+              164.2
+            ]
+          ]
+        },
+        {
+          "etapa": 11,
+          "pedido_interno": 6,
+          "veiculo_indice": 2,
+          "posicao_coleta": 0,
+          "posicao_entrega_antes_da_insercao": 0,
+          "acrescimo_f1": 14436.853654690556,
+          "acrescimo_f2": 0.0,
+          "nota_insercao": 0.0,
+          "candidatos_viaveis": 20,
+          "faixas_normalizacao": [
+            [
+              14436.853654690556,
+              15464.9935765777
+            ],
+            [
+              0.0,
+              0.0
+            ]
+          ]
+        },
+        {
+          "etapa": 12,
+          "pedido_interno": 10,
+          "veiculo_indice": 2,
+          "posicao_coleta": 0,
+          "posicao_entrega_antes_da_insercao": 2,
+          "acrescimo_f1": 3666.5854857880804,
+          "acrescimo_f2": 22.200000000000003,
+          "nota_insercao": 0.3627450980392156,
+          "candidatos_viaveis": 13,
+          "faixas_normalizacao": [
+            [
+              3666.5854857880804,
+              15464.9935765777
+            ],
+            [
+              0.0,
+              30.60000000000001
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "Q": 6,
+      "status": "concluida",
+      "phi_g_km": 250.0,
+      "ponto": {
+        "f1": 33065.43832467355,
+        "f2": 156.00000000000026,
+        "distancia": 120.0,
+        "espera": 84.00000000000009,
+        "desvio": 72.00000000000017,
+        "veiculos_usados": 2,
+        "carga_maxima": 6.0,
+        "rotas": [
+          [
+            7,
+            10,
+            2,
+            5,
+            4,
+            12,
+            14,
+            24,
+            17,
+            22,
+            19,
+            16
+          ],
+          [
+            8,
+            6,
+            11,
+            3,
+            1,
+            9,
+            20,
+            23,
+            13,
+            18,
+            15,
+            21
+          ],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        "agendas": [
+          {
+            "B": {
+              "7": 30.0,
+              "10": 34.2,
+              "2": 34.400000000000006,
+              "5": 38.60000000000001,
+              "4": 42.80000000000001,
+              "12": 43.000000000000014,
+              "14": 89.20000000000002,
+              "24": 89.40000000000002,
+              "17": 89.60000000000002,
+              "22": 99.80000000000003,
+              "19": 100.00000000000003,
+              "16": 100.20000000000003
+            },
+            "partida": 28.0,
+            "carga": {
+              "7": 1.0,
+              "10": 2.0,
+              "2": 3.0,
+              "5": 4.0,
+              "4": 5.0,
+              "12": 6.0,
+              "14": 5.0,
+              "24": 4.0,
+              "17": 3.0,
+              "22": 2.0,
+              "19": 1.0,
+              "16": 0.0
+            }
+          },
+          {
+            "B": {
+              "8": 31.0,
+              "6": 35.2,
+              "11": 39.400000000000006,
+              "3": 39.60000000000001,
+              "1": 43.80000000000001,
+              "9": 44.000000000000014,
+              "20": 90.20000000000002,
+              "23": 90.40000000000002,
+              "13": 90.60000000000002,
+              "18": 96.80000000000003,
+              "15": 97.00000000000003,
+              "21": 97.20000000000003
+            },
+            "partida": 29.0,
+            "carga": {
+              "8": 1.0,
+              "6": 2.0,
+              "11": 3.0,
+              "3": 4.0,
+              "1": 5.0,
+              "9": 6.0,
+              "20": 5.0,
+              "23": 4.0,
+              "13": 3.0,
+              "18": 2.0,
+              "15": 1.0,
+              "21": 0.0
+            }
+          }
+        ]
+      },
+      "pedidos_pendentes": [],
+      "tempo_execucao": 2.0296914000064135,
+      "candidatos_testados": 4386,
+      "avaliacoes_rotas": 896,
+      "historico": [
+        {
+          "etapa": 1,
+          "pedido_interno": 5,
+          "veiculo_indice": 0,
+          "posicao_coleta": 0,
+          "posicao_entrega_antes_da_insercao": 0,
+          "acrescimo_f1": 12773.922909724377,
+          "acrescimo_f2": 0.0,
+          "nota_insercao": 0.0,
+          "candidatos_viaveis": 144,
+          "faixas_normalizacao": [
+            [
+              12773.922909724377,
+              15464.9935765777
+            ],
+            [
+              0.0,
+              0.0
+            ]
+          ]
+        },
+        {
+          "etapa": 2,
+          "pedido_interno": 12,
+          "veiculo_indice": 0,
+          "posicao_coleta": 1,
+          "posicao_entrega_antes_da_insercao": 1,
+          "acrescimo_f1": 539.2361906491496,
+          "acrescimo_f2": 7.6000000000000085,
+          "nota_insercao": 0.12837837837837848,
+          "candidatos_viaveis": 165,
+          "faixas_normalizacao": [
+            [
+              539.2361906491496,
+              15464.9935765777
+            ],
+            [
+              0.0,
+              29.60000000000001
+            ]
+          ]
+        },
+        {
+          "etapa": 3,
+          "pedido_interno": 4,
+          "veiculo_indice": 0,
+          "posicao_coleta": 1,
+          "posicao_entrega_antes_da_insercao": 4,
+          "acrescimo_f1": 2647.5733507339028,
+          "acrescimo_f2": 6.200000000000017,
+          "nota_insercao": 0.12249245569108463,
+          "candidatos_viaveis": 200,
+          "faixas_normalizacao": [
+            [
+              556.5929066219051,
+              15464.9935765777
+            ],
+            [
+              0.0,
+              59.20000000000002
+            ]
+          ]
+        },
+        {
+          "etapa": 4,
+          "pedido_interno": 7,
+          "veiculo_indice": 0,
+          "posicao_coleta": 0,
+          "posicao_entrega_antes_da_insercao": 5,
+          "acrescimo_f1": 529.4637655510123,
+          "acrescimo_f2": 18.800000000000026,
+          "nota_insercao": 0.09325396825396837,
+          "candidatos_viaveis": 243,
+          "faixas_normalizacao": [
+            [
+              529.4637655510123,
+              15464.9935765777
+            ],
+            [
+              0.0,
+              100.80000000000001
+            ]
+          ]
+        },
+        {
+          "etapa": 5,
+          "pedido_interno": 2,
+          "veiculo_indice": 0,
+          "posicao_coleta": 1,
+          "posicao_entrega_antes_da_insercao": 4,
+          "acrescimo_f1": 556.5929066219069,
+          "acrescimo_f2": 29.400000000000034,
+          "nota_insercao": 0.1047008547008548,
+          "candidatos_viaveis": 285,
+          "faixas_normalizacao": [
+            [
+              556.5929066219069,
+              15464.9935765777
+            ],
+            [
+              0.0,
+              140.40000000000003
+            ]
+          ]
+        },
+        {
+          "etapa": 6,
+          "pedido_interno": 10,
+          "veiculo_indice": 0,
+          "posicao_coleta": 1,
+          "posicao_entrega_antes_da_insercao": 8,
+          "acrescimo_f1": 0.0,
+          "acrescimo_f2": 15.000000000000043,
+          "nota_insercao": 0.04437869822485219,
+          "candidatos_viaveis": 293,
+          "faixas_normalizacao": [
+            [
+              0.0,
+              15464.9935765777
+            ],
+            [
+              0.0,
+              169.00000000000003
+            ]
+          ]
+        },
+        {
+          "etapa": 7,
+          "pedido_interno": 1,
+          "veiculo_indice": 1,
+          "posicao_coleta": 0,
+          "posicao_entrega_antes_da_insercao": 0,
+          "acrescimo_f1": 12860.763697100188,
+          "acrescimo_f2": 0.0,
+          "nota_insercao": 0.0,
+          "candidatos_viaveis": 66,
+          "faixas_normalizacao": [
+            [
+              12860.763697100188,
+              14436.853654690556
+            ],
+            [
+              0.0,
+              0.0
+            ]
+          ]
+        },
+        {
+          "etapa": 8,
+          "pedido_interno": 9,
+          "veiculo_indice": 1,
+          "posicao_coleta": 1,
+          "posicao_entrega_antes_da_insercao": 2,
+          "acrescimo_f1": 1532.592641470943,
+          "acrescimo_f2": 2.200000000000003,
+          "nota_insercao": 0.08473716526177531,
+          "candidatos_viaveis": 70,
+          "faixas_normalizacao": [
+            [
+              529.4637655510141,
+              14436.853654690556
+            ],
+            [
+              0.0,
+              22.60000000000001
+            ]
+          ]
+        },
+        {
+          "etapa": 9,
+          "pedido_interno": 11,
+          "veiculo_indice": 1,
+          "posicao_coleta": 0,
+          "posicao_entrega_antes_da_insercao": 2,
+          "acrescimo_f1": 529.4637655510141,
+          "acrescimo_f2": 11.600000000000023,
+          "nota_insercao": 0.13302752293578002,
+          "candidatos_viaveis": 76,
+          "faixas_normalizacao": [
+            [
+              529.4637655510141,
+              14436.853654690556
+            ],
+            [
+              0.0,
+              43.60000000000002
+            ]
+          ]
+        },
+        {
+          "etapa": 10,
+          "pedido_interno": 3,
+          "veiculo_indice": 1,
+          "posicao_coleta": 1,
+          "posicao_entrega_antes_da_insercao": 5,
+          "acrescimo_f1": 0.0,
+          "acrescimo_f2": 8.000000000000014,
+          "nota_insercao": 0.05494505494505502,
+          "candidatos_viaveis": 78,
+          "faixas_normalizacao": [
+            [
+              0.0,
+              14436.853654690556
+            ],
+            [
+              0.0,
+              72.80000000000003
+            ]
+          ]
+        },
+        {
+          "etapa": 11,
+          "pedido_interno": 8,
+          "veiculo_indice": 1,
+          "posicao_coleta": 0,
+          "posicao_entrega_antes_da_insercao": 4,
+          "acrescimo_f1": 539.2361906491496,
+          "acrescimo_f2": 23.200000000000045,
+          "nota_insercao": 0.12314225053078576,
+          "candidatos_viaveis": 70,
+          "faixas_normalizacao": [
+            [
+              539.2361906491496,
+              14436.853654690556
+            ],
+            [
+              0.0,
+              94.20000000000003
+            ]
+          ]
+        },
+        {
+          "etapa": 12,
+          "pedido_interno": 6,
+          "veiculo_indice": 1,
+          "posicao_coleta": 1,
+          "posicao_entrega_antes_da_insercao": 8,
+          "acrescimo_f1": 556.5929066219069,
+          "acrescimo_f2": 34.00000000000004,
+          "nota_insercao": 0.14406779661016964,
+          "candidatos_viaveis": 46,
+          "faixas_normalizacao": [
+            [
+              556.5929066219069,
+              14436.853654690556
+            ],
+            [
+              0.0,
+              118.00000000000003
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "Q": 7,
+      "status": "concluida",
+      "phi_g_km": 350.0,
+      "ponto": {
+        "f1": 47084.877079036145,
+        "f2": 167.60000000000025,
+        "distancia": 122.0,
+        "espera": 74.40000000000008,
+        "desvio": 93.20000000000017,
+        "veiculos_usados": 2,
+        "carga_maxima": 7.0,
+        "rotas": [
+          [
+            7,
+            10,
+            2,
+            5,
+            8,
+            4,
+            12,
+            14,
+            24,
+            17,
+            22,
+            19,
+            16,
+            20
+          ],
+          [
+            11,
+            3,
+            6,
+            1,
+            9,
+            23,
+            13,
+            18,
+            15,
+            21
+          ],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        "agendas": [
+          {
+            "B": {
+              "7": 30.0,
+              "10": 34.2,
+              "2": 34.400000000000006,
+              "5": 38.60000000000001,
+              "8": 42.80000000000001,
+              "4": 43.000000000000014,
+              "12": 43.20000000000002,
+              "14": 89.40000000000002,
+              "24": 89.60000000000002,
+              "17": 89.80000000000003,
+              "22": 100.00000000000003,
+              "19": 100.20000000000003,
+              "16": 100.40000000000003,
+              "20": 118.60000000000004
+            },
+            "partida": 28.0,
+            "carga": {
+              "7": 1.0,
+              "10": 2.0,
+              "2": 3.0,
+              "5": 4.0,
+              "8": 5.0,
+              "4": 6.0,
+              "12": 7.0,
+              "14": 6.0,
+              "24": 5.0,
+              "17": 4.0,
+              "22": 3.0,
+              "19": 2.0,
+              "16": 1.0,
+              "20": 0.0
+            }
+          },
+          {
+            "B": {
+              "11": 31.0,
+              "3": 32.0,
+              "6": 36.2,
+              "1": 40.400000000000006,
+              "9": 40.60000000000001,
+              "23": 86.80000000000001,
+              "13": 87.00000000000001,
+              "18": 93.20000000000002,
+              "15": 93.40000000000002,
+              "21": 93.60000000000002
+            },
+            "partida": 29.0,
+            "carga": {
+              "11": 1.0,
+              "3": 2.0,
+              "6": 3.0,
+              "1": 4.0,
+              "9": 5.0,
+              "23": 4.0,
+              "13": 3.0,
+              "18": 2.0,
+              "15": 1.0,
+              "21": 0.0
+            }
+          }
+        ]
+      },
+      "pedidos_pendentes": [],
+      "tempo_execucao": 2.351180400000885,
+      "candidatos_testados": 4666,
+      "avaliacoes_rotas": 1030,
+      "historico": [
+        {
+          "etapa": 1,
+          "pedido_interno": 5,
+          "veiculo_indice": 0,
+          "posicao_coleta": 0,
+          "posicao_entrega_antes_da_insercao": 0,
+          "acrescimo_f1": 17883.49207361413,
+          "acrescimo_f2": 0.0,
+          "nota_insercao": 0.0,
+          "candidatos_viaveis": 144,
+          "faixas_normalizacao": [
+            [
+              17883.49207361413,
+              21650.99100720878
+            ],
+            [
+              0.0,
+              0.0
+            ]
+          ]
+        },
+        {
+          "etapa": 2,
+          "pedido_interno": 12,
+          "veiculo_indice": 0,
+          "posicao_coleta": 1,
+          "posicao_entrega_antes_da_insercao": 1,
+          "acrescimo_f1": 754.930666908811,
+          "acrescimo_f2": 7.6000000000000085,
+          "nota_insercao": 0.12837837837837848,
+          "candidatos_viaveis": 165,
+          "faixas_normalizacao": [
+            [
+              754.930666908811,
+              21650.99100720878
+            ],
+            [
+              0.0,
+              29.60000000000001
+            ]
+          ]
+        },
+        {
+          "etapa": 3,
+          "pedido_interno": 4,
+          "veiculo_indice": 0,
+          "posicao_coleta": 1,
+          "posicao_entrega_antes_da_insercao": 4,
+          "acrescimo_f1": 3706.6026910274595,
+          "acrescimo_f2": 6.200000000000017,
+          "nota_insercao": 0.12249245569108455,
+          "candidatos_viaveis": 200,
+          "faixas_normalizacao": [
+            [
+              779.2300692706667,
+              21650.99100720878
+            ],
+            [
+              0.0,
+              59.20000000000002
+            ]
+          ]
+        },
+        {
+          "etapa": 4,
+          "pedido_interno": 7,
+          "veiculo_indice": 0,
+          "posicao_coleta": 0,
+          "posicao_entrega_antes_da_insercao": 5,
+          "acrescimo_f1": 741.2492717714231,
+          "acrescimo_f2": 18.800000000000026,
+          "nota_insercao": 0.09325396825396837,
+          "candidatos_viaveis": 243,
+          "faixas_normalizacao": [
+            [
+              741.2492717714231,
+              21650.99100720878
+            ],
+            [
+              0.0,
+              100.80000000000001
+            ]
+          ]
+        },
+        {
+          "etapa": 5,
+          "pedido_interno": 2,
+          "veiculo_indice": 0,
+          "posicao_coleta": 1,
+          "posicao_entrega_antes_da_insercao": 4,
+          "acrescimo_f1": 779.2300692706667,
+          "acrescimo_f2": 29.400000000000034,
+          "nota_insercao": 0.1047008547008548,
+          "candidatos_viaveis": 285,
+          "faixas_normalizacao": [
+            [
+              779.2300692706667,
+              21650.99100720878
+            ],
+            [
+              0.0,
+              140.40000000000003
+            ]
+          ]
+        },
+        {
+          "etapa": 6,
+          "pedido_interno": 10,
+          "veiculo_indice": 0,
+          "posicao_coleta": 1,
+          "posicao_entrega_antes_da_insercao": 8,
+          "acrescimo_f1": 0.0,
+          "acrescimo_f2": 15.000000000000043,
+          "nota_insercao": 0.04437869822485219,
+          "candidatos_viaveis": 293,
+          "faixas_normalizacao": [
+            [
+              0.0,
+              21650.99100720878
+            ],
+            [
+              0.0,
+              169.00000000000003
+            ]
+          ]
+        },
+        {
+          "etapa": 7,
+          "pedido_interno": 8,
+          "veiculo_indice": 0,
+          "posicao_coleta": 4,
+          "posicao_entrega_antes_da_insercao": 12,
+          "acrescimo_f1": 1548.1940914019833,
+          "acrescimo_f2": 42.60000000000005,
+          "nota_insercao": 0.1046168958742634,
+          "candidatos_viaveis": 270,
+          "faixas_normalizacao": [
+            [
+              1548.1940914019833,
+              20211.595116566776
+            ],
+            [
+              0.0,
+              203.59999999999997
+            ]
+          ]
+        },
+        {
+          "etapa": 8,
+          "pedido_interno": 1,
+          "veiculo_indice": 1,
+          "posicao_coleta": 0,
+          "posicao_entrega_antes_da_insercao": 0,
+          "acrescimo_f1": 18005.06917594026,
+          "acrescimo_f2": 0.0,
+          "nota_insercao": 0.0,
+          "candidatos_viaveis": 55,
+          "faixas_normalizacao": [
+            [
+              18005.06917594026,
+              20211.595116566776
+            ],
+            [
+              0.0,
+              0.0
+            ]
+          ]
+        },
+        {
+          "etapa": 9,
+          "pedido_interno": 9,
+          "veiculo_indice": 1,
+          "posicao_coleta": 1,
+          "posicao_entrega_antes_da_insercao": 2,
+          "acrescimo_f1": 2145.6296980593215,
+          "acrescimo_f2": 2.200000000000003,
+          "nota_insercao": 0.08473716526177527,
+          "candidatos_viaveis": 56,
+          "faixas_normalizacao": [
+            [
+              741.2492717714231,
+              20211.595116566776
+            ],
+            [
+              0.0,
+              22.60000000000001
+            ]
+          ]
+        },
+        {
+          "etapa": 10,
+          "pedido_interno": 11,
+          "veiculo_indice": 1,
+          "posicao_coleta": 0,
+          "posicao_entrega_antes_da_insercao": 2,
+          "acrescimo_f1": 741.2492717714194,
+          "acrescimo_f2": 11.600000000000023,
+          "nota_insercao": 0.13302752293578002,
+          "candidatos_viaveis": 57,
+          "faixas_normalizacao": [
+            [
+              741.2492717714194,
+              20211.595116566776
+            ],
+            [
+              0.0,
+              43.60000000000002
+            ]
+          ]
+        },
+        {
+          "etapa": 11,
+          "pedido_interno": 3,
+          "veiculo_indice": 1,
+          "posicao_coleta": 1,
+          "posicao_entrega_antes_da_insercao": 5,
+          "acrescimo_f1": 0.0,
+          "acrescimo_f2": 8.000000000000014,
+          "nota_insercao": 0.05494505494505502,
+          "candidatos_viaveis": 52,
+          "faixas_normalizacao": [
+            [
+              0.0,
+              20211.595116566776
+            ],
+            [
+              0.0,
+              72.80000000000003
+            ]
+          ]
+        },
+        {
+          "etapa": 12,
+          "pedido_interno": 6,
+          "veiculo_indice": 1,
+          "posicao_coleta": 2,
+          "posicao_entrega_antes_da_insercao": 6,
+          "acrescimo_f1": 779.2300692706667,
+          "acrescimo_f2": 26.20000000000003,
+          "nota_insercao": 0.13906581740976656,
+          "candidatos_viaveis": 35,
+          "faixas_normalizacao": [
+            [
+              779.2300692706667,
+              20211.595116566776
+            ],
+            [
+              0.0,
+              94.20000000000003
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "Q": 8,
+      "status": "concluida",
+      "phi_g_km": 350.0,
+      "ponto": {
+        "f1": 47084.877079036145,
+        "f2": 199.60000000000028,
+        "distancia": 122.0,
+        "espera": 73.20000000000009,
+        "desvio": 126.40000000000019,
+        "veiculos_usados": 2,
+        "carga_maxima": 8.0,
+        "rotas": [
+          [
+            7,
+            10,
+            2,
+            1,
+            5,
+            8,
+            4,
+            12,
+            14,
+            24,
+            17,
+            22,
+            19,
+            16,
+            13,
+            20
+          ],
+          [
+            11,
+            3,
+            6,
+            9,
+            23,
+            18,
+            21,
+            15
+          ],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        "agendas": [
+          {
+            "B": {
+              "7": 30.0,
+              "10": 34.2,
+              "2": 34.400000000000006,
+              "1": 38.60000000000001,
+              "5": 38.80000000000001,
+              "8": 43.000000000000014,
+              "4": 43.20000000000002,
+              "12": 43.40000000000002,
+              "14": 89.60000000000002,
+              "24": 89.80000000000003,
+              "17": 90.00000000000003,
+              "22": 100.20000000000003,
+              "19": 100.40000000000003,
+              "16": 100.60000000000004,
+              "13": 118.80000000000004,
+              "20": 119.00000000000004
+            },
+            "partida": 28.0,
+            "carga": {
+              "7": 1.0,
+              "10": 2.0,
+              "2": 3.0,
+              "1": 4.0,
+              "5": 5.0,
+              "8": 6.0,
+              "4": 7.0,
+              "12": 8.0,
+              "14": 7.0,
+              "24": 6.0,
+              "17": 5.0,
+              "22": 4.0,
+              "19": 3.0,
+              "16": 2.0,
+              "13": 1.0,
+              "20": 0.0
+            }
+          },
+          {
+            "B": {
+              "11": 31.0,
+              "3": 32.0,
+              "6": 36.2,
+              "9": 40.400000000000006,
+              "23": 86.60000000000001,
+              "18": 92.80000000000001,
+              "21": 93.00000000000001,
+              "15": 93.20000000000002
+            },
+            "partida": 29.0,
+            "carga": {
+              "11": 1.0,
+              "3": 2.0,
+              "6": 3.0,
+              "9": 4.0,
+              "23": 3.0,
+              "18": 2.0,
+              "21": 1.0,
+              "15": 0.0
+            }
+          }
+        ]
+      },
+      "pedidos_pendentes": [],
+      "tempo_execucao": 2.820023999986006,
+      "candidatos_testados": 4906,
+      "avaliacoes_rotas": 1184,
+      "historico": [
+        {
+          "etapa": 1,
+          "pedido_interno": 5,
+          "veiculo_indice": 0,
+          "posicao_coleta": 0,
+          "posicao_entrega_antes_da_insercao": 0,
+          "acrescimo_f1": 17883.49207361413,
+          "acrescimo_f2": 0.0,
+          "nota_insercao": 0.0,
+          "candidatos_viaveis": 144,
+          "faixas_normalizacao": [
+            [
+              17883.49207361413,
+              21650.99100720878
+            ],
+            [
+              0.0,
+              0.0
+            ]
+          ]
+        },
+        {
+          "etapa": 2,
+          "pedido_interno": 12,
+          "veiculo_indice": 0,
+          "posicao_coleta": 1,
+          "posicao_entrega_antes_da_insercao": 1,
+          "acrescimo_f1": 754.930666908811,
+          "acrescimo_f2": 7.6000000000000085,
+          "nota_insercao": 0.12837837837837848,
+          "candidatos_viaveis": 165,
+          "faixas_normalizacao": [
+            [
+              754.930666908811,
+              21650.99100720878
+            ],
+            [
+              0.0,
+              29.60000000000001
+            ]
+          ]
+        },
+        {
+          "etapa": 3,
+          "pedido_interno": 4,
+          "veiculo_indice": 0,
+          "posicao_coleta": 1,
+          "posicao_entrega_antes_da_insercao": 4,
+          "acrescimo_f1": 3706.6026910274595,
+          "acrescimo_f2": 6.200000000000017,
+          "nota_insercao": 0.12249245569108455,
+          "candidatos_viaveis": 200,
+          "faixas_normalizacao": [
+            [
+              779.2300692706667,
+              21650.99100720878
+            ],
+            [
+              0.0,
+              59.20000000000002
+            ]
+          ]
+        },
+        {
+          "etapa": 4,
+          "pedido_interno": 7,
+          "veiculo_indice": 0,
+          "posicao_coleta": 0,
+          "posicao_entrega_antes_da_insercao": 5,
+          "acrescimo_f1": 741.2492717714231,
+          "acrescimo_f2": 18.800000000000026,
+          "nota_insercao": 0.09325396825396837,
+          "candidatos_viaveis": 243,
+          "faixas_normalizacao": [
+            [
+              741.2492717714231,
+              21650.99100720878
+            ],
+            [
+              0.0,
+              100.80000000000001
+            ]
+          ]
+        },
+        {
+          "etapa": 5,
+          "pedido_interno": 2,
+          "veiculo_indice": 0,
+          "posicao_coleta": 1,
+          "posicao_entrega_antes_da_insercao": 4,
+          "acrescimo_f1": 779.2300692706667,
+          "acrescimo_f2": 29.400000000000034,
+          "nota_insercao": 0.1047008547008548,
+          "candidatos_viaveis": 285,
+          "faixas_normalizacao": [
+            [
+              779.2300692706667,
+              21650.99100720878
+            ],
+            [
+              0.0,
+              140.40000000000003
+            ]
+          ]
+        },
+        {
+          "etapa": 6,
+          "pedido_interno": 10,
+          "veiculo_indice": 0,
+          "posicao_coleta": 1,
+          "posicao_entrega_antes_da_insercao": 8,
+          "acrescimo_f1": 0.0,
+          "acrescimo_f2": 15.000000000000043,
+          "nota_insercao": 0.04437869822485219,
+          "candidatos_viaveis": 293,
+          "faixas_normalizacao": [
+            [
+              0.0,
+              21650.99100720878
+            ],
+            [
+              0.0,
+              169.00000000000003
+            ]
+          ]
+        },
+        {
+          "etapa": 7,
+          "pedido_interno": 8,
+          "veiculo_indice": 0,
+          "posicao_coleta": 4,
+          "posicao_entrega_antes_da_insercao": 12,
+          "acrescimo_f1": 1548.1940914019833,
+          "acrescimo_f2": 42.60000000000005,
+          "nota_insercao": 0.1046168958742634,
+          "candidatos_viaveis": 270,
+          "faixas_normalizacao": [
+            [
+              1548.1940914019833,
+              20211.595116566776
+            ],
+            [
+              0.0,
+              203.59999999999997
+            ]
+          ]
+        },
+        {
+          "etapa": 8,
+          "pedido_interno": 1,
+          "veiculo_indice": 0,
+          "posicao_coleta": 3,
+          "posicao_entrega_antes_da_insercao": 13,
+          "acrescimo_f1": 0.0,
+          "acrescimo_f2": 44.20000000000006,
+          "nota_insercao": 0.1452036793692512,
+          "candidatos_viaveis": 139,
+          "faixas_normalizacao": [
+            [
+              0.0,
+              20211.595116566776
+            ],
+            [
+              0.0,
+              152.2
+            ]
+          ]
+        },
+        {
+          "etapa": 9,
+          "pedido_interno": 11,
+          "veiculo_indice": 1,
+          "posicao_coleta": 0,
+          "posicao_entrega_antes_da_insercao": 0,
+          "acrescimo_f1": 18027.98462100821,
+          "acrescimo_f2": 0.0,
+          "nota_insercao": 0.0,
+          "candidatos_viaveis": 44,
+          "faixas_normalizacao": [
+            [
+              18027.98462100821,
+              20211.595116566776
+            ],
+            [
+              0.0,
+              0.0
+            ]
+          ]
+        },
+        {
+          "etapa": 10,
+          "pedido_interno": 3,
+          "veiculo_indice": 1,
+          "posicao_coleta": 1,
+          "posicao_entrega_antes_da_insercao": 2,
+          "acrescimo_f1": 2145.6296980593215,
+          "acrescimo_f2": 1.2000000000000028,
+          "nota_insercao": 0.027777777777777832,
+          "candidatos_viaveis": 42,
+          "faixas_normalizacao": [
+            [
+              2145.6296980593215,
+              20211.595116566776
+            ],
+            [
+              0.0,
+              21.60000000000001
+            ]
+          ]
+        },
+        {
+          "etapa": 11,
+          "pedido_interno": 9,
+          "veiculo_indice": 1,
+          "posicao_coleta": 2,
+          "posicao_entrega_antes_da_insercao": 3,
+          "acrescimo_f1": 718.3338267034705,
+          "acrescimo_f2": 13.000000000000014,
+          "nota_insercao": 0.1394849785407726,
+          "candidatos_viaveis": 38,
+          "faixas_normalizacao": [
+            [
+              718.3338267034705,
+              20211.595116566776
+            ],
+            [
+              0.0,
+              46.60000000000002
+            ]
+          ]
+        },
+        {
+          "etapa": 12,
+          "pedido_interno": 6,
+          "veiculo_indice": 1,
+          "posicao_coleta": 2,
+          "posicao_entrega_antes_da_insercao": 4,
+          "acrescimo_f1": 779.2300692706667,
+          "acrescimo_f2": 21.600000000000023,
+          "nota_insercao": 0.153409090909091,
+          "candidatos_viaveis": 26,
+          "faixas_normalizacao": [
+            [
+              779.2300692706667,
+              20211.595116566776
+            ],
+            [
+              0.0,
+              70.40000000000003
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "Q": 9,
+      "status": "concluida",
+      "phi_g_km": 350.0,
+      "ponto": {
+        "f1": 66517.24212633226,
+        "f2": 223.40000000000032,
+        "distancia": 172.0,
+        "espera": 71.80000000000008,
+        "desvio": 151.60000000000022,
+        "veiculos_usados": 3,
+        "carga_maxima": 9.0,
+        "rotas": [
+          [
+            7,
+            11,
+            10,
+            2,
+            1,
+            5,
+            8,
+            4,
+            12,
+            14,
+            24,
+            17,
+            22,
+            19,
+            16,
+            23,
+            13,
+            20
+          ],
+          [
+            6,
+            9,
+            18,
+            21
+          ],
+          [
+            3,
+            15
+          ],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        "agendas": [
+          {
+            "B": {
+              "7": 30.0,
+              "11": 31.0,
+              "10": 35.2,
+              "2": 35.400000000000006,
+              "1": 39.60000000000001,
+              "5": 39.80000000000001,
+              "8": 44.000000000000014,
+              "4": 44.20000000000002,
+              "12": 44.40000000000002,
+              "14": 90.60000000000002,
+              "24": 90.80000000000003,
+              "17": 91.00000000000003,
+              "22": 101.20000000000003,
+              "19": 101.40000000000003,
+              "16": 101.60000000000004,
+              "23": 119.80000000000004,
+              "13": 120.00000000000004,
+              "20": 120.20000000000005
+            },
+            "partida": 28.0,
+            "carga": {
+              "7": 1.0,
+              "11": 2.0,
+              "10": 3.0,
+              "2": 4.0,
+              "1": 5.0,
+              "5": 6.0,
+              "8": 7.0,
+              "4": 8.0,
+              "12": 9.0,
+              "14": 8.0,
+              "24": 7.0,
+              "17": 6.0,
+              "22": 5.0,
+              "19": 4.0,
+              "16": 3.0,
+              "23": 2.0,
+              "13": 1.0,
+              "20": 0.0
+            }
+          },
+          {
+            "B": {
+              "6": 32.0,
+              "9": 36.2,
+              "18": 88.4,
+              "21": 88.60000000000001
+            },
+            "partida": 30.0,
+            "carga": {
+              "6": 1.0,
+              "9": 2.0,
+              "18": 1.0,
+              "21": 0.0
+            }
+          },
+          {
+            "B": {
+              "3": 32.0,
+              "15": 84.2
+            },
+            "partida": 30.0,
+            "carga": {
+              "3": 1.0,
+              "15": 0.0
+            }
+          }
+        ]
+      },
+      "pedidos_pendentes": [],
+      "tempo_execucao": 3.1262964000052307,
+      "candidatos_testados": 5078,
+      "avaliacoes_rotas": 1348,
+      "historico": [
+        {
+          "etapa": 1,
+          "pedido_interno": 5,
+          "veiculo_indice": 0,
+          "posicao_coleta": 0,
+          "posicao_entrega_antes_da_insercao": 0,
+          "acrescimo_f1": 17883.49207361413,
+          "acrescimo_f2": 0.0,
+          "nota_insercao": 0.0,
+          "candidatos_viaveis": 144,
+          "faixas_normalizacao": [
+            [
+              17883.49207361413,
+              21650.99100720878
+            ],
+            [
+              0.0,
+              0.0
+            ]
+          ]
+        },
+        {
+          "etapa": 2,
+          "pedido_interno": 12,
+          "veiculo_indice": 0,
+          "posicao_coleta": 1,
+          "posicao_entrega_antes_da_insercao": 1,
+          "acrescimo_f1": 754.930666908811,
+          "acrescimo_f2": 7.6000000000000085,
+          "nota_insercao": 0.12837837837837848,
+          "candidatos_viaveis": 165,
+          "faixas_normalizacao": [
+            [
+              754.930666908811,
+              21650.99100720878
+            ],
+            [
+              0.0,
+              29.60000000000001
+            ]
+          ]
+        },
+        {
+          "etapa": 3,
+          "pedido_interno": 4,
+          "veiculo_indice": 0,
+          "posicao_coleta": 1,
+          "posicao_entrega_antes_da_insercao": 4,
+          "acrescimo_f1": 3706.6026910274595,
+          "acrescimo_f2": 6.200000000000017,
+          "nota_insercao": 0.12249245569108455,
+          "candidatos_viaveis": 200,
+          "faixas_normalizacao": [
+            [
+              779.2300692706667,
+              21650.99100720878
+            ],
+            [
+              0.0,
+              59.20000000000002
+            ]
+          ]
+        },
+        {
+          "etapa": 4,
+          "pedido_interno": 7,
+          "veiculo_indice": 0,
+          "posicao_coleta": 0,
+          "posicao_entrega_antes_da_insercao": 5,
+          "acrescimo_f1": 741.2492717714231,
+          "acrescimo_f2": 18.800000000000026,
+          "nota_insercao": 0.09325396825396837,
+          "candidatos_viaveis": 243,
+          "faixas_normalizacao": [
+            [
+              741.2492717714231,
+              21650.99100720878
+            ],
+            [
+              0.0,
+              100.80000000000001
+            ]
+          ]
+        },
+        {
+          "etapa": 5,
+          "pedido_interno": 2,
+          "veiculo_indice": 0,
+          "posicao_coleta": 1,
+          "posicao_entrega_antes_da_insercao": 4,
+          "acrescimo_f1": 779.2300692706667,
+          "acrescimo_f2": 29.400000000000034,
+          "nota_insercao": 0.1047008547008548,
+          "candidatos_viaveis": 285,
+          "faixas_normalizacao": [
+            [
+              779.2300692706667,
+              21650.99100720878
+            ],
+            [
+              0.0,
+              140.40000000000003
+            ]
+          ]
+        },
+        {
+          "etapa": 6,
+          "pedido_interno": 10,
+          "veiculo_indice": 0,
+          "posicao_coleta": 1,
+          "posicao_entrega_antes_da_insercao": 8,
+          "acrescimo_f1": 0.0,
+          "acrescimo_f2": 15.000000000000043,
+          "nota_insercao": 0.04437869822485219,
+          "candidatos_viaveis": 293,
+          "faixas_normalizacao": [
+            [
+              0.0,
+              21650.99100720878
+            ],
+            [
+              0.0,
+              169.00000000000003
+            ]
+          ]
+        },
+        {
+          "etapa": 7,
+          "pedido_interno": 8,
+          "veiculo_indice": 0,
+          "posicao_coleta": 4,
+          "posicao_entrega_antes_da_insercao": 12,
+          "acrescimo_f1": 1548.1940914019833,
+          "acrescimo_f2": 42.60000000000005,
+          "nota_insercao": 0.1046168958742634,
+          "candidatos_viaveis": 270,
+          "faixas_normalizacao": [
+            [
+              1548.1940914019833,
+              20211.595116566776
+            ],
+            [
+              0.0,
+              203.59999999999997
+            ]
+          ]
+        },
+        {
+          "etapa": 8,
+          "pedido_interno": 1,
+          "veiculo_indice": 0,
+          "posicao_coleta": 3,
+          "posicao_entrega_antes_da_insercao": 13,
+          "acrescimo_f1": 0.0,
+          "acrescimo_f2": 44.20000000000006,
+          "nota_insercao": 0.1452036793692512,
+          "candidatos_viaveis": 139,
+          "faixas_normalizacao": [
+            [
+              0.0,
+              20211.595116566776
+            ],
+            [
+              0.0,
+              152.2
+            ]
+          ]
+        },
+        {
+          "etapa": 9,
+          "pedido_interno": 11,
+          "veiculo_indice": 0,
+          "posicao_coleta": 1,
+          "posicao_entrega_antes_da_insercao": 14,
+          "acrescimo_f1": 0.0,
+          "acrescimo_f2": 51.00000000000006,
+          "nota_insercao": 0.2202072538860106,
+          "candidatos_viaveis": 93,
+          "faixas_normalizacao": [
+            [
+              0.0,
+              20211.595116566776
+            ],
+            [
+              0.0,
+              115.80000000000001
+            ]
+          ]
+        },
+        {
+          "etapa": 10,
+          "pedido_interno": 9,
+          "veiculo_indice": 1,
+          "posicao_coleta": 0,
+          "posicao_entrega_antes_da_insercao": 0,
+          "acrescimo_f1": 20150.698873999583,
+          "acrescimo_f2": 0.0,
+          "nota_insercao": 0.0,
+          "candidatos_viaveis": 33,
+          "faixas_normalizacao": [
+            [
+              20150.698873999583,
+              20211.595116566776
+            ],
+            [
+              0.0,
+              0.0
+            ]
+          ]
+        },
+        {
+          "etapa": 11,
+          "pedido_interno": 3,
+          "veiculo_indice": 2,
+          "posicao_coleta": 0,
+          "posicao_entrega_antes_da_insercao": 0,
+          "acrescimo_f1": 20173.614319067532,
+          "acrescimo_f2": 0.0,
+          "nota_insercao": 0.49902465015768077,
+          "candidatos_viaveis": 28,
+          "faixas_normalizacao": [
+            [
+              741.2492717714194,
+              20211.595116566776
+            ],
+            [
+              0.0,
+              8.600000000000009
+            ]
+          ]
+        },
+        {
+          "etapa": 12,
+          "pedido_interno": 6,
+          "veiculo_indice": 1,
+          "posicao_coleta": 0,
+          "posicao_entrega_antes_da_insercao": 1,
+          "acrescimo_f1": 779.2300692706667,
+          "acrescimo_f2": 8.600000000000009,
+          "nota_insercao": 0.5,
+          "candidatos_viaveis": 17,
+          "faixas_normalizacao": [
+            [
+              779.2300692706667,
+              20211.595116566776
+            ],
+            [
+              0.0,
+              8.600000000000009
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "Q": 10,
+      "status": "concluida",
+      "phi_g_km": 350.0,
+      "ponto": {
+        "f1": 48451.27670782479,
+        "f2": 267.60000000000036,
+        "distancia": 126.0,
+        "espera": 76.4000000000001,
+        "desvio": 191.20000000000024,
+        "veiculos_usados": 2,
+        "carga_maxima": 10.0,
+        "rotas": [
+          [
+            7,
+            11,
+            6,
+            10,
+            2,
+            1,
+            5,
+            8,
+            4,
+            12,
+            14,
+            24,
+            17,
+            22,
+            19,
+            16,
+            23,
+            13,
+            20,
+            18
+          ],
+          [
+            3,
+            9,
+            15,
+            21
+          ],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        "agendas": [
+          {
+            "B": {
+              "7": 30.0,
+              "11": 31.0,
+              "6": 35.2,
+              "10": 35.400000000000006,
+              "2": 35.60000000000001,
+              "1": 39.80000000000001,
+              "5": 40.000000000000014,
+              "8": 44.20000000000002,
+              "4": 44.40000000000002,
+              "12": 44.60000000000002,
+              "14": 90.80000000000003,
+              "24": 91.00000000000003,
+              "17": 91.20000000000003,
+              "22": 101.40000000000003,
+              "19": 101.60000000000004,
+              "16": 101.80000000000004,
+              "23": 120.00000000000004,
+              "13": 120.20000000000005,
+              "20": 120.40000000000005,
+              "18": 126.60000000000005
+            },
+            "partida": 28.0,
+            "carga": {
+              "7": 1.0,
+              "11": 2.0,
+              "6": 3.0,
+              "10": 4.0,
+              "2": 5.0,
+              "1": 6.0,
+              "5": 7.0,
+              "8": 8.0,
+              "4": 9.0,
+              "12": 10.0,
+              "14": 9.0,
+              "24": 8.0,
+              "17": 7.0,
+              "22": 6.0,
+              "19": 5.0,
+              "16": 4.0,
+              "23": 3.0,
+              "13": 2.0,
+              "20": 1.0,
+              "18": 0.0
+            }
+          },
+          {
+            "B": {
+              "3": 32.0,
+              "9": 36.2,
+              "15": 88.4,
+              "21": 88.60000000000001
+            },
+            "partida": 30.0,
+            "carga": {
+              "3": 1.0,
+              "9": 2.0,
+              "15": 1.0,
+              "21": 0.0
+            }
+          }
+        ]
+      },
+      "pedidos_pendentes": [],
+      "tempo_execucao": 3.5334914999839384,
+      "candidatos_testados": 5186,
+      "avaliacoes_rotas": 1520,
+      "historico": [
+        {
+          "etapa": 1,
+          "pedido_interno": 5,
+          "veiculo_indice": 0,
+          "posicao_coleta": 0,
+          "posicao_entrega_antes_da_insercao": 0,
+          "acrescimo_f1": 17883.49207361413,
+          "acrescimo_f2": 0.0,
+          "nota_insercao": 0.0,
+          "candidatos_viaveis": 144,
+          "faixas_normalizacao": [
+            [
+              17883.49207361413,
+              21650.99100720878
+            ],
+            [
+              0.0,
+              0.0
+            ]
+          ]
+        },
+        {
+          "etapa": 2,
+          "pedido_interno": 12,
+          "veiculo_indice": 0,
+          "posicao_coleta": 1,
+          "posicao_entrega_antes_da_insercao": 1,
+          "acrescimo_f1": 754.930666908811,
+          "acrescimo_f2": 7.6000000000000085,
+          "nota_insercao": 0.12837837837837848,
+          "candidatos_viaveis": 165,
+          "faixas_normalizacao": [
+            [
+              754.930666908811,
+              21650.99100720878
+            ],
+            [
+              0.0,
+              29.60000000000001
+            ]
+          ]
+        },
+        {
+          "etapa": 3,
+          "pedido_interno": 4,
+          "veiculo_indice": 0,
+          "posicao_coleta": 1,
+          "posicao_entrega_antes_da_insercao": 4,
+          "acrescimo_f1": 3706.6026910274595,
+          "acrescimo_f2": 6.200000000000017,
+          "nota_insercao": 0.12249245569108455,
+          "candidatos_viaveis": 200,
+          "faixas_normalizacao": [
+            [
+              779.2300692706667,
+              21650.99100720878
+            ],
+            [
+              0.0,
+              59.20000000000002
+            ]
+          ]
+        },
+        {
+          "etapa": 4,
+          "pedido_interno": 7,
+          "veiculo_indice": 0,
+          "posicao_coleta": 0,
+          "posicao_entrega_antes_da_insercao": 5,
+          "acrescimo_f1": 741.2492717714231,
+          "acrescimo_f2": 18.800000000000026,
+          "nota_insercao": 0.09325396825396837,
+          "candidatos_viaveis": 243,
+          "faixas_normalizacao": [
+            [
+              741.2492717714231,
+              21650.99100720878
+            ],
+            [
+              0.0,
+              100.80000000000001
+            ]
+          ]
+        },
+        {
+          "etapa": 5,
+          "pedido_interno": 2,
+          "veiculo_indice": 0,
+          "posicao_coleta": 1,
+          "posicao_entrega_antes_da_insercao": 4,
+          "acrescimo_f1": 779.2300692706667,
+          "acrescimo_f2": 29.400000000000034,
+          "nota_insercao": 0.1047008547008548,
+          "candidatos_viaveis": 285,
+          "faixas_normalizacao": [
+            [
+              779.2300692706667,
+              21650.99100720878
+            ],
+            [
+              0.0,
+              140.40000000000003
+            ]
+          ]
+        },
+        {
+          "etapa": 6,
+          "pedido_interno": 10,
+          "veiculo_indice": 0,
+          "posicao_coleta": 1,
+          "posicao_entrega_antes_da_insercao": 8,
+          "acrescimo_f1": 0.0,
+          "acrescimo_f2": 15.000000000000043,
+          "nota_insercao": 0.04437869822485219,
+          "candidatos_viaveis": 293,
+          "faixas_normalizacao": [
+            [
+              0.0,
+              21650.99100720878
+            ],
+            [
+              0.0,
+              169.00000000000003
+            ]
+          ]
+        },
+        {
+          "etapa": 7,
+          "pedido_interno": 8,
+          "veiculo_indice": 0,
+          "posicao_coleta": 4,
+          "posicao_entrega_antes_da_insercao": 12,
+          "acrescimo_f1": 1548.1940914019833,
+          "acrescimo_f2": 42.60000000000005,
+          "nota_insercao": 0.1046168958742634,
+          "candidatos_viaveis": 270,
+          "faixas_normalizacao": [
+            [
+              1548.1940914019833,
+              20211.595116566776
+            ],
+            [
+              0.0,
+              203.59999999999997
+            ]
+          ]
+        },
+        {
+          "etapa": 8,
+          "pedido_interno": 1,
+          "veiculo_indice": 0,
+          "posicao_coleta": 3,
+          "posicao_entrega_antes_da_insercao": 13,
+          "acrescimo_f1": 0.0,
+          "acrescimo_f2": 44.20000000000006,
+          "nota_insercao": 0.1452036793692512,
+          "candidatos_viaveis": 139,
+          "faixas_normalizacao": [
+            [
+              0.0,
+              20211.595116566776
+            ],
+            [
+              0.0,
+              152.2
+            ]
+          ]
+        },
+        {
+          "etapa": 9,
+          "pedido_interno": 11,
+          "veiculo_indice": 0,
+          "posicao_coleta": 1,
+          "posicao_entrega_antes_da_insercao": 14,
+          "acrescimo_f1": 0.0,
+          "acrescimo_f2": 51.00000000000006,
+          "nota_insercao": 0.2202072538860106,
+          "candidatos_viaveis": 93,
+          "faixas_normalizacao": [
+            [
+              0.0,
+              20211.595116566776
+            ],
+            [
+              0.0,
+              115.80000000000001
+            ]
+          ]
+        },
+        {
+          "etapa": 10,
+          "pedido_interno": 6,
+          "veiculo_indice": 0,
+          "posicao_coleta": 2,
+          "posicao_entrega_antes_da_insercao": 18,
+          "acrescimo_f1": 2145.629698059318,
+          "acrescimo_f2": 44.200000000000045,
+          "nota_insercao": 0.20425138632162673,
+          "candidatos_viaveis": 55,
+          "faixas_normalizacao": [
+            [
+              2145.629698059318,
+              20211.595116566776
+            ],
+            [
+              0.0,
+              108.20000000000005
+            ]
+          ]
+        },
+        {
+          "etapa": 11,
+          "pedido_interno": 9,
+          "veiculo_indice": 1,
+          "posicao_coleta": 0,
+          "posicao_entrega_antes_da_insercao": 0,
+          "acrescimo_f1": 20150.698873999583,
+          "acrescimo_f2": 0.0,
+          "nota_insercao": 0.0,
+          "candidatos_viaveis": 22,
+          "faixas_normalizacao": [
+            [
+              20150.698873999583,
+              20173.614319067532
+            ],
+            [
+              0.0,
+              0.0
+            ]
+          ]
+        },
+        {
+          "etapa": 12,
+          "pedido_interno": 3,
+          "veiculo_indice": 1,
+          "posicao_coleta": 0,
+          "posicao_entrega_antes_da_insercao": 1,
+          "acrescimo_f1": 741.2492717714194,
+          "acrescimo_f2": 8.600000000000009,
+          "nota_insercao": 0.5,
+          "candidatos_viaveis": 14,
+          "faixas_normalizacao": [
+            [
+              741.2492717714194,
+              20173.614319067532
+            ],
+            [
+              0.0,
+              8.600000000000009
+            ]
+          ]
+        }
+      ]
+    }
+  ]
+}

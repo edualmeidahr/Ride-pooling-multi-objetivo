@@ -1,0 +1,7 @@
+﻿Q,metodo,seed,solucao_equilibrada_id,f1_equilibrada,f2_equilibrada,veiculos_equilibrada,escore_equilibrio,solucao_menor_distancia_id,f1_menor_distancia,f2_menor_distancia,solucao_menor_tempo_id,f1_menor_tempo,f2_menor_tempo,tempo_busca,agendamentos,hv,hv_exato,hv_relativo,recuperacao_exata,cardinalidade,resolucoes_agendamento,cache_hits
+1,sa,42,Q1_sa_seed42_p0,92.0,0.0,2,0.0,Q1_sa_seed42_p0,92.0,0.0,Q1_sa_seed42_p0,92.0,0.0,0.016497200005687773,75,0.11000000000000011,0.11000000000000011,1.0,1.0,1,8,67
+1,ga,42,Q1_ga_seed42_p0,92.0,0.0,2,0.0,Q1_ga_seed42_p0,92.0,0.0,Q1_ga_seed42_p0,92.0,0.0,0.013834299985319376,80,0.11000000000000011,0.11000000000000011,1.0,1.0,1,8,72
+1,grasp,42,Q1_grasp_seed42_p0,92.0,0.0,2,0.0,Q1_grasp_seed42_p0,92.0,0.0,Q1_grasp_seed42_p0,92.0,0.0,0.014086100040003657,87,0.11000000000000011,0.11000000000000011,1.0,1.0,1,8,79
+2,sa,42,Q2_sa_seed42_p0,46.0,4.5,1,0.7071067811865476,Q2_sa_seed42_p0,46.0,4.5,Q2_sa_seed42_p1,92.0,0.0,0.013309399946592748,71,0.2100000000000002,0.2100000000000002,1.0,1.0,2,8,63
+2,ga,42,Q2_ga_seed42_p0,46.0,4.5,1,0.7071067811865476,Q2_ga_seed42_p0,46.0,4.5,Q2_ga_seed42_p1,92.0,0.0,0.013972099986858666,78,0.2100000000000002,0.2100000000000002,1.0,1.0,2,8,70
+2,grasp,42,Q2_grasp_seed42_p0,46.0,4.5,1,0.7071067811865476,Q2_grasp_seed42_p0,46.0,4.5,Q2_grasp_seed42_p1,92.0,0.0,0.014494400005787611,80,0.2100000000000002,0.2100000000000002,1.0,1.0,2,8,72

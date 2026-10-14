@@ -1,0 +1,1499 @@
+{
+  "config": {
+    "instancia": "dados/exemplo_pequeno.json",
+    "pedidos": [
+      1,
+      2
+    ],
+    "m": 2,
+    "capacidades": [
+      1,
+      2,
+      5,
+      7,
+      10
+    ],
+    "sementes": [
+      42
+    ],
+    "referencia": "exata",
+    "cache_agendas": true,
+    "coletas_antes_de_qualquer_entrega": true,
+    "parametros_avaliacao": {
+      "phi": 1,
+      "alpha": 2,
+      "politica": "otimo"
+    },
+    "algoritmos": {
+      "sa": {
+        "temp_inicial": 1,
+        "temp_final": 0.5,
+        "fator_resfriamento": 0.6,
+        "iter_por_temp": 3
+      },
+      "ga": {
+        "tamanho_populacao": 6,
+        "geracoes": 2
+      },
+      "grasp": {
+        "max_iteracoes": 2,
+        "max_passos_busca_local": 2
+      }
+    },
+    "saida": "resultados/validacao_emissoes",
+    "modelo_emissoes": {
+      "descricao": "Hipotese sintetica por categorias de veiculo. Valores em g CO2/km, nao medidos nem transcritos das referencias.",
+      "escopo": "CO2 operacional estimado; sem ciclo de vida, partida a frio ou marcha lenta explicitos",
+      "veiculos": [
+        {
+          "tipo": "automovel",
+          "q_min": 1,
+          "q_max": 4,
+          "phi_g_km": 180
+        },
+        {
+          "tipo": "veiculo_familiar",
+          "q_min": 5,
+          "q_max": 6,
+          "phi_g_km": 250
+        },
+        {
+          "tipo": "van",
+          "q_min": 7,
+          "q_max": 10,
+          "phi_g_km": 350
+        },
+        {
+          "tipo": "micro_onibus",
+          "q_min": 11,
+          "q_max": 20,
+          "phi_g_km": 500
+        }
+      ],
+      "ruas": {
+        "seed": 20261004,
+        "fator_min": 1.0,
+        "fator_max": 1.15
+      },
+      "referencias": [
+        "https://www.gov.br/inmetro/pt-br/assuntos/avaliacao-da-conformidade/programa-brasileiro-de-etiquetagem/tabelas-de-eficiencia-energetica/veiculos-automotivos-pbe-veicular",
+        "https://www.gov.uk/government/publications/greenhouse-gas-reporting-conversion-factors-2026",
+        "https://www.hbefa.net/en/methodology"
+      ]
+    },
+    "observacao": "CO2 sintetico com perfis por Q e fatores de rua fixos. Uma semente; sem estimativa de variabilidade ou prova de otimalidade."
+  },
+  "opcoes": {
+    "modo": "comparar",
+    "metodos": [
+      "exato",
+      "sa",
+      "ga",
+      "grasp",
+      "gulosa"
+    ],
+    "seed": 42,
+    "peso_emissao": 0.5,
+    "capacidades": [
+      1,
+      2
+    ]
+  },
+  "unidade_f1": "g_CO2",
+  "input_sha256": "0af8e5e1808fd7bf326f17b99f5e5204c201d48cd9f8c6f36436fd7871165c3e",
+  "ambiente_emissoes": {
+    "unidade_f1": "g_CO2",
+    "config": {
+      "descricao": "Hipotese sintetica por categorias de veiculo. Valores em g CO2/km, nao medidos nem transcritos das referencias.",
+      "escopo": "CO2 operacional estimado; sem ciclo de vida, partida a frio ou marcha lenta explicitos",
+      "veiculos": [
+        {
+          "tipo": "automovel",
+          "q_min": 1,
+          "q_max": 4,
+          "phi_g_km": 180
+        },
+        {
+          "tipo": "veiculo_familiar",
+          "q_min": 5,
+          "q_max": 6,
+          "phi_g_km": 250
+        },
+        {
+          "tipo": "van",
+          "q_min": 7,
+          "q_max": 10,
+          "phi_g_km": 350
+        },
+        {
+          "tipo": "micro_onibus",
+          "q_min": 11,
+          "q_max": 20,
+          "phi_g_km": 500
+        }
+      ],
+      "ruas": {
+        "seed": 20261004,
+        "fator_min": 1.0,
+        "fator_max": 1.15
+      },
+      "referencias": [
+        "https://www.gov.br/inmetro/pt-br/assuntos/avaliacao-da-conformidade/programa-brasileiro-de-etiquetagem/tabelas-de-eficiencia-energetica/veiculos-automotivos-pbe-veicular",
+        "https://www.gov.uk/government/publications/greenhouse-gas-reporting-conversion-factors-2026",
+        "https://www.hbefa.net/en/methodology"
+      ],
+      "capacidades": [
+        1,
+        2
+      ]
+    },
+    "fatores_arestas": [
+      {
+        "origem": 0,
+        "destino": 1,
+        "distancia": 1,
+        "fator": 1.0261911810049624
+      },
+      {
+        "origem": 1,
+        "destino": 2,
+        "distancia": 2,
+        "fator": 1.1131858132438102
+      },
+      {
+        "origem": 2,
+        "destino": 3,
+        "distancia": 20,
+        "fator": 1.0589275311020288
+      }
+    ],
+    "matriz_ambiental": [
+      {
+        "origem": 0,
+        "destino": 0,
+        "caminho": [
+          0
+        ],
+        "distancia": 0.0,
+        "distancia_ponderada": 0.0
+      },
+      {
+        "origem": 0,
+        "destino": 1,
+        "caminho": [
+          0,
+          1
+        ],
+        "distancia": 1.0,
+        "distancia_ponderada": 1.0261911810049624
+      },
+      {
+        "origem": 0,
+        "destino": 2,
+        "caminho": [
+          0,
+          1,
+          2
+        ],
+        "distancia": 3.0,
+        "distancia_ponderada": 3.2525628074925828
+      },
+      {
+        "origem": 0,
+        "destino": 3,
+        "caminho": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "distancia": 23.0,
+        "distancia_ponderada": 24.43111342953316
+      },
+      {
+        "origem": 1,
+        "destino": 0,
+        "caminho": [
+          1,
+          0
+        ],
+        "distancia": 1.0,
+        "distancia_ponderada": 1.0261911810049624
+      },
+      {
+        "origem": 1,
+        "destino": 1,
+        "caminho": [
+          1
+        ],
+        "distancia": 0.0,
+        "distancia_ponderada": 0.0
+      },
+      {
+        "origem": 1,
+        "destino": 2,
+        "caminho": [
+          1,
+          2
+        ],
+        "distancia": 2.0,
+        "distancia_ponderada": 2.2263716264876203
+      },
+      {
+        "origem": 1,
+        "destino": 3,
+        "caminho": [
+          1,
+          2,
+          3
+        ],
+        "distancia": 22.0,
+        "distancia_ponderada": 23.404922248528194
+      },
+      {
+        "origem": 2,
+        "destino": 0,
+        "caminho": [
+          2,
+          1,
+          0
+        ],
+        "distancia": 3.0,
+        "distancia_ponderada": 3.2525628074925828
+      },
+      {
+        "origem": 2,
+        "destino": 1,
+        "caminho": [
+          2,
+          1
+        ],
+        "distancia": 2.0,
+        "distancia_ponderada": 2.2263716264876203
+      },
+      {
+        "origem": 2,
+        "destino": 2,
+        "caminho": [
+          2
+        ],
+        "distancia": 0.0,
+        "distancia_ponderada": 0.0
+      },
+      {
+        "origem": 2,
+        "destino": 3,
+        "caminho": [
+          2,
+          3
+        ],
+        "distancia": 20.0,
+        "distancia_ponderada": 21.178550622040575
+      },
+      {
+        "origem": 3,
+        "destino": 0,
+        "caminho": [
+          3,
+          2,
+          1,
+          0
+        ],
+        "distancia": 23.0,
+        "distancia_ponderada": 24.431113429533156
+      },
+      {
+        "origem": 3,
+        "destino": 1,
+        "caminho": [
+          3,
+          2,
+          1
+        ],
+        "distancia": 22.0,
+        "distancia_ponderada": 23.404922248528194
+      },
+      {
+        "origem": 3,
+        "destino": 2,
+        "caminho": [
+          3,
+          2
+        ],
+        "distancia": 20.0,
+        "distancia_ponderada": 21.178550622040575
+      },
+      {
+        "origem": 3,
+        "destino": 3,
+        "caminho": [
+          3
+        ],
+        "distancia": 0.0,
+        "distancia_ponderada": 0.0
+      }
+    ],
+    "phi_por_q": {
+      "1": 180.0,
+      "2": 180.0
+    }
+  },
+  "fontes_sha256": {
+    "codigo\\menu.py": "fdb1c13f06bd9b3b4aa631ac62da6a361f0ab757353f4ee46f99b3ca20bffa5a",
+    "codigo\\darp\\avaliador.py": "77da91df6d734aef10fb46c47a4e73f3a48caa0d59946f0c25cae9c95925da28",
+    "codigo\\darp\\cenarios.py": "44f429ff347bc1ee4d13ee647e399eff17ff0e072b20b1ca18783a2560e0db29",
+    "codigo\\darp\\emissoes.py": "7f35765d0692090df7a68b915788392ff5bd1cb532edb5d828f7549dd9694319",
+    "codigo\\darp\\exato.py": "3c7489792398595721361815e63a5a3ca7c7ceaf447cb5945cf6948fc237b452",
+    "codigo\\darp\\instancia.py": "1fbd76f510282dd1f03d80f0058827bd4806cad98a3b27c6f98060b97a743f74",
+    "codigo\\darp\\leitor_res.py": "0578e52baa34539f62b0360be4adf7801faf7ad68143a4e28c6b5ae05b7a6a1f",
+    "codigo\\darp\\mip.py": "cd84754e25bc57bbb576723a3bd91574491190b9d2b796ebb710bc5552d722b2",
+    "codigo\\darp\\pareto.py": "39d4dabdc9c98fbe63395bc633ce6f3fa75353cbeb081caa3d810b9af57b415c",
+    "codigo\\darp\\rede.py": "3230e2bf5140058577186fef158e99a8154f3f1c36511ca8ba83e598728f767d",
+    "codigo\\darp\\solucao.py": "bef5ba603b198a8e32ce0cf716dd5e9c9475532048eafb4a93d447c6bf1866f3",
+    "codigo\\darp\\__init__.py": "62e0e338c3a66b8e3b083283b6108b01a2d8b1099373b57c9fad7103a2437c79",
+    "codigo\\experimentos\\capacidade_q.py": "85d7096b191131af21a01f48bd1762687cced49e49114a6b9421af377b6b9ec8",
+    "codigo\\experimentos\\comparar_metaheuristicas.py": "26c1590517e768e5419f4e5bb3538ad5af68325c3ab1042d6e8a1e40bba9379c",
+    "codigo\\experimentos\\conferir_registros_campanha.py": "42c4a33d26b2a640b95e1ffdab8b4656b6014030dd80c08eb99dbf0332f01d28",
+    "codigo\\experimentos\\executar_campanha.py": "d50acbeb0e3100cddf5fa678d77fe29f53a9b6aa1631a1be874bc5b09fc750ce",
+    "codigo\\experimentos\\executar_heuristica.py": "0d958afd6e033c221734157b4b04c56ffbcb9d07856966337afa77be3f62c29e",
+    "codigo\\experimentos\\fase2_fronteira.py": "6394787245c6abd42db7de064ca88f5a88eac1aeac42a82d74147024f9731a56",
+    "codigo\\experimentos\\gerar_graficos_campanha.py": "3d29958f5efadb35a2a46792ef395dcdc55b1359a2ab130f1a492adacf90bee5",
+    "codigo\\experimentos\\preparar_cenario_q10.py": "549b28b30c0e6bdc561d4a5223ac0e2ecbce1862ef6823b06c6e01b15a402dec",
+    "codigo\\experimentos\\preparar_experimentos_emissoes.py": "7436f9768f583b38a4cba86d266276534eb2bb4b280f98a402e5aed259ef98bb",
+    "codigo\\experimentos\\resumir_campanha.py": "38e03fe3df6b949e39e45743f72765ab7a529b2c349f7da344d1094dfa1ad780",
+    "codigo\\experimentos\\resumir_capacidade.py": "aafcbe1f77cda8fc5c34823103ff11d91251bf6bfe97856ea57de5db4b9e1813",
+    "codigo\\experimentos\\validar_cenario_q10.py": "50d82862215d7603cde78b4499d88e90273e07b9b0e812fcbeb45fe85443c136",
+    "codigo\\experimentos\\validar_emissoes.py": "2afc2a0435809161035c5a3d913bc1a83658b3f832e472a57414bd0da5dfe021",
+    "codigo\\experimentos\\validar_entrada_json.py": "ca563708a7c387ae00efedc99ff8571f1a54eea8245e70ad7a998866acf9ac7d",
+    "codigo\\experimentos\\validar_fase1.py": "034e2b3dd43104cb273e682465a4df978bec7f8c75dbb8b5a4880d01de302e32",
+    "codigo\\experimentos\\validar_heuristica.py": "7aa99a20e048a4c444a01c605b9ab04982c8e443bfdca0a440413a5860dcf1f6",
+    "codigo\\experimentos\\validar_menu.py": "55c1cabc8cfa30f73f574d40a2ed845b478f00cb2b67cb34b32054bc412d3af1",
+    "codigo\\experimentos\\validar_novo_modelo.py": "962ba12de42882af61c249cea2f5bbb566b809d547a63d717c1c2f4c8396c5cd",
+    "codigo\\experimentos\\validar_operadores.py": "7ff05e8cbba78a677897b245c6f8e7312b223d056ddac95f5790678e5cde00fb",
+    "codigo\\experimentos\\validar_resumos.py": "a50608acf7868ea711ccf1fa65caf21fd3e8ddadae89cad4f63b8b2caacecd1a",
+    "codigo\\darp\\heuristicas\\gulosa.py": "4edc99c9727a0f21eefff99a763909c00792286440707c6caaa8a13fb077eb2e",
+    "codigo\\darp\\heuristicas\\__init__.py": "0788551ddb8d89bf64ed5c9bf0800a597e5e948cd0aa00d428b1fc6fc71adc01",
+    "codigo\\darp\\metaheuristicas\\base.py": "396ae9c1f6648b206a6dbaac359d2db0b780838d3fcdeba31dd8463b7b457bf3",
+    "codigo\\darp\\metaheuristicas\\ga.py": "8078b68457009fab21556532df42213aa601f0aaac339d060933456211acbe6c",
+    "codigo\\darp\\metaheuristicas\\grasp.py": "2c5ea650177b06d11a28addc8013298c44f1f4150123d8c13bcd33ef76bf96c9",
+    "codigo\\darp\\metaheuristicas\\operadores.py": "0f0d967b0834176704cb34281bade0e3ff8b5d4984174c4d08c4bee830c1fb0a",
+    "codigo\\darp\\metaheuristicas\\sa.py": "a916bfc9cb6ffa1e5ddc368c47633f68460cecc23f94d3250a710a93e92f5974",
+    "codigo\\darp\\metaheuristicas\\__init__.py": "d41a3c58ad9323b2f5ab2dd66ccb6a1092441635cebc4d6366591174c3bcbe67"
+  },
+  "referencias": {
+    "1": {
+      "tipo": "exata",
+      "pontos": [
+        [
+          17590.401669263872,
+          0.0
+        ]
+      ]
+    },
+    "2": {
+      "tipo": "exata",
+      "pontos": [
+        [
+          8795.200834631936,
+          4.5
+        ],
+        [
+          17590.401669263872,
+          0.0
+        ]
+      ]
+    }
+  },
+  "execucoes": [
+    {
+      "Q": 1,
+      "categoria": "exato",
+      "metodo": "exato",
+      "status": "otimo",
+      "phi_g_km": 180.0,
+      "seed": null,
+      "tempo_busca_s": 1.5130891999870073,
+      "pontos": [
+        {
+          "solucao_id": "Q1_exato_p0",
+          "f1": 17590.401669263872,
+          "f2": 0.0,
+          "distancia_km": 92.0,
+          "espera": 0.0,
+          "desvio": 0.0,
+          "veiculos_usados": 2,
+          "carga_maxima": 1.0,
+          "rotas": [
+            [
+              1,
+              3
+            ],
+            [
+              2,
+              4
+            ]
+          ],
+          "agendas": [
+            {
+              "B": {
+                "1": 30.0,
+                "3": 74.5
+              },
+              "partida": 28.0,
+              "carga": {
+                "1": 1.0,
+                "3": 0.0
+              }
+            },
+            {
+              "B": {
+                "2": 31.0,
+                "4": 71.5
+              },
+              "partida": 25.0,
+              "carga": {
+                "2": 1.0,
+                "4": 0.0
+              }
+            }
+          ]
+        }
+      ],
+      "historico": [],
+      "pedidos_pendentes": []
+    },
+    {
+      "Q": 1,
+      "categoria": "metaheuristica",
+      "metodo": "sa",
+      "status": "concluida",
+      "phi_g_km": 180.0,
+      "seed": 42,
+      "tempo_busca_s": 0.0211264000099618,
+      "pontos": [
+        {
+          "solucao_id": "Q1_sa_p0",
+          "f1": 17590.401669263872,
+          "f2": 0.0,
+          "distancia_km": 92.0,
+          "espera": 0.0,
+          "desvio": 0.0,
+          "veiculos_usados": 2,
+          "carga_maxima": 1.0,
+          "rotas": [
+            [
+              1,
+              3
+            ],
+            [
+              2,
+              4
+            ]
+          ],
+          "agendas": [
+            {
+              "B": {
+                "1": 30.0,
+                "3": 74.5
+              },
+              "partida": 28.0,
+              "carga": {
+                "1": 1.0,
+                "3": 0.0
+              }
+            },
+            {
+              "B": {
+                "2": 31.0,
+                "4": 71.5
+              },
+              "partida": 25.0,
+              "carga": {
+                "2": 1.0,
+                "4": 0.0
+              }
+            }
+          ]
+        }
+      ],
+      "historico": [
+        {
+          "trajetoria": 0,
+          "temperatura": 1,
+          "tamanho_pareto": 1,
+          "fronteira": [
+            [
+              17590.401669263872,
+              0.0
+            ]
+          ],
+          "agendamentos": null,
+          "tempo": 0.019010543823242188
+        },
+        {
+          "trajetoria": 0,
+          "temperatura": 0.6,
+          "tamanho_pareto": 1,
+          "fronteira": [
+            [
+              17590.401669263872,
+              0.0
+            ]
+          ],
+          "agendamentos": null,
+          "tempo": 0.019010543823242188
+        },
+        {
+          "trajetoria": 1,
+          "temperatura": 1,
+          "tamanho_pareto": 1,
+          "fronteira": [
+            [
+              17590.401669263872,
+              0.0
+            ]
+          ],
+          "agendamentos": null,
+          "tempo": 0.02001047134399414
+        },
+        {
+          "trajetoria": 1,
+          "temperatura": 0.6,
+          "tamanho_pareto": 1,
+          "fronteira": [
+            [
+              17590.401669263872,
+              0.0
+            ]
+          ],
+          "agendamentos": null,
+          "tempo": 0.0209958553314209
+        },
+        {
+          "trajetoria": 2,
+          "temperatura": 1,
+          "tamanho_pareto": 1,
+          "fronteira": [
+            [
+              17590.401669263872,
+              0.0
+            ]
+          ],
+          "agendamentos": null,
+          "tempo": 0.0209958553314209
+        },
+        {
+          "trajetoria": 2,
+          "temperatura": 0.6,
+          "tamanho_pareto": 1,
+          "fronteira": [
+            [
+              17590.401669263872,
+              0.0
+            ]
+          ],
+          "agendamentos": null,
+          "tempo": 0.022008895874023438
+        }
+      ],
+      "pedidos_pendentes": []
+    },
+    {
+      "Q": 1,
+      "categoria": "metaheuristica",
+      "metodo": "ga",
+      "status": "concluida",
+      "phi_g_km": 180.0,
+      "seed": 42,
+      "tempo_busca_s": 0.020581600023433566,
+      "pontos": [
+        {
+          "solucao_id": "Q1_ga_p0",
+          "f1": 17590.401669263872,
+          "f2": 0.0,
+          "distancia_km": 92.0,
+          "espera": 0.0,
+          "desvio": 0.0,
+          "veiculos_usados": 2,
+          "carga_maxima": 1.0,
+          "rotas": [
+            [
+              1,
+              3
+            ],
+            [
+              2,
+              4
+            ]
+          ],
+          "agendas": [
+            {
+              "B": {
+                "1": 30.0,
+                "3": 74.5
+              },
+              "partida": 28.0,
+              "carga": {
+                "1": 1.0,
+                "3": 0.0
+              }
+            },
+            {
+              "B": {
+                "2": 31.0,
+                "4": 71.5
+              },
+              "partida": 25.0,
+              "carga": {
+                "2": 1.0,
+                "4": 0.0
+              }
+            }
+          ]
+        }
+      ],
+      "historico": [
+        {
+          "geracao": 0,
+          "tamanho_pareto": 1,
+          "fronteira": [
+            [
+              17590.401669263872,
+              0.0
+            ]
+          ],
+          "agendamentos": null,
+          "tempo": 0.01920175552368164
+        },
+        {
+          "geracao": 1,
+          "tamanho_pareto": 1,
+          "fronteira": [
+            [
+              17590.401669263872,
+              0.0
+            ]
+          ],
+          "agendamentos": null,
+          "tempo": 0.02120065689086914
+        }
+      ],
+      "pedidos_pendentes": []
+    },
+    {
+      "Q": 1,
+      "categoria": "metaheuristica",
+      "metodo": "grasp",
+      "status": "concluida",
+      "phi_g_km": 180.0,
+      "seed": 42,
+      "tempo_busca_s": 0.01869769999757409,
+      "pontos": [
+        {
+          "solucao_id": "Q1_grasp_p0",
+          "f1": 17590.401669263872,
+          "f2": 0.0,
+          "distancia_km": 92.0,
+          "espera": 0.0,
+          "desvio": 0.0,
+          "veiculos_usados": 2,
+          "carga_maxima": 1.0,
+          "rotas": [
+            [
+              1,
+              3
+            ],
+            [
+              2,
+              4
+            ]
+          ],
+          "agendas": [
+            {
+              "B": {
+                "1": 30.0,
+                "3": 74.5
+              },
+              "partida": 28.0,
+              "carga": {
+                "1": 1.0,
+                "3": 0.0
+              }
+            },
+            {
+              "B": {
+                "2": 31.0,
+                "4": 71.5
+              },
+              "partida": 25.0,
+              "carga": {
+                "2": 1.0,
+                "4": 0.0
+              }
+            }
+          ]
+        }
+      ],
+      "historico": [
+        {
+          "iteracao": 0,
+          "peso_f1": 0.05,
+          "tamanho_pareto": 1,
+          "fronteira": [
+            [
+              17590.401669263872,
+              0.0
+            ]
+          ],
+          "agendamentos": null,
+          "tempo": 0.01699995994567871
+        },
+        {
+          "iteracao": 1,
+          "peso_f1": 0.9500000000000001,
+          "tamanho_pareto": 1,
+          "fronteira": [
+            [
+              17590.401669263872,
+              0.0
+            ]
+          ],
+          "agendamentos": null,
+          "tempo": 0.018999814987182617
+        }
+      ],
+      "pedidos_pendentes": []
+    },
+    {
+      "Q": 1,
+      "categoria": "heuristica",
+      "metodo": "gulosa",
+      "status": "concluida",
+      "phi_g_km": 180.0,
+      "seed": null,
+      "tempo_busca_s": 0.006174199981614947,
+      "pontos": [
+        {
+          "solucao_id": "Q1_gulosa_p0",
+          "f1": 17590.401669263872,
+          "f2": 0.0,
+          "distancia_km": 92.0,
+          "espera": 0.0,
+          "desvio": 0.0,
+          "veiculos_usados": 2,
+          "carga_maxima": 1.0,
+          "rotas": [
+            [
+              1,
+              3
+            ],
+            [
+              2,
+              4
+            ]
+          ],
+          "agendas": [
+            {
+              "B": {
+                "1": 30.0,
+                "3": 74.5
+              },
+              "partida": 28.0,
+              "carga": {
+                "1": 1.0,
+                "3": 0.0
+              }
+            },
+            {
+              "B": {
+                "2": 31.0,
+                "4": 71.5
+              },
+              "partida": 25.0,
+              "carga": {
+                "2": 1.0,
+                "4": 0.0
+              }
+            }
+          ]
+        }
+      ],
+      "historico": [
+        {
+          "etapa": 1,
+          "pedido_interno": 1,
+          "veiculo_indice": 0,
+          "posicao_coleta": 0,
+          "posicao_entrega_antes_da_insercao": 0,
+          "acrescimo_f1": 8795.200834631936,
+          "acrescimo_f2": 0.0,
+          "nota_insercao": 0.0,
+          "candidatos_viaveis": 4,
+          "faixas_normalizacao": [
+            [
+              8795.200834631936,
+              8795.200834631936
+            ],
+            [
+              0.0,
+              0.0
+            ]
+          ]
+        },
+        {
+          "etapa": 2,
+          "pedido_interno": 2,
+          "veiculo_indice": 1,
+          "posicao_coleta": 0,
+          "posicao_entrega_antes_da_insercao": 0,
+          "acrescimo_f1": 8795.200834631936,
+          "acrescimo_f2": 0.0,
+          "nota_insercao": 0.0,
+          "candidatos_viaveis": 1,
+          "faixas_normalizacao": [
+            [
+              8795.200834631936,
+              8795.200834631936
+            ],
+            [
+              0.0,
+              0.0
+            ]
+          ]
+        }
+      ],
+      "pedidos_pendentes": []
+    },
+    {
+      "Q": 2,
+      "categoria": "exato",
+      "metodo": "exato",
+      "status": "otimo",
+      "phi_g_km": 180.0,
+      "seed": null,
+      "tempo_busca_s": 0.0096303999889642,
+      "pontos": [
+        {
+          "solucao_id": "Q2_exato_p0",
+          "f1": 8795.200834631936,
+          "f2": 4.5,
+          "distancia_km": 46.0,
+          "espera": 3.5,
+          "desvio": 1.0,
+          "veiculos_usados": 1,
+          "carga_maxima": 2.0,
+          "rotas": [
+            [
+              1,
+              2,
+              3,
+              4
+            ]
+          ],
+          "agendas": [
+            {
+              "B": {
+                "1": 30.0,
+                "2": 34.5,
+                "3": 75.0,
+                "4": 75.5
+              },
+              "partida": 28.0,
+              "carga": {
+                "1": 1.0,
+                "2": 2.0,
+                "3": 1.0,
+                "4": 0.0
+              }
+            }
+          ]
+        },
+        {
+          "solucao_id": "Q2_exato_p1",
+          "f1": 17590.401669263872,
+          "f2": 0.0,
+          "distancia_km": 92.0,
+          "espera": 0.0,
+          "desvio": 0.0,
+          "veiculos_usados": 2,
+          "carga_maxima": 1.0,
+          "rotas": [
+            [
+              1,
+              3
+            ],
+            [
+              2,
+              4
+            ]
+          ],
+          "agendas": [
+            {
+              "B": {
+                "1": 30.0,
+                "3": 74.5
+              },
+              "partida": 28.0,
+              "carga": {
+                "1": 1.0,
+                "3": 0.0
+              }
+            },
+            {
+              "B": {
+                "2": 31.0,
+                "4": 71.5
+              },
+              "partida": 25.0,
+              "carga": {
+                "2": 1.0,
+                "4": 0.0
+              }
+            }
+          ]
+        }
+      ],
+      "historico": [],
+      "pedidos_pendentes": []
+    },
+    {
+      "Q": 2,
+      "categoria": "metaheuristica",
+      "metodo": "sa",
+      "status": "concluida",
+      "phi_g_km": 180.0,
+      "seed": 42,
+      "tempo_busca_s": 0.02016610000282526,
+      "pontos": [
+        {
+          "solucao_id": "Q2_sa_p0",
+          "f1": 8795.200834631936,
+          "f2": 4.5,
+          "distancia_km": 46.0,
+          "espera": 3.5,
+          "desvio": 1.0,
+          "veiculos_usados": 1,
+          "carga_maxima": 2.0,
+          "rotas": [
+            [
+              1,
+              2,
+              4,
+              3
+            ],
+            []
+          ],
+          "agendas": [
+            {
+              "B": {
+                "1": 30.0,
+                "2": 34.5,
+                "4": 75.0,
+                "3": 75.5
+              },
+              "partida": 28.0,
+              "carga": {
+                "1": 1.0,
+                "2": 2.0,
+                "4": 1.0,
+                "3": 0.0
+              }
+            }
+          ]
+        },
+        {
+          "solucao_id": "Q2_sa_p1",
+          "f1": 17590.401669263872,
+          "f2": 0.0,
+          "distancia_km": 92.0,
+          "espera": 0.0,
+          "desvio": 0.0,
+          "veiculos_usados": 2,
+          "carga_maxima": 1.0,
+          "rotas": [
+            [
+              1,
+              3
+            ],
+            [
+              2,
+              4
+            ]
+          ],
+          "agendas": [
+            {
+              "B": {
+                "1": 30.0,
+                "3": 74.5
+              },
+              "partida": 28.0,
+              "carga": {
+                "1": 1.0,
+                "3": 0.0
+              }
+            },
+            {
+              "B": {
+                "2": 31.0,
+                "4": 71.5
+              },
+              "partida": 25.0,
+              "carga": {
+                "2": 1.0,
+                "4": 0.0
+              }
+            }
+          ]
+        }
+      ],
+      "historico": [
+        {
+          "trajetoria": 0,
+          "temperatura": 1,
+          "tamanho_pareto": 2,
+          "fronteira": [
+            [
+              8795.200834631936,
+              4.5
+            ],
+            [
+              17590.401669263872,
+              0.0
+            ]
+          ],
+          "agendamentos": null,
+          "tempo": 0.017998933792114258
+        },
+        {
+          "trajetoria": 0,
+          "temperatura": 0.6,
+          "tamanho_pareto": 2,
+          "fronteira": [
+            [
+              8795.200834631936,
+              4.5
+            ],
+            [
+              17590.401669263872,
+              0.0
+            ]
+          ],
+          "agendamentos": null,
+          "tempo": 0.017998933792114258
+        },
+        {
+          "trajetoria": 1,
+          "temperatura": 1,
+          "tamanho_pareto": 2,
+          "fronteira": [
+            [
+              8795.200834631936,
+              4.5
+            ],
+            [
+              17590.401669263872,
+              0.0
+            ]
+          ],
+          "agendamentos": null,
+          "tempo": 0.018998384475708008
+        },
+        {
+          "trajetoria": 1,
+          "temperatura": 0.6,
+          "tamanho_pareto": 2,
+          "fronteira": [
+            [
+              8795.200834631936,
+              4.5
+            ],
+            [
+              17590.401669263872,
+              0.0
+            ]
+          ],
+          "agendamentos": null,
+          "tempo": 0.018998384475708008
+        },
+        {
+          "trajetoria": 2,
+          "temperatura": 1,
+          "tamanho_pareto": 2,
+          "fronteira": [
+            [
+              8795.200834631936,
+              4.5
+            ],
+            [
+              17590.401669263872,
+              0.0
+            ]
+          ],
+          "agendamentos": null,
+          "tempo": 0.01999521255493164
+        },
+        {
+          "trajetoria": 2,
+          "temperatura": 0.6,
+          "tamanho_pareto": 2,
+          "fronteira": [
+            [
+              8795.200834631936,
+              4.5
+            ],
+            [
+              17590.401669263872,
+              0.0
+            ]
+          ],
+          "agendamentos": null,
+          "tempo": 0.01999521255493164
+        }
+      ],
+      "pedidos_pendentes": []
+    },
+    {
+      "Q": 2,
+      "categoria": "metaheuristica",
+      "metodo": "ga",
+      "status": "concluida",
+      "phi_g_km": 180.0,
+      "seed": 42,
+      "tempo_busca_s": 0.01984019999508746,
+      "pontos": [
+        {
+          "solucao_id": "Q2_ga_p0",
+          "f1": 8795.200834631936,
+          "f2": 4.5,
+          "distancia_km": 46.0,
+          "espera": 3.5,
+          "desvio": 1.0,
+          "veiculos_usados": 1,
+          "carga_maxima": 2.0,
+          "rotas": [
+            [
+              1,
+              2,
+              3,
+              4
+            ],
+            []
+          ],
+          "agendas": [
+            {
+              "B": {
+                "1": 30.0,
+                "2": 34.5,
+                "3": 75.0,
+                "4": 75.5
+              },
+              "partida": 28.0,
+              "carga": {
+                "1": 1.0,
+                "2": 2.0,
+                "3": 1.0,
+                "4": 0.0
+              }
+            }
+          ]
+        },
+        {
+          "solucao_id": "Q2_ga_p1",
+          "f1": 17590.401669263872,
+          "f2": 0.0,
+          "distancia_km": 92.0,
+          "espera": 0.0,
+          "desvio": 0.0,
+          "veiculos_usados": 2,
+          "carga_maxima": 1.0,
+          "rotas": [
+            [
+              1,
+              3
+            ],
+            [
+              2,
+              4
+            ]
+          ],
+          "agendas": [
+            {
+              "B": {
+                "1": 30.0,
+                "3": 74.5
+              },
+              "partida": 28.0,
+              "carga": {
+                "1": 1.0,
+                "3": 0.0
+              }
+            },
+            {
+              "B": {
+                "2": 31.0,
+                "4": 71.5
+              },
+              "partida": 25.0,
+              "carga": {
+                "2": 1.0,
+                "4": 0.0
+              }
+            }
+          ]
+        }
+      ],
+      "historico": [
+        {
+          "geracao": 0,
+          "tamanho_pareto": 2,
+          "fronteira": [
+            [
+              8795.200834631936,
+              4.5
+            ],
+            [
+              17590.401669263872,
+              0.0
+            ]
+          ],
+          "agendamentos": null,
+          "tempo": 0.018342971801757812
+        },
+        {
+          "geracao": 1,
+          "tamanho_pareto": 2,
+          "fronteira": [
+            [
+              8795.200834631936,
+              4.5
+            ],
+            [
+              17590.401669263872,
+              0.0
+            ]
+          ],
+          "agendamentos": null,
+          "tempo": 0.01934814453125
+        }
+      ],
+      "pedidos_pendentes": []
+    },
+    {
+      "Q": 2,
+      "categoria": "metaheuristica",
+      "metodo": "grasp",
+      "status": "concluida",
+      "phi_g_km": 180.0,
+      "seed": 42,
+      "tempo_busca_s": 0.022251799993682653,
+      "pontos": [
+        {
+          "solucao_id": "Q2_grasp_p0",
+          "f1": 8795.200834631936,
+          "f2": 4.5,
+          "distancia_km": 46.0,
+          "espera": 3.5,
+          "desvio": 1.0,
+          "veiculos_usados": 1,
+          "carga_maxima": 2.0,
+          "rotas": [
+            [
+              1,
+              2,
+              3,
+              4
+            ],
+            []
+          ],
+          "agendas": [
+            {
+              "B": {
+                "1": 30.0,
+                "2": 34.5,
+                "3": 75.0,
+                "4": 75.5
+              },
+              "partida": 28.0,
+              "carga": {
+                "1": 1.0,
+                "2": 2.0,
+                "3": 1.0,
+                "4": 0.0
+              }
+            }
+          ]
+        },
+        {
+          "solucao_id": "Q2_grasp_p1",
+          "f1": 17590.401669263872,
+          "f2": 0.0,
+          "distancia_km": 92.0,
+          "espera": 0.0,
+          "desvio": 0.0,
+          "veiculos_usados": 2,
+          "carga_maxima": 1.0,
+          "rotas": [
+            [
+              1,
+              3
+            ],
+            [
+              2,
+              4
+            ]
+          ],
+          "agendas": [
+            {
+              "B": {
+                "1": 30.0,
+                "3": 74.5
+              },
+              "partida": 28.0,
+              "carga": {
+                "1": 1.0,
+                "3": 0.0
+              }
+            },
+            {
+              "B": {
+                "2": 31.0,
+                "4": 71.5
+              },
+              "partida": 25.0,
+              "carga": {
+                "2": 1.0,
+                "4": 0.0
+              }
+            }
+          ]
+        }
+      ],
+      "historico": [
+        {
+          "iteracao": 0,
+          "peso_f1": 0.05,
+          "tamanho_pareto": 1,
+          "fronteira": [
+            [
+              17590.401669263872,
+              0.0
+            ]
+          ],
+          "agendamentos": null,
+          "tempo": 0.020015716552734375
+        },
+        {
+          "iteracao": 1,
+          "peso_f1": 0.9500000000000001,
+          "tamanho_pareto": 2,
+          "fronteira": [
+            [
+              8795.200834631936,
+              4.5
+            ],
+            [
+              17590.401669263872,
+              0.0
+            ]
+          ],
+          "agendamentos": null,
+          "tempo": 0.02199840545654297
+        }
+      ],
+      "pedidos_pendentes": []
+    },
+    {
+      "Q": 2,
+      "categoria": "heuristica",
+      "metodo": "gulosa",
+      "status": "concluida",
+      "phi_g_km": 180.0,
+      "seed": null,
+      "tempo_busca_s": 0.008765599981416017,
+      "pontos": [
+        {
+          "solucao_id": "Q2_gulosa_p0",
+          "f1": 8795.200834631936,
+          "f2": 4.5,
+          "distancia_km": 46.0,
+          "espera": 3.5,
+          "desvio": 1.0,
+          "veiculos_usados": 1,
+          "carga_maxima": 2.0,
+          "rotas": [
+            [
+              1,
+              2,
+              4,
+              3
+            ],
+            []
+          ],
+          "agendas": [
+            {
+              "B": {
+                "1": 30.0,
+                "2": 34.5,
+                "4": 75.0,
+                "3": 75.5
+              },
+              "partida": 28.0,
+              "carga": {
+                "1": 1.0,
+                "2": 2.0,
+                "4": 1.0,
+                "3": 0.0
+              }
+            }
+          ]
+        }
+      ],
+      "historico": [
+        {
+          "etapa": 1,
+          "pedido_interno": 1,
+          "veiculo_indice": 0,
+          "posicao_coleta": 0,
+          "posicao_entrega_antes_da_insercao": 0,
+          "acrescimo_f1": 8795.200834631936,
+          "acrescimo_f2": 0.0,
+          "nota_insercao": 0.0,
+          "candidatos_viaveis": 4,
+          "faixas_normalizacao": [
+            [
+              8795.200834631936,
+              8795.200834631936
+            ],
+            [
+              0.0,
+              0.0
+            ]
+          ]
+        },
+        {
+          "etapa": 2,
+          "pedido_interno": 2,
+          "veiculo_indice": 0,
+          "posicao_coleta": 1,
+          "posicao_entrega_antes_da_insercao": 1,
+          "acrescimo_f1": 0.0,
+          "acrescimo_f2": 4.5,
+          "nota_insercao": 0.5,
+          "candidatos_viaveis": 3,
+          "faixas_normalizacao": [
+            [
+              0.0,
+              8795.200834631936
+            ],
+            [
+              0.0,
+              4.5
+            ]
+          ]
+        }
+      ],
+      "pedidos_pendentes": []
+    }
+  ],
+  "concluida": true
+}

@@ -38,6 +38,8 @@ def main():
     qs = dados["config"]["capacidades"]
     seeds = dados["config"]["sementes"]
     runs = dados["execucoes"]
+    ambiental = bool(dados.get("ambiente_emissoes"))
+    eixo_f1 = "Emissão total estimada (g CO₂)" if ambiental else "Distância total da frota (km)"
     exata = dados.get("tipo_referencia", "exata") == "exata"
     rotulo_ref = "Exata" if exata else "Referência empírica"
     descricao_ref = "gabarito exato" if exata else "união não dominada dos métodos e sementes, para o mesmo Q"
@@ -106,7 +108,7 @@ def main():
         ax.set_title(f"Q = {Q}", loc="left")
         ax.set_xlim(0, maxx * 1.08)
         ax.set_ylim(-maxy * 0.045, maxy * 1.1)
-        ax.set_xlabel("Distância total da frota (km)")
+        ax.set_xlabel(eixo_f1)
         ax.set_ylabel("Tempo perdido (passageiro-minutos)")
         eixo(ax)
     legend = [Line2D([0], [0], color="#202938", linestyle="--", label=rotulo_ref)]
@@ -127,12 +129,12 @@ def main():
            f"100% significa o mesmo hipervolume da referência: {descricao_ref}. Valores menores revelam alternativas ainda não recuperadas.",
            "Mesma normalização para todas as capacidades e sementes; a faixa é mínimo–máximo, não intervalo de confiança.")
 
-    fig, ax = figura("Distância mínima encontrada por capacidade", contexto + " · mediana e intervalo mínimo–máximo")
+    fig, ax = figura("Emissão mínima encontrada por capacidade" if ambiental else "Distância mínima encontrada por capacidade", contexto + " · mediana e intervalo mínimo–máximo")
     faixa(ax, "min_f1")
     ax.plot(qs, [min(p[0] for p in dados["referencias"][str(q)]["pontos"]) for q in qs],
             color="#202938", linestyle="--", label=rotulo_ref)
     ax.set_ylim(bottom=0)
-    ax.set_ylabel("Menor distância da fronteira (km)")
+    ax.set_ylabel("Menor emissão da fronteira (g CO₂)" if ambiental else "Menor distância da fronteira (km)")
     ax.legend(frameon=False, ncol=4)
     salvar(fig, "03_distancia_por_q", "Benefício e saturação da capacidade",
            "Mostra quanto a capacidade adicional reduz a melhor distância. Um patamar indica saturação nessa instância.",
@@ -239,7 +241,7 @@ def main():
             ax.plot([p[0] for p in pontos],[max(0,p[1]) for p in pontos],
                     color=mapa(0.10+0.75*(q-min(qs))/max(1,max(qs)-min(qs))),marker="o",markersize=3,
                     linewidth=1.2,label=f"Q={q}")
-        ax.set_xlabel("Distância total da frota (km)")
+        ax.set_xlabel(eixo_f1)
         ax.set_ylabel("Tempo perdido (passageiro-minutos)")
         ax.set_xlim(left=0)
         ax.set_ylim(bottom=0)
@@ -263,6 +265,7 @@ def main():
         "Capacidades maiores que a demanda total tornam-se redundantes. Patamares antes disso também podem ocorrer pela geometria e pelas janelas.", "",
         "## Configuração e dados reproduzíveis", "",
         "Configuração completa, versões, hash da entrada, hash dos fontes, rotas, horários e checkpoints: [execucoes.json](execucoes.json).",
+        "Soluções reais com objetivos pareados e critério explícito de equilíbrio: [RESUMO_SOLUCOES.md](RESUMO_SOLUCOES.md). Os extremos de distância e tempo não devem ser combinados como se fossem uma única solução.",
         "Métricas por capacidade/método/semente: [metricas.csv](metricas.csv).", "",
         "## Resumo observado por capacidade", "",
         "A distância abaixo é o menor valor na referência. As três últimas colunas mostram a mediana de qualidade relativa nas sementes; não comparam qualidade absoluta entre capacidades.", "",
@@ -338,6 +341,29 @@ def main():
         "5. Estudar alpha=1.5/2 e cenários com mais/menos veículos sem misturar seus efeitos com Q.",
         "6. Para emissões reais, adotar redes e fatores por veículo calibrados; com phi(Q), melhoria de emissão ao aumentar Q deixa de ser garantida.",
         "7. Alinhar o relatório acadêmico ao conjunto de métodos escolhido e consolidar a campanha final."]
+    if ambiental:
+        linhas = ["# Guia dos gráficos: emissão estimada e tempo perdido", "", contexto, "",
+            f"{len(runs)} execuções; {len(seeds)} semente(s) por método/Q. Referência: {descricao_ref}.", "",
+            "f1 é CO2 operacional estimado, em gramas: phi(Q) × soma das distâncias ponderadas pelas ruas. "
+            "Fatores são sintéticos, não calibrados. A distância física permanece separada no JSON. "
+            "Os perfis, fatores sorteados e caminhos físicos estão em [ambiente_emissoes.json](ambiente_emissoes.json).", "",
+            "Aumentar Q altera também phi: o ótimo de emissão não é necessariamente monotônico. "
+            "Escolhas de veículos e capacidade variam juntas neste protocolo; não isola o efeito de Q. "
+            "Uma semente não estima variabilidade: quando há uma, a faixa mínimo–máximo tem largura zero.", "",
+            "[Soluções reais e critério de escolha](RESUMO_SOLUCOES.md) · [Resumo por execução](metricas.csv)", "",
+            "Tempo perdido é espera após a coleta desejada mais excesso a bordo, em passageiro-minutos. "
+            "Não é a duração total da viagem. O hipervolume relativo mede cobertura da referência, não erro percentual da emissão. "
+            "As linhas das fronteiras conectam soluções discretas; interpolar não cria uma solução viável.", ""]
+        for nome, titulo, leitura, nota in guias:
+            titulo = titulo.replace("Distância", "Emissão estimada").replace("distância", "emissão estimada")
+            leitura = leitura.replace("distância", "emissão estimada")
+            if nome == "03_distancia_por_q":
+                leitura = "Menor emissão encontrada em cada execução. Pode subir ao mudar a categoria do veículo. Não representa simultaneamente o melhor serviço."
+            if nome == "10_fronteiras_todos_q":
+                nota = "Referências empíricas: buscas incompletas e phi diferente entre categorias influenciam as curvas. Não há prova de otimalidade."
+            linhas += [f"## {titulo}", "", leitura, "", nota, "",
+                       f"![{titulo}](graficos/{nome}.png)", "",
+                       f"[PNG](graficos/{nome}.png) · [SVG](graficos/{nome}.svg)", ""]
     (args.resultados / "GUIA_RESULTADOS.md").write_text("\n".join(linhas) + "\n", encoding="utf-8")
     print(f"{len(guias)} figuras PNG/SVG e guia em {args.resultados}")
 

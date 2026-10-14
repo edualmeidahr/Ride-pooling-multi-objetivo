@@ -9,6 +9,7 @@ sys.path.insert(0,str(Path(__file__).resolve().parents[1]))
 from darp import ler_instancia_json, ler_instancia
 from darp.instancia import reduzir
 from darp.pareto import filtrar, hipervolume, normalizar
+from darp.emissoes import preparar_ambiente, phi_para_q
 
 
 def conferir(pasta):
@@ -23,6 +24,11 @@ def conferir(pasta):
     caminho=raiz/c["instancia"]
     base=(ler_instancia_json(caminho,Q=min(c["capacidades"])) if caminho.suffix.lower()==".json" else ler_instancia(caminho))
     inst=reduzir(base,c["pedidos"],m=c["m"])
+    ambiental = c.get("modelo_emissoes")
+    if ambiental:
+        inst, ambiente = preparar_ambiente(inst, json.loads(caminho.read_text(encoding="utf-8")),
+                                          {**ambiental, "capacidades": c["capacidades"]})
+        assert ambiente == d["ambiente_emissoes"]
     n_pontos=0
     for r in d["execucoes"]:
         assert r["agendamentos"]==r["resolucoes_agendamento"]+r["cache_hits"]
@@ -31,11 +37,12 @@ def conferir(pasta):
             assert len(visitados)==2*inst.n and set(visitados)==set(inst.atendimento)
             rotas=[rota for rota in p["rotas"] if rota]
             assert len(rotas)<=inst.m and len(rotas)==len(p["agendas"])
-            km=desvio=espera=0.0
+            km=desvio=espera=ponderada=0.0
             max_carga=0
             for rota,agenda in zip(rotas,p["agendas"]):
                 caminho=[inst.deposito_ini]+rota+[inst.deposito_fim]
                 km+=sum(inst.dist(a,b) for a,b in zip(caminho,caminho[1:]))
+                ponderada+=sum(inst.dist_ambiental(a,b) for a,b in zip(caminho,caminho[1:]))
                 B={int(i):v for i,v in agenda["B"].items()}
                 partida=agenda["partida"]
                 retorno=B[rota[-1]]+inst.nos[rota[-1]].s+inst.tempo(rota[-1],inst.deposito_fim)
@@ -59,7 +66,10 @@ def conferir(pasta):
                 assert carga==0
                 for a,b in zip(rota,rota[1:]):
                     assert B[b]>=B[a]+inst.nos[a].s+inst.tempo(a,b)-1e-6
-            assert abs(p["f1"]-c["parametros_avaliacao"]["phi"]*km)<1e-6
+            phi = phi_para_q(ambiental, r["Q"]) if ambiental else c["parametros_avaliacao"]["phi"]
+            assert abs(p["f1"]-phi*ponderada)<1e-6
+            if "distancia" in p:
+                assert abs(p["distancia"]-km)<1e-6
             assert abs(p["f2"]-desvio-espera)<1e-6
             assert abs(p["desvio"]-desvio)<1e-6 and abs(p["espera"]-espera)<1e-6
             assert p["veiculos_usados"]==len(rotas) and p["carga_maxima"]==max_carga

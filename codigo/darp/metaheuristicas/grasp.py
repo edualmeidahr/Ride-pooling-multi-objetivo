@@ -9,6 +9,7 @@ from ..avaliador import Avaliador
 from ..instancia import Instancia
 from ..pareto import domina
 from ..solucao import Solucao, solucao_individual
+from ..emissoes import escalas_busca
 from .base import ArquivoPareto, Metaheuristica, ResultadoOtimizacao
 from .operadores import construcao_gulosa_randomizada, perturbar_solucao
 
@@ -41,9 +42,10 @@ class GRASP(Metaheuristica):
         atual = sol_inicial
         res_atual = av.avaliar(atual)
         avaliacoes = 1
+        ref1, ref2 = escalas_busca(inst, av) if inst.matriz_ambiental is not None else (1.0, 1.0)
 
         def custo(f1: float, f2: float, viol: int) -> float:
-            return peso_f1 * f1 + (1.0 - peso_f1) * f2 + viol * 1000.0
+            return peso_f1 * (f1 / ref1) + (1.0 - peso_f1) * (f2 / ref2) + viol * 1000.0
 
         c_atual = custo(res_atual.f1, res_atual.f2, len(res_atual.violacoes))
 

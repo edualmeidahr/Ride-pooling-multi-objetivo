@@ -74,6 +74,8 @@ class AlgoritmoGenetico(Metaheuristica):
         for req in faltando:
             melhor_sol = None
             melhor_custo = float("inf")
+            if inst.matriz_ambiental is not None:
+                melhor_custo = (float("inf"), float("inf"))
 
             for k in range(inst.m):
                 tam = len(sol_temp.rotas[k].sequencia)
@@ -82,7 +84,9 @@ class AlgoritmoGenetico(Metaheuristica):
                 cand_rota = inserir_requisicao(sol_temp.rotas[k], req, pos_c, pos_e, inst)
 
                 ag, viol = av.avaliar_rota(cand_rota)
-                custo = ag.distancia + len(viol) * 500.0
+                custo = av.emissao_rota(cand_rota) + len(viol) * 500.0
+                if inst.matriz_ambiental is not None:
+                    custo = (len(viol), av.emissao_rota(cand_rota))
                 if custo < melhor_custo:
                     melhor_custo = custo
                     cand_rotas = [r.copiar() for r in sol_temp.rotas]

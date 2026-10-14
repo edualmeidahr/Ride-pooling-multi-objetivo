@@ -1,0 +1,243 @@
+{
+  "unidade_f1": "g_CO2",
+  "config": {
+    "descricao": "Hipotese sintetica por categorias de veiculo. Valores em g CO2/km, nao medidos nem transcritos das referencias.",
+    "escopo": "CO2 operacional estimado; sem ciclo de vida, partida a frio ou marcha lenta explicitos",
+    "veiculos": [
+      {
+        "tipo": "automovel",
+        "q_min": 1,
+        "q_max": 4,
+        "phi_g_km": 180
+      },
+      {
+        "tipo": "veiculo_familiar",
+        "q_min": 5,
+        "q_max": 6,
+        "phi_g_km": 250
+      },
+      {
+        "tipo": "van",
+        "q_min": 7,
+        "q_max": 10,
+        "phi_g_km": 350
+      },
+      {
+        "tipo": "micro_onibus",
+        "q_min": 11,
+        "q_max": 20,
+        "phi_g_km": 500
+      }
+    ],
+    "ruas": {
+      "seed": 20261004,
+      "fator_min": 1.0,
+      "fator_max": 1.15
+    },
+    "referencias": [
+      "https://www.gov.br/inmetro/pt-br/assuntos/avaliacao-da-conformidade/programa-brasileiro-de-etiquetagem/tabelas-de-eficiencia-energetica/veiculos-automotivos-pbe-veicular",
+      "https://www.gov.uk/government/publications/greenhouse-gas-reporting-conversion-factors-2026",
+      "https://www.hbefa.net/en/methodology"
+    ],
+    "capacidades": [
+      1,
+      2,
+      5,
+      7,
+      10
+    ]
+  },
+  "fatores_arestas": [
+    {
+      "origem": 0,
+      "destino": 1,
+      "distancia": 1,
+      "fator": 1.0261911810049624
+    },
+    {
+      "origem": 1,
+      "destino": 2,
+      "distancia": 2,
+      "fator": 1.1131858132438102
+    },
+    {
+      "origem": 2,
+      "destino": 3,
+      "distancia": 20,
+      "fator": 1.0589275311020288
+    }
+  ],
+  "matriz_ambiental": [
+    {
+      "origem": 0,
+      "destino": 0,
+      "caminho": [
+        0
+      ],
+      "distancia": 0.0,
+      "distancia_ponderada": 0.0
+    },
+    {
+      "origem": 0,
+      "destino": 1,
+      "caminho": [
+        0,
+        1
+      ],
+      "distancia": 1.0,
+      "distancia_ponderada": 1.0261911810049624
+    },
+    {
+      "origem": 0,
+      "destino": 2,
+      "caminho": [
+        0,
+        1,
+        2
+      ],
+      "distancia": 3.0,
+      "distancia_ponderada": 3.2525628074925828
+    },
+    {
+      "origem": 0,
+      "destino": 3,
+      "caminho": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "distancia": 23.0,
+      "distancia_ponderada": 24.43111342953316
+    },
+    {
+      "origem": 1,
+      "destino": 0,
+      "caminho": [
+        1,
+        0
+      ],
+      "distancia": 1.0,
+      "distancia_ponderada": 1.0261911810049624
+    },
+    {
+      "origem": 1,
+      "destino": 1,
+      "caminho": [
+        1
+      ],
+      "distancia": 0.0,
+      "distancia_ponderada": 0.0
+    },
+    {
+      "origem": 1,
+      "destino": 2,
+      "caminho": [
+        1,
+        2
+      ],
+      "distancia": 2.0,
+      "distancia_ponderada": 2.2263716264876203
+    },
+    {
+      "origem": 1,
+      "destino": 3,
+      "caminho": [
+        1,
+        2,
+        3
+      ],
+      "distancia": 22.0,
+      "distancia_ponderada": 23.404922248528194
+    },
+    {
+      "origem": 2,
+      "destino": 0,
+      "caminho": [
+        2,
+        1,
+        0
+      ],
+      "distancia": 3.0,
+      "distancia_ponderada": 3.2525628074925828
+    },
+    {
+      "origem": 2,
+      "destino": 1,
+      "caminho": [
+        2,
+        1
+      ],
+      "distancia": 2.0,
+      "distancia_ponderada": 2.2263716264876203
+    },
+    {
+      "origem": 2,
+      "destino": 2,
+      "caminho": [
+        2
+      ],
+      "distancia": 0.0,
+      "distancia_ponderada": 0.0
+    },
+    {
+      "origem": 2,
+      "destino": 3,
+      "caminho": [
+        2,
+        3
+      ],
+      "distancia": 20.0,
+      "distancia_ponderada": 21.178550622040575
+    },
+    {
+      "origem": 3,
+      "destino": 0,
+      "caminho": [
+        3,
+        2,
+        1,
+        0
+      ],
+      "distancia": 23.0,
+      "distancia_ponderada": 24.431113429533156
+    },
+    {
+      "origem": 3,
+      "destino": 1,
+      "caminho": [
+        3,
+        2,
+        1
+      ],
+      "distancia": 22.0,
+      "distancia_ponderada": 23.404922248528194
+    },
+    {
+      "origem": 3,
+      "destino": 2,
+      "caminho": [
+        3,
+        2
+      ],
+      "distancia": 20.0,
+      "distancia_ponderada": 21.178550622040575
+    },
+    {
+      "origem": 3,
+      "destino": 3,
+      "caminho": [
+        3
+      ],
+      "distancia": 0.0,
+      "distancia_ponderada": 0.0
+    }
+  ],
+  "phi_por_q": {
+    "1": 180.0,
+    "2": 180.0,
+    "5": 250.0,
+    "7": 350.0,
+    "10": 350.0
+  }
+}
