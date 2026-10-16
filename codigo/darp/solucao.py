@@ -78,6 +78,8 @@ class Solucao:
         for k, rota in enumerate(self.rotas):
             posicao = {no: p for p, no in enumerate(rota.sequencia)}
             for no in rota.sequencia:
+                if no not in inst.atendimento:
+                    continue
                 i = inst.solicitacao_de(no)
                 par = inst.entrega_de(i) if no <= inst.n else i
                 if par not in posicao:

@@ -14,9 +14,10 @@ diferenca entre as duas fronteiras quantifica o quanto a politica deixa na mesa.
 
 A fronteira e percorrida pelo metodo epsilon-restrito: minimiza-se f_1 sujeito a
 f_2 <= epsilon e, a cada solucao encontrada, aperta-se epsilon um pouco abaixo
-do f_2 obtido, ate o problema ficar inviavel. O objetivo leva uma parcela
-minuscula de f_2 (forma aumentada) para descartar solucoes fracamente
-dominadas, nas quais f_1 e otimo mas f_2 poderia melhorar sem custo.
+do f_2 obtido, ate o problema ficar inviavel. O desempate e lexicografico:
+primeiro f_1, depois f_2, com gaps de otimalidade zerados. A constante de
+f_2 e preservada ao atualizar o lado direito. A completude em instancias
+pequenas e conferida contra enumeracao (o passo de epsilon e numerico).
 """
 
 from __future__ import annotations
@@ -45,6 +46,8 @@ class ResultadoMip:
     duas implementacoes concordam sobre o mesmo ponto.
     """
     partidas: dict[int, float]
+    status: int = 2
+    gap: float | None = None
 
 
 def _importar():
@@ -181,14 +184,26 @@ def fronteira_epsilon(inst: Instancia, par: Parametros | None = None,
 
     mod, f1, f2 = construir(inst, par)
     mod.Params.TimeLimit = limite_tempo
+    mod.Params.Threads = 1
+    mod.Params.MIPGap = 0.0
+    mod.Params.MIPGapAbs = 0.0
+    mod.Params.FeasibilityTol = 1e-9
+    mod.Params.IntFeasTol = 1e-9
     limite = mod.addConstr(f2 <= GRB.INFINITY, name="epsilon")
-    mod.setObjective(f1 + peso * f2, GRB.MINIMIZE)
+    # O peso legado e mantido na assinatura por compatibilidade. Um peso
+    # pequeno nao garante desempate nem impede que o gap esconda pontos.
+    mod.ModelSense = GRB.MINIMIZE
+    mod.setObjectiveN(f1, index=0, priority=2, abstol=0.0, reltol=0.0)
+    mod.setObjectiveN(f2, index=1, priority=1, abstol=0.0, reltol=0.0)
 
     pontos: list[ResultadoMip] = []
     epsilon = GRB.INFINITY
 
     for _ in range(max_pontos):
-        limite.RHS = epsilon
+        # Gurobi transfere a constante de f2 para o lado direito ao criar a
+        # restricao. RHS recebe o limite da parte VARIAVEL, nao de f2 inteiro.
+        # Ignorar -sum(q*t_direto) apertava epsilon em excesso e pulava pontos.
+        limite.RHS = epsilon - f2.getConstant()
         mod.optimize()
 
         if mod.Status == GRB.INFEASIBLE:
@@ -196,14 +211,21 @@ def fronteira_epsilon(inst: Instancia, par: Parametros | None = None,
         if mod.SolCount == 0:
             raise SolverIndisponivel(
                 f"solver terminou sem solucao (status {mod.Status})")
+        if mod.Status != GRB.OPTIMAL:
+            raise SolverIndisponivel(
+                f"referencia sem certificado de otimalidade: status={mod.Status}")
 
         valor_f1 = f1.getValue()
         valor_f2 = f2.getValue()
         sol, B, partidas = _extrair(mod, inst)
         pontos.append(ResultadoMip(f1=valor_f1, f2=valor_f2, solucao=sol,
-                                   tempo=mod.Runtime, B=B, partidas=partidas))
+                                   tempo=mod.Runtime, B=B, partidas=partidas,
+                                   status=mod.Status, gap=None))
         if valor_f2 <= passo:
             break
         epsilon = valor_f2 - passo
+
+    else:
+        raise SolverIndisponivel("limite de pontos atingido: fronteira nao certificada como completa")
 
     return pontos

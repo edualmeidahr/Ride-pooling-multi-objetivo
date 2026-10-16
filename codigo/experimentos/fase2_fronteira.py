@@ -37,7 +37,7 @@ DADOS = RAIZ / "dados"
 SAIDA = RAIZ / "resultados"
 SAIDA.mkdir(exist_ok=True)
 
-PEDIDOS = [1, 2, 3, 4, 5]   # 5 solicitacoes: 2 de volta e 3 de ida em pr01
+PEDIDOS = [1, 2, 3, 4, 5]   # 5 solicitacoes de volta (janela na entrega)
 TOL = 1e-3
 
 
@@ -94,7 +94,7 @@ print("=" * 78)
 
 base = ler_instancia(DADOS / "tabu" / "pr01")
 inst = reduzir(base, PEDIDOS, m=len(PEDIDOS))
-par = Parametros(phi=1.0)
+par = Parametros(phi=1.0, exigir_otimo=True)
 av = Avaliador(inst, par)
 
 print(f"\nInstancia reduzida: {inst.resumo()}")

@@ -205,7 +205,7 @@ def reduzir(inst: Instancia, pedidos: list[int], m: int | None = None) -> Instan
     """
     pedidos = sorted(pedidos)
     k = len(pedidos)
-    if not pedidos or pedidos[0] < 1 or pedidos[-1] > inst.n:
+    if not pedidos or len(set(pedidos)) != k or pedidos[0] < 1 or pedidos[-1] > inst.n:
         raise ValueError(f"solicitacoes fora de 1..{inst.n}: {pedidos}")
 
     nos = [No(id=0, x=inst.nos[0].x, y=inst.nos[0].y, s=inst.nos[0].s,

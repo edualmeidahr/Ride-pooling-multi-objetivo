@@ -1,0 +1,7 @@
+__pycache__/
+*.py[cod]
+/tmp/
+# Dados brutos e copias de fontes ficam disponiveis localmente; CSVs,
+# manifestos, auditorias e graficos resumidos continuam versionaveis.
+/resultados/aco/*/execucoes/
+/resultados/aco/*/fontes/

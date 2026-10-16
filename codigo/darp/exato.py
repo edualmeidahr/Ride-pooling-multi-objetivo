@@ -24,7 +24,7 @@ from __future__ import annotations
 from itertools import combinations
 
 from . import pareto
-from .avaliador import Avaliador
+from .avaliador import Avaliador, RotaTemporalmenteInviavel
 from .instancia import Instancia
 from .solucao import Rota, Solucao
 
@@ -88,7 +88,10 @@ def frentes_por_subconjunto(inst: Instancia, av: Avaliador,
         for pedidos in combinations(inst.coletas, tamanho):
             pontos = []
             for seq in sequencias_viaveis(inst, pedidos):
-                ag, violacoes = av.avaliar_rota(Rota(list(seq)), politica=politica)
+                try:
+                    ag, violacoes = av.avaliar_rota(Rota(list(seq)), politica=politica)
+                except RotaTemporalmenteInviavel:
+                    continue
                 if violacoes:
                     continue
                 desvio, espera, _ = av.contribuicao(ag)

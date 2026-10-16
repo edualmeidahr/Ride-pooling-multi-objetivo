@@ -108,7 +108,10 @@ for nome in ("pr01", "pr07"):
     else:
         print("  [ok  ] estrutura: cobertura, pareamento e precedencia consistentes")
 
-    res = av.avaliar_com_B(pub.solucao, pub.B, pub.partidas)
+    # Agendas externas tem instantes arredondados a duas casas decimais.
+    externo = Avaliador(inst, Parametros(phi=1.0, tolerancia=TOL))
+    res = externo.avaliar_com_B(pub.solucao, pub.B, pub.partidas)
+    conferir("agenda publicada viavel com tolerancia externa", len(res.violacoes), 0, 0)
 
     print("\n  Conferencia contra os valores do arquivo:")
     conferir("distancia total", res.distancia, pub.distancia, TOL_DIST)
@@ -169,7 +172,8 @@ for nome in ("pr01", "pr07"):
     pub = ler_res(RAIZ / "tabu" / f"{nome}.res")
     av = Avaliador(inst, Parametros(phi=1.0))
 
-    publicada = av.avaliar_com_B(pub.solucao, pub.B, pub.partidas)
+    publicada = Avaliador(inst, Parametros(phi=1.0, tolerancia=TOL)).avaliar_com_B(
+        pub.solucao, pub.B, pub.partidas)
     livre = Solucao(rotas=[r.copiar() for r in pub.solucao.rotas])  # sem partidas
     cedo = av.avaliar(livre, politica=CEDO)
     bordo = av.avaliar(livre, politica=BORDO)

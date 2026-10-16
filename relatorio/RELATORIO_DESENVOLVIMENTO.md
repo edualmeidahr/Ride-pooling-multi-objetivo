@@ -13,7 +13,8 @@
 | 0 | Modelagem biobjetivo e alinhamento com o professor | Concluída |
 | 1 | Leitor de instâncias e avaliador de soluções | Concluída |
 | 2 | Gabarito: extremos e fronteira exata em instância pequena | Concluída |
-| 3 | Metaheurística NSGA-II | Pendente |
+| 3 | Colônia de formigas própria: ACO-BORDO e ACO-OTIMO | Implementada; ver `ACO.md` e `RESULTADOS_ACO.md` |
+| 3b | Metaheurística NSGA-II | Pendente |
 | 4 | Metaheurística MOILS | Pendente |
 | 5 | Método ε-restrito + ILS | Pendente |
 | 6 | Experimentos, métricas e redação final | Pendente |
@@ -189,6 +190,22 @@ Trabalho/
 ---
 
 ## Próximos passos (Fases 3–6)
+
+**Atualização em 15/10/2026:** foi acrescentada uma colônia de formigas
+multiobjetivo própria para cumprir a implementação manual solicitada à equipe.
+Ela compartilha o modelo, a representação e as métricas existentes e compara
+BORDO e OTIMO com um construtivo sem aprendizado. O núcleo, a validação, os
+comandos e a distinção entre biblioteca de agendamento e metaheurística pronta
+estão documentados em `ACO.md`. NSGA-II, MOILS e ε-restrito + ILS permanecem
+pendentes. O histórico acima descreve o estado anterior e não é uma certificação
+dos extremos da instância completa: em particular, a construção com m=n é uma
+referência de serviço perfeito, não o extremo eficiente mínimo comprovado.
+
+Na ampliação dos gabaritos, corrigiu-se a constante de f2 na RHS do método
+ε-restrito e adotou-se desempate lexicográfico. A referência pequena passou a
+ser conferida em recortes de volta, ida e mistos (4, 15 e 8 pontos). Também foram
+reforçadas as verificações de horários e criado um auditor independente. Os
+resultados novos e o escopo real da campanha estão em `RESULTADOS_ACO.md`.
 
 1. Representação cromossômica / vizinhanças que movem o **par** coleta–entrega.
 2. NSGA-II (linha de base, p.ex. via `pymoo`).

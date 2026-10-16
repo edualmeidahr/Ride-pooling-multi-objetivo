@@ -4,10 +4,13 @@ from .avaliador import BORDO, CEDO, OTIMO, Avaliacao, AgendaRota, Avaliador, Par
 from .instancia import IDA, LIVRE, VOLTA, Instancia, No, ler_instancia
 from .leitor_res import SolucaoPublicada, ler_res
 from .solucao import Rota, Solucao, solucao_individual
+from .aco import ConfigACO, PontoACO, ResultadoACO, resolver_aco
+from .validacao import verificar_solucao
 
 __all__ = [
     "BORDO", "CEDO", "OTIMO", "Avaliacao", "AgendaRota", "Avaliador", "Parametros",
     "IDA", "LIVRE", "VOLTA", "Instancia", "No", "ler_instancia",
     "SolucaoPublicada", "ler_res",
     "Rota", "Solucao", "solucao_individual",
+    "ConfigACO", "PontoACO", "ResultadoACO", "resolver_aco", "verificar_solucao",
 ]

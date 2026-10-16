@@ -11,7 +11,7 @@ verifica a viabilidade e devolve os dois objetivos
 Politica de agendamento
 -----------------------
 A rota fixa a ordem das visitas, mas nao os instantes: sobra liberdade para
-adiantar ou atrasar cada atendimento dentro da janela. Duas politicas estao
+adiantar ou atrasar cada atendimento dentro da janela. Tres politicas estao
 disponiveis.
 
 CEDO -- inicio mais cedo. Cada no e atendido no primeiro instante admissivel e
@@ -41,6 +41,8 @@ contra a saida do solver sem depender de politica alguma.
 from __future__ import annotations
 
 from dataclasses import dataclass, field
+import math
+import warnings
 
 from .instancia import Instancia
 from .solucao import Rota, Solucao
@@ -50,6 +52,14 @@ INF = float("inf")
 CEDO = "cedo"
 BORDO = "bordo"
 OTIMO = "otimo"
+
+
+class ErroAgendamento(RuntimeError):
+    """Dependencia ausente ou falha numerica; nao significa inviabilidade."""
+
+
+class RotaTemporalmenteInviavel(ErroAgendamento):
+    """O programa linear provou que a sequencia nao admite horarios."""
 
 
 @dataclass
@@ -80,6 +90,9 @@ class Parametros:
     politica: str = OTIMO
     """Politica de agendamento: CEDO, BORDO ou OTIMO."""
 
+    exigir_otimo: bool = False
+    """Em OTIMO, proibe fallback e distingue inviabilidade de falha do PL."""
+
 
 @dataclass
 class AgendaRota:
@@ -93,6 +106,8 @@ class AgendaRota:
     espera: dict[int, float] = field(default_factory=dict)
     carga: dict[int, float] = field(default_factory=dict)
     R: dict[int, float] = field(default_factory=dict)
+    politica_efetiva: str = "externa"
+    status_agendamento: str = "externo"
 
     @property
     def duracao(self) -> float:
@@ -138,6 +153,7 @@ class Avaliador:
     def __init__(self, inst: Instancia, par: Parametros | None = None) -> None:
         self.inst = inst
         self.par = par or Parametros()
+        self.chamadas_pl = 0
 
     # ------------------------------------------------------------------
     # Agendamento
@@ -342,9 +358,13 @@ class Avaliador:
         """
         try:
             import numpy as np
-            from scipy.optimize import linprog
-        except ImportError:
-            return self._agendar_bordo(seq, partida)
+            from scipy.optimize import linprog, OptimizeWarning
+        except ImportError as erro:
+            if self.par.exigir_otimo:
+                raise ErroAgendamento("OTIMO exige NumPy e SciPy; fallback desativado") from erro
+            ag = self._agendar_bordo(seq, partida)
+            ag.politica_efetiva, ag.status_agendamento = BORDO, "fallback_dependencia"
+            return ag
 
         inst = self.inst
         ini, fim = inst.deposito_ini, inst.deposito_fim
@@ -352,6 +372,8 @@ class Avaliador:
         pos_B = {no: p for p, no in enumerate(seq)}
         pos_esp = {no: len(seq) + p for p, no in enumerate(coletas)}
         total = len(seq) + len(coletas)
+        pos_ini, pos_fim = total, total + 1
+        total += 2
 
         primeiro, ultimo = seq[0], seq[-1]
         t_entrada = inst.tempo(ini, primeiro)
@@ -392,16 +414,12 @@ class Avaliador:
         for i in coletas:
             restricao({pos_B[i]: 1.0, pos_esp[i]: -1.0}, inst.rho[i])
 
-        # Duracao maxima da rota e janela do deposito de retorno.
+        # Saida e retorno explicitos: permitem espera no primeiro atendimento
+        # e no deposito final sem violar janelas ou omitir parte da jornada.
         folga_fim = inst.nos[ultimo].s + t_saida
-        if partida is None:
-            # A saida do deposito acompanha o primeiro atendimento, o que torna
-            # a duracao dependente apenas da diferenca entre o ultimo e o primeiro.
-            restricao({pos_B[ultimo]: 1.0, pos_B[primeiro]: -1.0},
-                      inst.T_max - folga_fim - t_entrada)
-        else:
-            restricao({pos_B[ultimo]: 1.0}, inst.T_max + partida - folga_fim)
-        restricao({pos_B[ultimo]: 1.0}, inst.nos[fim].l - folga_fim)
+        restricao({pos_ini: 1.0, pos_B[primeiro]: -1.0}, -t_entrada)
+        restricao({pos_B[ultimo]: 1.0, pos_fim: -1.0}, -folga_fim)
+        restricao({pos_fim: 1.0, pos_ini: -1.0}, inst.T_max)
 
         limites: list[tuple[float, float]] = []
         for no in seq:
@@ -411,16 +429,40 @@ class Avaliador:
                 inferior = max(inferior, base + t_entrada)
             limites.append((inferior, inst.nos[no].l))
         limites += [(0.0, None)] * len(coletas)
+        limites += [(inst.nos[ini].e, inst.nos[ini].l) if partida is None else (partida, partida),
+                    (inst.nos[fim].e, inst.nos[fim].l)]
 
-        saida = linprog(custo, A_ub=A, b_ub=b, bounds=limites, method="highs")
+        self.chamadas_pl += 1
+        try:
+            # Evita que cada processo crie uma equipe inteira de threads para
+            # milhares de PLs pequenos. SciPy encaminha esta opcao ao HiGHS.
+            with warnings.catch_warnings():
+                warnings.filterwarnings('ignore', message='Unrecognized options detected.*threads',
+                                        category=OptimizeWarning)
+                saida = linprog(custo, A_ub=A, b_ub=b, bounds=limites, method="highs",
+                                options={"threads": 1})
+        except (ValueError, RuntimeError) as erro:
+            if self.par.exigir_otimo:
+                raise ErroAgendamento(f"falha do PL: {erro}") from erro
+            ag = self._agendar_bordo(seq, partida)
+            ag.politica_efetiva, ag.status_agendamento = BORDO, "fallback_erro"
+            return ag
         if not saida.success:
-            # Rota temporalmente inviavel: devolve a agenda heuristica para que
-            # as violacoes sejam diagnosticadas normalmente.
-            return self._agendar_bordo(seq, partida)
+            if self.par.exigir_otimo:
+                if saida.status == 2:
+                    raise RotaTemporalmenteInviavel(str(saida.message))
+                raise ErroAgendamento(f"PL sem otimo: status={saida.status}: {saida.message}")
+            ag = self._agendar_bordo(seq, partida)
+            ag.politica_efetiva = BORDO
+            ag.status_agendamento = f"fallback_pl_{saida.status}"
+            return ag
 
         B = {no: float(saida.x[pos_B[no]]) for no in seq}
-        escolhida = partida if partida is not None else B[primeiro] - t_entrada
-        return self._montar_com_B(seq, escolhida, B)
+        escolhida = float(saida.x[pos_ini])
+        ag = self._montar_com_B(seq, escolhida, B)
+        ag.retorno = float(saida.x[pos_fim])
+        ag.politica_efetiva, ag.status_agendamento = OTIMO, "otimo"
+        return ag
 
     def _agendar_cedo(self, seq: list[int], partida: float | None) -> AgendaRota:
         inst = self.inst
@@ -443,10 +485,16 @@ class Avaliador:
             return AgendaRota(sequencia=[])
 
         politica = politica or self.par.politica
+        if not self._estrutura_rota_valida(rota):
+            raise ValueError("rota invalida: nos, pares ou precedencia")
         if politica == CEDO:
-            return self._agendar_cedo(rota.sequencia, partida)
+            ag = self._agendar_cedo(rota.sequencia, partida)
+            ag.politica_efetiva, ag.status_agendamento = CEDO, "heuristico"
+            return ag
         if politica == BORDO:
-            return self._agendar_bordo(rota.sequencia, partida)
+            ag = self._agendar_bordo(rota.sequencia, partida)
+            ag.politica_efetiva, ag.status_agendamento = BORDO, "heuristico"
+            return ag
         if politica == OTIMO:
             return self._agendar_otimo(rota.sequencia, partida)
         raise ValueError(f"politica de agendamento desconhecida: {politica}")
@@ -455,19 +503,51 @@ class Avaliador:
     # Viabilidade
     # ------------------------------------------------------------------
 
+    def _estrutura_rota_valida(self, rota: Rota) -> bool:
+        seq, inst = rota.sequencia, self.inst
+        if len(seq) != len(set(seq)) or any(no not in inst.atendimento for no in seq):
+            return False
+        pos = {no: i for i, no in enumerate(seq)}
+        return all(inst.entrega_de(i) in pos and pos[i] < pos[inst.entrega_de(i)]
+                   for i in seq if i <= inst.n) and all(
+                       inst.coleta_de(j) in pos for j in seq if j > inst.n)
+
     def _violacoes(self, k: int, ag: AgendaRota) -> list[str]:
         inst, tol = self.inst, self.par.tolerancia
         fora: list[str] = []
 
+        if any(not math.isfinite(x) for x in [ag.partida, ag.retorno, *ag.B.values()]):
+            return [f"rota {k}: horario nao finito"]
+        ini, fim = inst.nos[inst.deposito_ini], inst.nos[inst.deposito_fim]
+        if not ini.e - tol <= ag.partida <= ini.l + tol:
+            fora.append(f"rota {k}: janela do deposito de saida")
+        if not fim.e - tol <= ag.retorno <= fim.l + tol:
+            fora.append(f"rota {k}: janela do deposito de retorno")
+        anterior, instante = inst.deposito_ini, ag.partida
+
         for no in ag.sequencia:
+            if ag.B[no] < inst.nos[no].e - tol:
+                fora.append(f"rota {k}: janela inferior no no {no}")
+            if ag.B[no] < instante + inst.tempo(anterior, no) - tol:
+                fora.append(f"rota {k}: deslocamento impossivel ate no {no}")
+            anterior, instante = no, ag.B[no] + inst.nos[no].s
             if ag.B[no] > inst.nos[no].l + tol:
                 fora.append(f"rota {k}: janela no no {no} "
                             f"(B={ag.B[no]:.2f} > l={inst.nos[no].l:.2f})")
             if ag.carga[no] > inst.Q + tol:
                 fora.append(f"rota {k}: capacidade no no {no} "
                             f"(carga={ag.carga[no]:.0f} > Q={inst.Q})")
+            if ag.carga[no] < -tol:
+                fora.append(f"rota {k}: carga negativa no no {no}")
+
+        if ag.sequencia and abs(ag.carga[ag.sequencia[-1]]) > tol:
+            fora.append(f"rota {k}: carga final nao nula")
+        if ag.retorno < instante + inst.tempo(anterior, inst.deposito_fim) - tol:
+            fora.append(f"rota {k}: retorno impossivel")
 
         for i, valor in ag.R.items():
+            if valor < inst.t_direto(i) - tol:
+                fora.append(f"rota {k}: tempo a bordo inferior ao direto, solicitacao {i}")
             limite = inst.limite_bordo(i, self.par.alpha)
             if valor > limite + tol:
                 fora.append(f"rota {k}: tempo a bordo da solicitacao {i} "
@@ -517,6 +597,8 @@ class Avaliador:
         res = Avaliacao()
 
         res.violacoes.extend(sol.conferir_estrutura(inst))
+        if res.violacoes:
+            return res
 
         for k, rota in enumerate(sol.rotas):
             if not rota.usada:
@@ -552,6 +634,12 @@ class Avaliador:
         inst, par = self.inst, self.par
         res = Avaliacao()
         res.violacoes.extend(sol.conferir_estrutura(inst))
+        if res.violacoes:
+            return res
+        if any(no not in B for no in inst.atendimento) or any(
+                k not in partidas for k, r in enumerate(sol.rotas) if r.usada):
+            res.violacoes.append("agenda externa incompleta")
+            return res
 
         for k, rota in enumerate(sol.rotas):
             if not rota.usada:
