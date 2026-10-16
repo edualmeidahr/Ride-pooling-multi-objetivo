@@ -52,6 +52,11 @@
     "grasp": {
       "max_iteracoes": 4,
       "max_passos_busca_local": 3
+    },
+    "aco": {
+      "formigas": 6,
+      "iteracoes": 5,
+      "max_avaliacoes": 50000
     }
   },
   "saida": "resultados/comparacao_emissoes_q1_10",

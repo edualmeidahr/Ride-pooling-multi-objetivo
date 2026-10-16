@@ -11,7 +11,8 @@
   "algoritmos": {
     "sa": {"temp_inicial": 1, "temp_final": 0.5, "fator_resfriamento": 0.6, "iter_por_temp": 3},
     "ga": {"tamanho_populacao": 6, "geracoes": 2},
-    "grasp": {"max_iteracoes": 2, "max_passos_busca_local": 2}
+    "grasp": {"max_iteracoes": 2, "max_passos_busca_local": 2},
+    "aco": {"formigas": 4, "iteracoes": 3, "max_avaliacoes": 2000}
   },
   "saida": "resultados/exemplo_pequeno"
 }

@@ -140,10 +140,15 @@
     "grasp": {
       "max_iteracoes": 4,
       "max_passos_busca_local": 3
+    },
+    "aco": {
+      "formigas": 2,
+      "iteracoes": 2,
+      "max_avaliacoes": 200000
     }
   },
   "saida": "resultados/comparacao_100_corridas",
-  "observacao": "100 pedidos, Q=1..10, uma execucao por SA/GA/GRASP/gulosa. Construcao sequencial para escala; parametros exploratorios, sem ranking nem referencia exata.",
+  "observacao": "100 pedidos, Q=1..10, uma execucao por SA/GA/GRASP/ACO/gulosa. Construcao limitada para escala; ACO usa ordem sorteada e herda o limite de posicoes. Parametros exploratorios, sem ranking nem referencia exata.",
   "modelo_emissoes": {
     "descricao": "Hipotese sintetica por categorias de veiculo. Valores em g CO2/km, nao medidos nem transcritos das referencias.",
     "escopo": "CO2 operacional estimado; sem ciclo de vida, partida a frio ou marcha lenta explicitos",

@@ -37,6 +37,11 @@
     "grasp": {
       "max_iteracoes": 2,
       "max_passos_busca_local": 2
+    },
+    "aco": {
+      "formigas": 4,
+      "iteracoes": 3,
+      "max_avaliacoes": 2000
     }
   },
   "saida": "resultados/validacao_emissoes",
