@@ -29,10 +29,37 @@ py -3 -m venv .venv
 .\.venv\Scripts\python.exe menu.py
 ```
 
-No menu: 1 = exato; 2 = heurística; 3 = metaheurísticas; 4 = comparar as três
-categorias; 5 = comparar aproximados; 0 = sair. Para a demonstração pequena,
-selecione 4 e aceite os padrões com Enter. São executados os seis métodos
-com Q=1 e Q=2. A pasta dos resultados é informada ao final.
+**Para rodar 100 corridas: digite 6 e pressione Enter.**
+
+Essa opção executa SA, GA, GRASP, ACO e gulosa, com Q de 1 a 10 e semente 42:
+50 execuções ao todo. São usados os 100 pedidos completos e o modelo de CO2.
+Não é necessário informar caminhos, capacidade ou outros parâmetros.
+
+O programa mostra a pasta de saída e avisa quando inicia e termina cada método/Q.
+Abra o `RESUMO.md` dessa pasta para consultar os resultados. A campanha pode
+demorar; os resultados são salvos ao término de cada método/Q.
+
+Outras opções: 1 = exato; 2 = heurística; 3 = metaheurísticas; 4 = comparar as três
+categorias no pequeno; 5 = comparar aproximados; 0 = sair.
+Depois de escolher uma dessas opções, selecione o exemplo pelo número:
+
+| Número do exemplo | Entrada |
+|---|---|
+| 1 | 2 corridas — distância |
+| 2 | 2 corridas — emissão de CO2 |
+| 3 | 12 corridas — emissão de CO2 |
+| 4 | 100 corridas — emissão de CO2 |
+| 5 | Caminho de uma configuração própria |
+| 0 | Voltar |
+
+As opções com exato oferecem apenas os exemplos pequenos e a configuração
+própria, sujeita ao limite de seis pedidos. Para rodar somente uma metaheurística
+com 100 corridas, selecione 3 no menu principal, 4 no exemplo, Enter para todos
+os Q e escolha a metaheurística. Para somente a gulosa, use 2, 4 e Enter.
+
+Para a demonstração pequena, escolha 4 no menu principal e aceite os três padrões
+com Enter (exemplo, Q e metaheurísticas). A semente fica em 42 e o peso da gulosa
+em 0,5. Para alterar esses parâmetros, utilize os argumentos de execução.
 
 Também é possível rodar cada pasta diretamente:
 

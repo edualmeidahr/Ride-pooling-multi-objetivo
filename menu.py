@@ -188,6 +188,10 @@ def executar(config_path, modo, algoritmos=("sa", "ga", "grasp", "aco"), seed=42
         hashes = registro["fontes_sha256"]
         registro = anterior
         registro.setdefault("retomadas", []).append({"execucoes_preservadas": len(existentes), "fontes_sha256": hashes})
+    total = len(qs) * len(metodos)
+    print(f"\nExecucao: {inst.n} corridas | {inst.m} veiculos disponiveis | Q = {qs}", flush=True)
+    print(f"Metodos: {', '.join(m.upper() for m in metodos)} | {total} execucoes no total | semente {seed}", flush=True)
+    print(f"Resultados: {destino}\nO programa salva os resultados apos cada metodo/Q.", flush=True)
     for q in qs:
         atual = cenario_capacidade(inst, q)
         par = replace(par_base, phi=phi_para_q(c["modelo_emissoes"], q)) if ambiente else par_base
@@ -198,6 +202,7 @@ def executar(config_path, modo, algoritmos=("sa", "ga", "grasp", "aco"), seed=42
             av.limite_pedidos_construcao = limite_pedidos
             av.limite_posicoes_construcao = limite_posicoes
             av.coletas_concorrentes = c.get("coletas_antes_de_qualquer_entrega", False)
+            print(f"Iniciando Q={q} | {nome.upper()} | {inst.n} corridas...", flush=True)
             t0 = time.perf_counter()
             historico, pendentes = [], []
             if nome == "exato":
@@ -240,38 +245,87 @@ def executar(config_path, modo, algoritmos=("sa", "ga", "grasp", "aco"), seed=42
     return registro, destino
 
 
+def escolher_opcao(prompt, opcoes, padrao=None):
+    """Mantem o usuario na pergunta quando a opcao digitada nao existe."""
+    while True:
+        valor = input(prompt).strip()
+        if not valor and padrao is not None:
+            valor = padrao
+        if valor in opcoes:
+            return valor
+        print(f"Opcao invalida. Escolha: {', '.join(opcoes)}.")
+
+
+def ler_capacidades(texto):
+    """Enter usa a configuracao; tambem aceita um Q ou lista separada por virgulas/espacos."""
+    if not texto.strip():
+        return None
+    try:
+        valores = [int(v) for v in texto.replace(",", " ").split()]
+    except ValueError as erro:
+        raise ValueError("Digite um Q inteiro (ex.: 2) ou uma lista (ex.: 1, 5, 10).") from erro
+    if not valores or any(q < 1 for q in valores):
+        raise ValueError("Q deve ser inteiro positivo.")
+    return sorted(set(valores))
+
+
 def menu():
+    exemplos = {
+        "1": ("experimentos/exemplo_pequeno.json", "2 corridas - demonstracao rapida (distancia)", [1, 2]),
+        "2": ("experimentos/validacao_emissoes.json", "2 corridas - exemplo com emissao de CO2", [1, 2, 5, 7, 10]),
+        "3": ("experimentos/comparacao_emissoes_q1_10.json", "12 corridas - emissao de CO2", list(range(1, 11))),
+        "4": ("experimentos/comparacao_100_corridas.json", "100 corridas - emissao de CO2", list(range(1, 11))),
+    }
     while True:
         print("\nDARP — escolha a implementacao\n1 — Metodo exato\n2 — Heuristica gulosa\n3 — Metaheuristica\n"
-              "4 — Comparar as tres categorias (entrada pequena)\n5 — Comparar heuristica e metaheuristicas\n0 — Sair")
-        opcao = input("Opcao: ").strip()
+              "4 — Comparar as tres categorias (2 corridas)\n5 — Comparar heuristica e metaheuristicas\n"
+              "6 — RODAR 100 CORRIDAS: SA, GA, GRASP, ACO e gulosa; Q de 1 a 10\n0 — Sair")
+        opcao = escolher_opcao("Opcao: ", ("0", "1", "2", "3", "4", "5", "6"))
         if opcao == "0":
             return
         modos = {"1": "exato", "2": "heuristica", "3": "metaheuristica", "4": "comparar", "5": "comparar_aproximados"}
-        if opcao not in modos:
-            print("Opcao invalida.")
-            continue
         try:
-            print("Configuracoes: experimentos/exemplo_pequeno.json (2 pedidos); "
-                  "experimentos/validacao_emissoes.json (2 pedidos, CO2); "
-                  "experimentos/comparacao_emissoes_q1_10.json (12 pedidos, CO2).")
-            print("Teste grande: experimentos/comparacao_100_corridas.json (100 pedidos, opcoes 2/3/5).")
-            config = input("Configuracao [Enter = exemplo_pequeno]: ").strip() or "experimentos/exemplo_pequeno.json"
-            q = input("Q [Enter = todas as capacidades da configuracao]: ").strip()
-            qs = [int(q)] if q else None
+            if opcao == "6":
+                print("\n100 corridas completas; 100 veiculos disponiveis; Q=1 a 10.")
+                print("5 metodos x 10 capacidades = 50 execucoes. Uma semente (42); peso da gulosa 0,5.")
+                executar(exemplos["4"][0], "comparar_aproximados")
+                continue
+            inclui_exato = opcao in ("1", "4")
+            disponiveis = ("1", "2") if inclui_exato else ("1", "2", "3", "4")
+            print("\nEscolha o exemplo pelo NUMERO:")
+            for chave in disponiveis:
+                print(f"{chave} — {exemplos[chave][1]}")
+            if inclui_exato:
+                print("O exato aceita ate 6 corridas. Para 100, use a opcao 6 do menu principal.")
+            print("5 — Outro arquivo de configuracao\n0 — Voltar")
+            exemplo = escolher_opcao("Exemplo [Enter = 1]: ", (*disponiveis, "5", "0"), "1")
+            if exemplo == "0":
+                continue
+            if exemplo == "5":
+                config = input("Caminho do arquivo JSON (ex.: experimentos/exemplo_pequeno.json): ").strip()
+                c = json.loads(caminho_projeto(config).read_text(encoding="utf-8"))
+                if inclui_exato and len(c["pedidos"]) > LIMITE_EXATO:
+                    print("Esse exemplo e grande demais para o exato. Use a opcao 2, 3, 5 ou 6 do menu principal.")
+                    continue
+                capacidades = c["capacidades"]
+            else:
+                config, descricao, capacidades = exemplos[exemplo]
+                print(f"Selecionado: {descricao}.")
+            print(f"Capacidades do exemplo: {capacidades}.")
+            while True:
+                try:
+                    qs = ler_capacidades(input("Q [Enter = todos; ou digite um valor, ex.: 2]: "))
+                    break
+                except ValueError as erro:
+                    print(erro)
             algoritmos = ("sa", "ga", "grasp", "aco")
-            seed, peso = 42, 0.5
             if opcao in ("3", "4", "5"):
                 print("Metaheuristica: 1 — SA; 2 — GA; 3 — GRASP; 4 — Todas; 5 — ACO (colonia de formigas)")
-                a = input("Opcao [Enter = todas]: ").strip() or "4"
+                a = escolher_opcao("Opcao [Enter = todas]: ", ("1", "2", "3", "4", "5"), "4")
                 escolhas = {"1": ("sa",), "2": ("ga",), "3": ("grasp",), "4": algoritmos, "5": ("aco",)}
-                if a not in escolhas:
-                    raise ValueError("Metaheuristica invalida.")
                 algoritmos = escolhas[a]
-                seed = int(input("Semente [Enter = 42]: ").strip() or "42")
-            if opcao in ("2", "4", "5"):
-                peso = float((input("Peso da emissao de 0 a 1 [Enter = 0,5]: ").strip() or "0.5").replace(",", "."))
-            executar(config, modos[opcao], algoritmos=algoritmos, seed=seed, peso_emissao=peso, capacidades=qs)
+            print("Parametros padrao: semente 42 e peso da gulosa 0,5. Nao e preciso preencher outros parametros.")
+            executar(config, modos[opcao], algoritmos=algoritmos, capacidades=qs)
         except (ValueError, KeyError, TypeError, OSError) as exc:
             print(f"Nao foi possivel executar: {exc}")
 
