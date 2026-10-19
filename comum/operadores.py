@@ -66,6 +66,7 @@ def mover_requisicao(
         return sol.copiar()
 
     nova_sol = sol.copiar()
+    nova_sol.partidas = None
     nova_sol.rotas.extend(Rota() for _ in range(inst.m - len(nova_sol.rotas)))
     if origem_idx == rota_destino_idx:
         rota_sem = remover_requisicao(nova_sol.rotas[origem_idx], req_id, inst)
@@ -95,6 +96,7 @@ def trocar_requisicoes(
 
     # Remove req1 da r1 e req2 da r2
     nova_sol = sol.copiar()
+    nova_sol.partidas = None
     nova_sol.rotas[r1_idx] = remover_requisicao(nova_sol.rotas[r1_idx], req1, inst)
     nova_sol.rotas[r2_idx] = remover_requisicao(nova_sol.rotas[r2_idx], req2, inst)
 
@@ -131,6 +133,7 @@ def reordenar_rota_2opt(
                 return None  # Invalido
 
     nova_sol = sol.copiar()
+    nova_sol.partidas = None
     nova_sol.rotas[rota_idx] = Rota(seq)
     return nova_sol
 

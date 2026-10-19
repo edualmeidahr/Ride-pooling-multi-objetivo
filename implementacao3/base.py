@@ -4,11 +4,14 @@ from __future__ import annotations
 
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
+from functools import wraps
+from time import perf_counter
 
 from comum.avaliador import Avaliador
 from comum.instancia import Instancia
 from comum.pareto import domina, filtrar
 from comum.solucao import Solucao
+from comum.capacidade import ContextoCapacidades, LimiteBusca, chave_solucao
 
 
 @dataclass
@@ -21,6 +24,8 @@ class ResultadoOtimizacao:
     iteracoes: int = 0
     avaliacoes: int = 0
     historico: list[dict] = field(default_factory=list)
+    estatisticas: dict = field(default_factory=dict)
+    motivo_parada: str = "iteracoes"
 
     @property
     def num_solucoes(self) -> int:
@@ -62,10 +67,13 @@ class ArquivoPareto:
         """
         candidato = (f1, f2)
         # Se algum ponto ja domina ou e identico, descarta
-        for atual in self._pontos:
+        for indice, atual in enumerate(self._pontos):
             if domina(atual, candidato, self.tol):
                 return False
             if abs(atual[0] - f1) <= self.tol and abs(atual[1] - f2) <= self.tol:
+                if chave_solucao(solucao) < chave_solucao(atual[2]):
+                    self._pontos[indice] = (f1, f2, solucao.copiar())
+                    return True
                 return False
 
         # Remove pontos dominados pelo novo candidato
@@ -83,6 +91,34 @@ class Metaheuristica(ABC):
 
     def __init__(self, nome: str) -> None:
         self.nome = nome
+
+    def __init_subclass__(cls, **kwargs):
+        super().__init_subclass__(**kwargs)
+        original = cls.__dict__.get('otimizar')
+        if original is None:
+            return
+
+        @wraps(original)
+        def executar(self, inst, av, **opcoes):
+            contexto = opcoes.get('contextos') or ContextoCapacidades.fixo(inst, av)
+            opcoes['contextos'] = contexto
+            self._arquivo = ArquivoPareto()
+            self._historico = []
+            self._metadados = {'origem': 'propria'}
+            inicio = perf_counter()
+            if not contexto.viaveis:
+                return ResultadoOtimizacao(self.nome, estatisticas=contexto.estatisticas(),
+                                           motivo_parada='inviavel_demanda')
+            try:
+                resultado = original(self, inst, av, **opcoes)
+            except LimiteBusca:
+                resultado = ResultadoOtimizacao(self.nome, self._arquivo.pontos,
+                    tempo_execucao=perf_counter() - inicio, motivo_parada='consultas_rotas',
+                    historico=self._historico, iteracoes=len(self._historico))
+            resultado.estatisticas = {**resultado.estatisticas, **contexto.estatisticas(), **self._metadados}
+            resultado.avaliacoes = resultado.estatisticas['contadores'].get('solucoes', 0)
+            return resultado
+        cls.otimizar = executar
 
     @abstractmethod
     def otimizar(

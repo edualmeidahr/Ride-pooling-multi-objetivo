@@ -16,15 +16,17 @@ class ColoniaFormigas(Metaheuristica):
         config = replace(self.config, politica=av.par.politica)
         if config.limite_posicoes_insercao is None:
             config = replace(config, limite_posicoes_insercao=getattr(av, "limite_posicoes_construcao", None))
-        res = resolver_aco(inst, av.par, config)
+        res = resolver_aco(inst, av.par, config, contextos=kwargs['contextos'], arquivo_comum=self._arquivo)
         estatisticas = {"tipo": "resumo_aco", "motivo_parada": res.motivo_parada,
                        "consultas": res.consultas, "acertos_cache": res.acertos_cache,
                        "chamadas_pl": res.chamadas_pl, "construcoes": res.construcoes,
                        "fracassadas": res.fracassadas, "interrompidas": res.interrompidas,
-                       "rejeicoes_necessarias": res.rejeicoes_necessarias}
+                       "rejeicoes_necessarias": res.rejeicoes_necessarias,
+                       "feromonios_q": res.feromonios_q}
         return ResultadoOtimizacao(
             algoritmo=self.nome,
             fronteira=[(p.f1, p.f2, p.solucao) for p in res.fronteira],
             tempo_execucao=res.tempo, iteracoes=len(res.historico), avaliacoes=res.consultas,
             historico=[*res.historico, estatisticas],
+            motivo_parada=res.motivo_parada,
         )

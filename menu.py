@@ -6,41 +6,43 @@ import json
 import math
 import time
 import uuid
-from copy import deepcopy
 from dataclasses import replace
 from pathlib import Path
+from importlib.metadata import version as versao_pacote
 
 from comum.avaliador import Avaliador, Parametros
 from implementacao2 import HeuristicaGulosa
 from comum.instancia import ler_instancia_json, ler_instancia
-from implementacao3 import obter_metaheuristica
+from implementacao3 import (obter_metaheuristica, selecionar_algoritmos, METODOS,
+                            METODOS_PADRAO, METODOS_BIBLIOTECAS, GRUPOS)
 from comum.cenarios import cenario_capacidade
 from comum.emissoes import preparar_ambiente, phi_para_q
 from implementacao1.exato import fronteira_exata
 from comum.instancia import reduzir
 from comum.pareto import filtrar
+from comum.capacidade import AvaliadorComCache, ContextoCapacidades, chave_solucao
+from comum.validacao import verificar_solucao
 
 RAIZ = Path(__file__).resolve().parent
 LIMITE_EXATO = 6
 MODOS = ("exato", "metaheuristica", "heuristica", "comparar", "comparar_aproximados")
 
 
-class AvaliadorComCache(Avaliador):
-    """Mesmo agendamento, reutilizado somente dentro da execucao de um metodo."""
-    def __init__(self, inst, par):
-        super().__init__(inst, par)
-        self._cache = {}
-
-    def agendar(self, rota, partida=None, politica=None):
-        chave = (tuple(rota.sequencia), partida, politica or self.par.politica)
-        if chave not in self._cache:
-            self._cache[chave] = super().agendar(rota, partida, politica)
-        return deepcopy(self._cache[chave])
-
-
 def caminho_projeto(valor):
     caminho = Path(valor)
     return caminho if caminho.is_absolute() else RAIZ / caminho
+
+
+def verificar_versoes_registro(registro):
+    for execucao in registro['execucoes']:
+        if execucao.get('origem') == 'biblioteca' and execucao.get('biblioteca'):
+            pacote = execucao['biblioteca']
+            try:
+                atual = versao_pacote(pacote)
+            except ImportError as erro:
+                raise RuntimeError('Instale as dependencias com: python -m pip install -r requirements.txt') from erro
+            if atual != execucao.get('versao_biblioteca'):
+                raise ValueError(f'Retomada recusada: versao de {pacote} mudou')
 
 
 def preparar(config_path, capacidades=None):
@@ -61,7 +63,8 @@ def preparar(config_path, capacidades=None):
     if c.get("coletas_antes_de_qualquer_entrega"):
         if min(inst.nos[i].e + inst.nos[i].s + inst.tempo(i,inst.entrega_de(i)) for i in inst.coletas) <= max(inst.nos[i].l for i in inst.coletas):
             raise ValueError("Entrada declarada concorrente permite entrega antes do fim das coletas.")
-    par = Parametros(**c["parametros_avaliacao"])
+    from comum.instancia import ler_parametros_json
+    par = ler_parametros_json(arquivo)
     ambiente = None
     if c.get("modelo_emissoes"):
         inst, ambiente = preparar_ambiente(inst, json.loads(entrada.read_text(encoding="utf-8")),
@@ -70,15 +73,24 @@ def preparar(config_path, capacidades=None):
 
 
 def serializar_ponto(sol, av):
+    sol = sol.copiar()
+    if sol.Q is None:
+        sol.Q = av.inst.Q
     calculado = av.avaliar(sol)
     if not calculado.viavel:
         raise RuntimeError(f"Metodo retornou solucao inviavel: {calculado.violacoes}")
-    return {"f1": calculado.f1, "f2": calculado.f2, "distancia_km": calculado.distancia,
+    auditoria = verificar_solucao(av.inst, sol, calculado.agendas, av.par)
+    if not auditoria.viavel or max(abs(auditoria.f1-calculado.f1), abs(auditoria.f2-calculado.f2)) > 1e-6:
+        raise RuntimeError(f"Auditoria independente rejeitou solucao: {auditoria.violacoes}")
+    return {"Q": sol.Q, "phi_g_km": av.par.phi,
+            "f1": calculado.f1, "f2": calculado.f2, "distancia_km": calculado.distancia,
             "espera": calculado.f2_espera, "desvio": calculado.f2_desvio,
             "veiculos_usados": calculado.veiculos_usados,
             "carga_maxima": max((a.carga_maxima for a in calculado.agendas), default=0),
             "rotas": [r.sequencia for r in sol.rotas],
-            "agendas": [{"B": a.B, "partida": a.partida, "carga": a.carga} for a in calculado.agendas]}
+            "agendas": [{"sequencia": a.sequencia, "B": a.B, "partida": a.partida,
+                         "retorno": a.retorno, "carga": a.carga,
+                         "status_agendamento": a.status_agendamento} for a in calculado.agendas]}
 
 
 def salvar(saida, registro):
@@ -88,7 +100,7 @@ def salvar(saida, registro):
     for r in registro["execucoes"]:
         pontos = r["pontos"]
         if pontos:
-            ref = registro["referencias"][str(r["Q"])]["pontos"]
+            ref = registro["referencias"]["global" if r.get('capacidade') == 'variavel' else str(r["Q"])]["pontos"]
             mins = [min(p[i] for p in ref) for i in (0, 1)]
             amps = [max(p[i] for p in ref)-mins[i] for i in (0, 1)]
             def nota(p):
@@ -99,11 +111,13 @@ def salvar(saida, registro):
             selecionado = p["solucao_id"]
         else:
             p, selecionado = {}, None
-        linhas.append({"Q": r["Q"], "categoria": r["categoria"], "metodo": r["metodo"], "status": r["status"],
+        linhas.append({"Q": p.get("Q", r["Q"]), "categoria": r["categoria"], "metodo": r["metodo"], "status": r["status"],
                        "f1": p.get("f1"), "f2": p.get("f2"), "veiculos_usados": p.get("veiculos_usados"),
-                       "tempo_busca_s": r["tempo_busca_s"], "pontos": len(pontos), "solucao_id": selecionado})
+                       "tempo_busca_s": r["tempo_busca_s"], "pontos": len(pontos), "solucao_id": selecionado,
+                       "origem": r.get('origem', 'propria'), 'biblioteca': r.get('biblioteca'),
+                       'versao_biblioteca': r.get('versao_biblioteca')})
         for p in pontos:
-            solucoes.append({"solucao_id": p["solucao_id"], "Q": r["Q"], "categoria": r["categoria"], "metodo": r["metodo"],
+            solucoes.append({"solucao_id": p["solucao_id"], "Q": p.get("Q", r["Q"]), "categoria": r["categoria"], "metodo": r["metodo"],
                 "f1": p["f1"], "f2": p["f2"], "distancia_km": p["distancia_km"], "veiculos_usados": p["veiculos_usados"],
                 "rotas_json": json.dumps(p["rotas"], separators=(",", ":"))})
     for nome, dados, campos in (("metricas.csv", linhas, list(linhas[0]) if linhas else ["Q", "status"]),
@@ -116,7 +130,8 @@ def salvar(saida, registro):
         f"Entrada: {len(registro['config']['pedidos'])} pedidos completos; {registro['config']['m']} veículos disponíveis; capacidades {registro['opcoes']['capacidades']}.", "",
         f"Unidades: f1 = {registro['unidade_f1']}; f2 = passageiro-minutos. Distância física é registrada separadamente em km.", "",
         "Cada linha representa uma solução real. Para métodos com vários pontos, o resumo escolhe a menor distância euclidiana "
-        "ao ideal dos objetivos normalizados, com pesos iguais e extremos da referência do mesmo Q. "
+        "ao ideal dos objetivos normalizados, com pesos iguais e extremos da referência do mesmo Q no modo fixo, "
+        "ou da referência global no modo variável. "
         "A referência é exata se a enumeração foi executada; caso contrário, é a união não dominada dos métodos selecionados. "
         "Esta escolha de apresentação não muda a busca e não garante um ótimo único. Não combinar mínimos de soluções diferentes.", "",
         "| Q | Categoria | Método | Status | f1 | f2 | Veículos | Pontos |",
@@ -135,11 +150,10 @@ def salvar(saida, registro):
     (saida / "RESUMO.md").write_text("\n".join(texto), encoding="utf-8")
 
 
-def executar(config_path, modo, algoritmos=("sa", "ga", "grasp", "aco"), seed=42, peso_emissao=0.5, capacidades=None, saida=None, retomar=False):
+def _executar_fixo(config_path, modo, algoritmos=METODOS_PADRAO, seed=42, peso_emissao=0.5, capacidades=None, saida=None, retomar=False, max_consultas_rotas=None):
     if modo not in MODOS:
         raise ValueError("Implementacao desconhecida.")
-    if not algoritmos or any(m not in ("sa", "ga", "grasp", "aco") for m in algoritmos) or len(set(algoritmos)) != len(algoritmos):
-        raise ValueError("Selecione SA, GA, GRASP e/ou ACO, sem repeticoes.")
+    algoritmos = selecionar_algoritmos(algoritmos)
     if type(seed) is not int:
         raise ValueError("Semente deve ser inteira.")
     gulosa = HeuristicaGulosa(peso_emissao)
@@ -161,22 +175,25 @@ def executar(config_path, modo, algoritmos=("sa", "ga", "grasp", "aco"), seed=42
     if modo in ("heuristica", "comparar", "comparar_aproximados"):
         metodos += ["gulosa"]
     destino = caminho_projeto(saida) if saida is not None else RAIZ / "resultados/menu" / f"execucao-{uuid.uuid4().hex[:8]}"
-    registro = {"config": c, "opcoes": {"modo": modo, "metodos": metodos, "seed": seed, "peso_emissao": peso_emissao,
+    registro = {"versao_formato": 2, "config": c, "opcoes": {"modo": modo, "metodos": metodos, "seed": seed, "peso_emissao": peso_emissao,
                 "capacidades": qs}, "unidade_f1": "g_CO2" if ambiente or par_base.phi != 1 else "km",
                 "input_sha256": input_hash, "ambiente_emissoes": ambiente,
                 "fontes_sha256": {str(p.relative_to(RAIZ)): hashlib.sha256(p.read_bytes()).hexdigest()
                                   for p in [RAIZ / "menu.py", *(p for pasta in ("comum", "implementacao1", "implementacao2", "implementacao3") for p in (RAIZ / pasta).rglob("*.py"))]},
                 "referencias": {}, "execucoes": [], "concluida": False}
+    if max_consultas_rotas is not None:
+        registro['opcoes']['max_consultas_rotas'] = max_consultas_rotas
     existentes = set()
     if retomar:
         if saida is None:
             raise ValueError("Retomada exige a pasta original em --saida.")
         anterior = json.loads((destino / "execucoes.json").read_text(encoding="utf-8"))
+        verificar_versoes_registro(anterior)
         for k in ("config", "opcoes", "input_sha256", "ambiente_emissoes"):
             if anterior[k] != registro[k]:
                 raise ValueError(f"Retomada recusada: {k} mudou.")
         for path, hash_atual in registro["fontes_sha256"].items():
-            if path.replace("\\", "/").startswith(("comum/", "implementacao1/", "implementacao2/", "implementacao3/")):
+            if path == 'menu.py' or path.replace("\\", "/").startswith(("comum/", "implementacao1/", "implementacao2/", "implementacao3/")):
                 if anterior["fontes_sha256"].get(path) != hash_atual:
                     raise ValueError(f"Retomada recusada: algoritmo/modelo alterado ({path}).")
         existentes = {(r["Q"],r["metodo"]) for r in anterior["execucoes"]}
@@ -198,7 +215,14 @@ def executar(config_path, modo, algoritmos=("sa", "ga", "grasp", "aco"), seed=42
         for nome in metodos:
             if (q,nome) in existentes:
                 continue
-            av = AvaliadorComCache(atual, par) if c.get("cache_agendas") else Avaliador(atual, par)
+            limite = None if max_consultas_rotas is None else max_consultas_rotas // len(qs)
+            if limite == 0:
+                raise ValueError("Orcamento total deve permitir ao menos uma consulta por Q")
+            ctx = ContextoCapacidades(inst, par_base, [q], c.get('modelo_emissoes'),
+                cache=c.get('cache_agendas', False), construcao=c.get('construcao'),
+                concorrentes=c.get('coletas_antes_de_qualquer_entrega', False),
+                max_consultas_rotas=limite if nome in algoritmos else None)
+            atual, av = ctx.obter(q)
             av.limite_pedidos_construcao = limite_pedidos
             av.limite_posicoes_construcao = limite_posicoes
             av.coletas_concorrentes = c.get("coletas_antes_de_qualquer_entrega", False)
@@ -216,7 +240,7 @@ def executar(config_path, modo, algoritmos=("sa", "ga", "grasp", "aco"), seed=42
                 categoria = "heuristica"
             else:
                 parametros = c.get("algoritmos", {}).get(nome, {})
-                res = obter_metaheuristica(nome, seed=seed, **parametros).otimizar(atual, av)
+                res = obter_metaheuristica(nome, seed=seed, **parametros).otimizar(atual, av, contextos=ctx)
                 frente = res.fronteira
                 status = "concluida" if frente else "sem_solucao_encontrada"
                 historico, categoria = res.historico, "metaheuristica"
@@ -229,7 +253,10 @@ def executar(config_path, modo, algoritmos=("sa", "ga", "grasp", "aco"), seed=42
                 pontos.append({"solucao_id": f"Q{q}_{nome}_p{i}", **ponto})
             registro["execucoes"].append({"Q": q, "categoria": categoria, "metodo": nome, "status": status,
                 "phi_g_km": par.phi, "seed": seed if categoria == "metaheuristica" else None,
-                "tempo_busca_s": tempo, "pontos": pontos, "historico": historico, "pedidos_pendentes": pendentes})
+                "tempo_busca_s": tempo, "pontos": pontos, "historico": historico, "pedidos_pendentes": pendentes,
+                "estatisticas": res.estatisticas if nome in algoritmos else ctx.estatisticas(),
+                **metadados_execucao(nome, res.estatisticas if nome in algoritmos else {}),
+                "motivo_parada": res.motivo_parada if nome in algoritmos else 'concluida'})
             if usar_exato:
                 ref = next(r for r in registro["execucoes"] if r["Q"] == q and r["metodo"] == "exato")
                 referencia = [(p["f1"], p["f2"]) for p in ref["pontos"]]
@@ -242,6 +269,139 @@ def executar(config_path, modo, algoritmos=("sa", "ga", "grasp", "aco"), seed=42
     registro["concluida"] = True
     salvar(destino, registro)
     print(f"Resultados: {destino / 'RESUMO.md'}", flush=True)
+    return registro, destino
+
+
+def executar(config_path, modo, algoritmos=METODOS_PADRAO, seed=42,
+             peso_emissao=0.5, capacidades=None, saida=None, retomar=False,
+             capacidade=None, max_consultas_rotas=None):
+    algoritmos = selecionar_algoritmos(algoritmos)
+    configuracao = json.loads(caminho_projeto(config_path).read_text(encoding='utf-8'))
+    capacidade = capacidade or configuracao.get('capacidade', 'fixo')
+    max_consultas_rotas = max_consultas_rotas if max_consultas_rotas is not None else configuracao.get('max_consultas_rotas')
+    if max_consultas_rotas is not None and (type(max_consultas_rotas) is not int or max_consultas_rotas < 1):
+        raise ValueError('max_consultas_rotas deve ser inteiro positivo')
+    if capacidade == 'fixo':
+        return _executar_fixo(config_path, modo, algoritmos, seed, peso_emissao, capacidades,
+                             saida, retomar, max_consultas_rotas)
+    if capacidade != 'variavel':
+        raise ValueError('capacidade deve ser fixo ou variavel')
+    return executar_variavel(config_path, modo, algoritmos, seed, peso_emissao,
+                             capacidades, saida, retomar, max_consultas_rotas)
+
+
+def frente_global(pontos):
+    # Desempate de objetivos idênticos pela menor capacidade e rotas.
+    return filtrar(sorted(pontos, key=lambda p: chave_solucao(p[2])))
+
+
+def metadados_execucao(nome, estatisticas):
+    return {'origem': 'biblioteca' if nome in METODOS_BIBLIOTECAS else 'propria',
+            'biblioteca': estatisticas.get('biblioteca'),
+            'versao_biblioteca': estatisticas.get('versao_biblioteca')}
+
+
+def executar_variavel(config_path, modo, algoritmos, seed, peso_emissao, capacidades,
+                     saida, retomar, max_consultas_rotas):
+    if modo not in MODOS:
+        raise ValueError('modo invalido')
+    algoritmos = selecionar_algoritmos(algoritmos)
+    if type(seed) is not int:
+        raise ValueError('semente deve ser inteira')
+    c, inst, par, qs, ambiente, input_hash = preparar(config_path, capacidades)
+    usar_exato = modo in ('exato', 'comparar')
+    if usar_exato and (inst.n > LIMITE_EXATO or par.politica != 'otimo'):
+        raise ValueError('Exato exige politica otimo e no maximo seis pedidos')
+    metodos = (['exato'] if usar_exato else [])
+    if modo in ('metaheuristica', 'comparar', 'comparar_aproximados'):
+        metodos += list(algoritmos)
+    if modo in ('heuristica', 'comparar', 'comparar_aproximados'):
+        metodos += ['gulosa']
+    gulosa = HeuristicaGulosa(peso_emissao,
+        limite_pedidos=c.get('construcao', {}).get('limite_pedidos_candidatos'),
+        limite_posicoes=c.get('construcao', {}).get('limite_posicoes_insercao'))
+    destino = caminho_projeto(saida) if saida else RAIZ / 'resultados/menu' / f'execucao-{uuid.uuid4().hex[:8]}'
+    fontes = {str(p.relative_to(RAIZ)): hashlib.sha256(p.read_bytes()).hexdigest()
+              for p in [RAIZ / 'menu.py', *(p for pasta in ('comum', 'implementacao1', 'implementacao2', 'implementacao3')
+                      for p in (RAIZ / pasta).rglob('*.py'))]}
+    registro = {'versao_formato': 2, 'config': c,
+        'opcoes': {'modo': modo, 'capacidade': 'variavel', 'metodos': metodos, 'seed': seed,
+                   'peso_emissao': peso_emissao, 'capacidades': qs, 'max_consultas_rotas': max_consultas_rotas},
+        'unidade_f1': 'g_CO2' if ambiente or par.phi != 1 else 'km', 'input_sha256': input_hash,
+        'ambiente_emissoes': ambiente, 'fontes_sha256': fontes, 'referencias': {}, 'execucoes': [], 'concluida': False}
+    if retomar:
+        if saida is None:
+            raise ValueError('Retomada exige --saida')
+        anterior = json.loads((destino / 'execucoes.json').read_text(encoding='utf-8'))
+        verificar_versoes_registro(anterior)
+        for k in ('versao_formato', 'config', 'opcoes', 'input_sha256', 'ambiente_emissoes', 'fontes_sha256'):
+            if anterior.get(k) != registro[k]:
+                raise ValueError(f'Retomada recusada: {k} mudou')
+        existentes = [r['metodo'] for r in anterior['execucoes']]
+        if len(set(existentes)) != len(existentes) or not set(existentes) <= set(metodos):
+            raise ValueError('Registros duplicados ou inesperados')
+        registro = anterior
+        if registro['concluida']:
+            return registro, destino
+    print(f'Capacidade variavel | {inst.n} pedidos | Q em {qs} | {len(metodos)} buscas', flush=True)
+    for nome in metodos:
+        if any(r['metodo'] == nome for r in registro['execucoes']):
+            continue
+        ctx = ContextoCapacidades(inst, par, qs, c.get('modelo_emissoes'),
+            cache=c.get('cache_agendas', False), construcao=c.get('construcao'),
+            concorrentes=c.get('coletas_antes_de_qualquer_entrega', False),
+            max_consultas_rotas=max_consultas_rotas if nome in algoritmos else None)
+        inicio = time.perf_counter()
+        historico, frente, motivo = [], [], 'concluida'
+        print(f'Iniciando {nome.upper()} com Q variavel...', flush=True)
+        if not ctx.viaveis:
+            status = 'inviavel_demanda'
+            categoria = 'metaheuristica' if nome in algoritmos else ('exato' if nome == 'exato' else 'heuristica')
+        elif nome in ('exato', 'gulosa'):
+            categoria = 'exato' if nome == 'exato' else 'heuristica'
+            for q in ctx.viaveis:
+                atual, av = ctx.obter(q)
+                if nome == 'exato':
+                    pontos = fronteira_exata(atual, av)
+                else:
+                    res = gulosa.resolver(atual, av)
+                    pontos = [(res.avaliacao.f1, res.avaliacao.f2, res.solucao)] if res.solucao else []
+                    historico.append({'Q': q, 'status': res.status, 'historico': res.historico})
+                for f1, f2, sol in pontos:
+                    sol.Q = q
+                    frente.append((f1, f2, sol))
+            frente = frente_global(frente)
+            status = ('otimo' if nome == 'exato' else 'concluida') if frente else (
+                'inviavel' if nome == 'exato' else 'sem_solucao_encontrada')
+        else:
+            atual, av = ctx.obter(ctx.viaveis[0])
+            res = obter_metaheuristica(nome, seed=seed, **c.get('algoritmos', {}).get(nome, {})).otimizar(atual, av, contextos=ctx)
+            frente, historico, motivo = res.fronteira, res.historico, res.motivo_parada
+            categoria, status = 'metaheuristica', 'concluida' if frente else 'sem_solucao_encontrada'
+        tempo = time.perf_counter() - inicio
+        estatisticas = res.estatisticas if nome in algoritmos and ctx.viaveis else ctx.estatisticas()
+        pontos = []
+        for i, (f1, f2, sol) in enumerate(frente):
+            atual, av = ctx.obter(sol.Q)
+            ponto = serializar_ponto(sol, Avaliador(atual, av.par))
+            if max(abs(f1-ponto['f1']), abs(f2-ponto['f2'])) > 1e-6:
+                raise RuntimeError('Objetivos inconsistentes na reavaliacao')
+            if c.get('modelo_emissoes'):
+                ponto['tipo_veiculo'] = next(p['tipo'] for p in c['modelo_emissoes']['veiculos'] if p['q_min'] <= sol.Q <= p['q_max'])
+            pontos.append({'solucao_id': f'variavel_{nome}_Q{sol.Q}_p{i}', **ponto})
+        registro['execucoes'].append({'Q': None, 'capacidade': 'variavel', 'categoria': categoria,
+            'metodo': nome, 'status': status, 'motivo_parada': motivo, 'seed': seed if nome in algoritmos else None,
+            'tempo_busca_s': tempo, 'pontos': pontos, 'historico': historico, 'estatisticas': estatisticas,
+            'pedidos_pendentes': [], **metadados_execucao(nome, estatisticas)})
+        base_ref = next((r['pontos'] for r in registro['execucoes'] if r['metodo'] == 'exato'), None)
+        if base_ref is None:
+            base_ref = [p for r in registro['execucoes'] for p in r['pontos']]
+        referencia = filtrar([(p['f1'], p['f2']) for p in base_ref])
+        registro['referencias']['global'] = {'tipo': 'exata' if usar_exato else 'empirica', 'pontos': referencia}
+        salvar(destino, registro)
+        print(f'{nome.upper()} | {status} | {len(pontos)} pontos | {tempo:.2f}s', flush=True)
+    registro['concluida'] = True
+    salvar(destino, registro)
     return registro, destino
 
 
@@ -279,11 +439,12 @@ def menu():
     while True:
         print("\nDARP — escolha a implementacao\n1 — Metodo exato\n2 — Heuristica gulosa\n3 — Metaheuristica\n"
               "4 — Comparar as tres categorias (2 corridas)\n5 — Comparar heuristica e metaheuristicas\n"
-              "6 — RODAR 100 CORRIDAS: SA, GA, GRASP, ACO e gulosa; Q de 1 a 10\n0 — Sair")
-        opcao = escolher_opcao("Opcao: ", ("0", "1", "2", "3", "4", "5", "6"))
+              "6 — RODAR 100 CORRIDAS: SA, GA, GRASP, ACO e gulosa; Q de 1 a 10\n"
+              "7 — Otimizar Q e rotas com as metaheuristicas\n0 — Sair")
+        opcao = escolher_opcao("Opcao: ", ("0", "1", "2", "3", "4", "5", "6", "7"))
         if opcao == "0":
             return
-        modos = {"1": "exato", "2": "heuristica", "3": "metaheuristica", "4": "comparar", "5": "comparar_aproximados"}
+        modos = {"1": "exato", "2": "heuristica", "3": "metaheuristica", "4": "comparar", "5": "comparar_aproximados", "7": "metaheuristica"}
         try:
             if opcao == "6":
                 print("\n100 corridas completas; 100 veiculos disponiveis; Q=1 a 10.")
@@ -318,15 +479,20 @@ def menu():
                     break
                 except ValueError as erro:
                     print(erro)
-            algoritmos = ("sa", "ga", "grasp", "aco")
-            if opcao in ("3", "4", "5"):
-                print("Metaheuristica: 1 — SA; 2 — GA; 3 — GRASP; 4 — Todas; 5 — ACO (colonia de formigas)")
-                a = escolher_opcao("Opcao [Enter = todas]: ", ("1", "2", "3", "4", "5"), "4")
-                escolhas = {"1": ("sa",), "2": ("ga",), "3": ("grasp",), "4": algoritmos, "5": ("aco",)}
+            algoritmos = METODOS_PADRAO
+            if opcao in ("3", "4", "5", "7"):
+                print("Metaheuristica: 1 — SA proprio; 2 — GA proprio; 3 — GRASP proprio; "
+                      "4 — Quatro proprios; 5 — ACO propria; 6 — GA biblioteca; 7 — SA biblioteca; "
+                      "8 — PSO biblioteca; 9 — Tres bibliotecas; 10 — Todas as sete")
+                a = escolher_opcao("Opcao [Enter = quatro proprios]: ", tuple(str(i) for i in range(1, 11)), "4")
+                escolhas = {"1": ("sa",), "2": ("ga",), "3": ("grasp",), "4": algoritmos, "5": ("aco",),
+                            "6": ('ga_lib',), "7": ('sa_lib',), "8": ('pso_lib',),
+                            "9": METODOS_BIBLIOTECAS, "10": tuple(METODOS)}
                 algoritmos = escolhas[a]
             print("Parametros padrao: semente 42 e peso da gulosa 0,5. Nao e preciso preencher outros parametros.")
-            executar(config, modos[opcao], algoritmos=algoritmos, capacidades=qs)
-        except (ValueError, KeyError, TypeError, OSError) as exc:
+            executar(config, modos[opcao], algoritmos=algoritmos, capacidades=qs,
+                     capacidade='variavel' if opcao == '7' else 'fixo')
+        except (ValueError, KeyError, TypeError, OSError, RuntimeError) as exc:
             print(f"Nao foi possivel executar: {exc}")
 
 
@@ -334,10 +500,15 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--modo", choices=MODOS)
     parser.add_argument("--config", default="experimentos/exemplo_pequeno.json")
-    parser.add_argument("--algoritmos", nargs="+", choices=("sa", "ga", "grasp", "aco"), default=["sa", "ga", "grasp", "aco"])
+    parser.add_argument("--algoritmos", nargs="+", choices=(*METODOS, *GRUPOS), default=list(METODOS_PADRAO),
+                        help='Metodos individuais ou grupos bibliotecas/todos; padrao: quatro proprios')
     parser.add_argument("--seed", type=int, default=42)
     parser.add_argument("--peso-emissao", type=float, default=0.5)
     parser.add_argument("--q", nargs="+", type=int)
+    parser.add_argument("--capacidade", choices=('fixo', 'variavel'),
+                        help='Q fixo por execucao ou escolhido junto com as rotas')
+    parser.add_argument("--max-consultas-rotas", type=int,
+                        help='Orcamento por metaheuristica; dividido entre Q no modo fixo')
     parser.add_argument("--saida")
     parser.add_argument("--retomar", action="store_true", help="Preserva resultados existentes e executa apenas os metodos/Q pendentes")
     args = parser.parse_args()
@@ -345,8 +516,9 @@ def main():
         if args.modo is None:
             menu()
         else:
-            executar(args.config, args.modo, args.algoritmos, args.seed, args.peso_emissao, args.q, args.saida, retomar=args.retomar)
-    except (ValueError, KeyError, TypeError, OSError) as exc:
+            executar(args.config, args.modo, args.algoritmos, args.seed, args.peso_emissao, args.q, args.saida,
+                     retomar=args.retomar, capacidade=args.capacidade, max_consultas_rotas=args.max_consultas_rotas)
+    except (ValueError, KeyError, TypeError, OSError, RuntimeError) as exc:
         parser.exit(2, f"Erro: {exc}\n")
     except (EOFError, KeyboardInterrupt):
         print("\nExecucao encerrada. Registros ja exportados permanecem na pasta de saida.")

@@ -8,10 +8,8 @@ import time
 from comum.avaliador import Avaliador
 from comum.instancia import Instancia
 from comum.pareto import domina
-from comum.solucao import Solucao, solucao_individual
-from comum.emissoes import escalas_busca
-from implementacao3.base import ArquivoPareto, Metaheuristica, ResultadoOtimizacao
-from comum.operadores import construcao_gulosa_randomizada, perturbar_solucao
+from comum.solucao import Solucao
+from implementacao3.base import Metaheuristica, ResultadoOtimizacao
 
 
 class GRASP(Metaheuristica):
@@ -37,12 +35,14 @@ class GRASP(Metaheuristica):
         av: Avaliador,
         peso_f1: float,
         rng: random.Random,
+        busca=None,
+        arquivo=None,
     ) -> tuple[Solucao, int]:
         """Busca local por primeiro aprimoramento (First Improvement) no objetivo ponderado."""
         atual = sol_inicial
-        res_atual = av.avaliar(atual)
+        res_atual = busca.avaliar(atual)
         avaliacoes = 1
-        ref1, ref2 = escalas_busca(inst, av) if inst.matriz_ambiental is not None else (1.0, 1.0)
+        ref1, ref2 = busca.escalas
 
         def custo(f1: float, f2: float, viol: int) -> float:
             return peso_f1 * (f1 / ref1) + (1.0 - peso_f1) * (f2 / ref2) + viol * 1000.0
@@ -53,13 +53,16 @@ class GRASP(Metaheuristica):
             melhorou = False
             # Amostra de vizinhos
             for _ in range(15):
-                vizinho = perturbar_solucao(atual, inst, rng)
-                res_viz = av.avaliar(vizinho)
+                vizinho = busca.perturbar(atual, rng)
+                res_viz = busca.avaliar(vizinho)
                 avaliacoes += 1
+                if res_viz.viavel:
+                    arquivo.adicionar(res_viz.f1, res_viz.f2, vizinho)
 
                 c_viz = custo(res_viz.f1, res_viz.f2, len(res_viz.violacoes))
                 # Criterio: aprimoramento na funcao ponderada ou dominancia de Pareto
-                if c_viz < c_atual - 1e-4 or domina(res_viz.objetivos, res_atual.objetivos):
+                if (not res_atual.viavel or res_viz.viavel) and (
+                        c_viz < c_atual - 1e-4 or domina(res_viz.objetivos, res_atual.objetivos)):
                     atual = vizinho
                     res_atual = res_viz
                     c_atual = c_viz
@@ -79,37 +82,37 @@ class GRASP(Metaheuristica):
     ) -> ResultadoOtimizacao:
         inicio = time.time()
         rng = random.Random(self.seed)
-        arquivo = ArquivoPareto()
+        arquivo = self._arquivo
+        busca = kwargs['contextos']
 
         # Inclui ponto de referencia
-        base = solucao_individual(inst)
-        aval_base = av.avaliar(base)
+        base = busca.individual(busca.viaveis[0])
+        aval_base = busca.avaliar(base)
         if aval_base.viavel:
             arquivo.adicionar(aval_base.f1, aval_base.f2, base)
 
         total_avals = 1
-        historico = []
+        historico = self._historico
 
         for it in range(self.max_iteracoes):
             # Varia o peso sistematicamente em [0.05, 0.95] para cobrir toda a curva de Pareto
             peso_f1 = 0.05 + 0.90 * (it / max(1, self.max_iteracoes - 1))
 
             # Fase 1: Construcao Gulosa Randomizada (RCL)
-            sol_construida = construcao_gulosa_randomizada(
-                inst, av, alpha=self.alpha_rcl, peso_f1=peso_f1, rng=rng
-            )
-            res_c = av.avaliar(sol_construida)
+            sol_construida = busca.construir(busca.escolher(it, rng), rng,
+                                            alpha=self.alpha_rcl, peso_f1=peso_f1)
+            res_c = busca.avaliar(sol_construida)
             total_avals += 1
             if res_c.viavel:
                 arquivo.adicionar(res_c.f1, res_c.f2, sol_construida)
 
             # Fase 2: Busca Local
             sol_otimizada, avals_bl = self._busca_local(
-                sol_construida, inst, av, peso_f1, rng
+                sol_construida, inst, av, peso_f1, rng, busca, arquivo
             )
             total_avals += avals_bl
 
-            res_bl = av.avaliar(sol_otimizada)
+            res_bl = busca.avaliar(sol_otimizada)
             total_avals += 1
             if res_bl.viavel:
                 arquivo.adicionar(res_bl.f1, res_bl.f2, sol_otimizada)

@@ -21,6 +21,7 @@ from comum.instancia import Instancia
 from comum.pareto import domina
 from comum.solucao import Rota, Solucao
 from comum.validacao import verificar_solucao
+from comum.capacidade import ContextoCapacidades, LimiteBusca, chave_solucao
 
 
 @dataclass(frozen=True)
@@ -95,6 +96,7 @@ class ResultadoACO:
     tempo: float = 0.0
     motivo_parada: str = "iteracoes"
     feromonios: list[list[float]] = field(default_factory=list)
+    feromonios_q: dict[int, float] = field(default_factory=dict)
 
 
 def insercoes_pares(seq: list[int], coleta: int, entrega: int, limite: int | None = None):
@@ -193,9 +195,13 @@ def roleta(probs: list[float], rng: random.Random) -> int:
 
 def atualizar_arquivo(arquivo: list[PontoACO], ponto: PontoACO) -> None:
     tol = 1e-9
-    if any(domina(p.objetivos, ponto.objetivos) or all(
-            abs(x - y) <= tol for x, y in zip(p.objetivos, ponto.objetivos)) for p in arquivo):
-        return
+    for i, p in enumerate(arquivo):
+        if domina(p.objetivos, ponto.objetivos):
+            return
+        if all(abs(x-y) <= tol for x, y in zip(p.objetivos, ponto.objetivos)):
+            if chave_solucao(ponto.solucao) < chave_solucao(p.solucao):
+                arquivo[i] = deepcopy(ponto)
+            return
     arquivo[:] = [p for p in arquivo if not domina(ponto.objetivos, p.objetivos)]
     arquivo.append(deepcopy(ponto))
     arquivo.sort(key=lambda p: p.objetivos)
@@ -231,7 +237,7 @@ class _Limite(Exception):
 
 
 def resolver_aco(instancia: Instancia, parametros: Parametros | None = None,
-                 config: ConfigACO | None = None) -> ResultadoACO:
+                 config: ConfigACO | None = None, *, contextos=None, arquivo_comum=None) -> ResultadoACO:
     config = config or ConfigACO()
     par = replace(parametros or Parametros(), politica=config.politica)
     if not math.isfinite(par.phi) or par.phi <= 0 or not math.isfinite(par.tolerancia) or par.tolerancia < 0:
@@ -249,12 +255,20 @@ def resolver_aco(instancia: Instancia, parametros: Parametros | None = None,
     geometria = copy(instancia)
     geometria.dist = lru_cache(maxsize=None)(instancia.dist)
     geometria.tempo = lru_cache(maxsize=None)(instancia.tempo)
-    av, rng, res = Avaliador(geometria, par), random.Random(config.seed), ResultadoACO()
+    contextos = contextos or ContextoCapacidades.fixo(geometria, Avaliador(geometria, par))
+    if not contextos.viaveis:
+        return ResultadoACO(motivo_parada='inviavel_demanda')
+    if any(av.par.politica != config.politica for av in contextos.avaliadores.values()):
+        raise ValueError('A politica ACO deve coincidir com a politica dos contextos')
+    rng, res = random.Random(config.seed), ResultadoACO()
     inicio = perf_counter()
     tamanho = 2 * instancia.n + 2
-    tau = [[config.tau_inicial if config.aprender else 1.0 for _ in range(tamanho)]
-           for _ in range(tamanho)]
-    cache: dict[tuple[int, ...], tuple[AgendaRota | None, list[str], tuple[float, float]]] = {}
+    tau_por_q = {q: [[config.tau_inicial if config.aprender else 1.0 for _ in range(tamanho)]
+                    for _ in range(tamanho)] for q in contextos.viaveis}
+    tau_q = {q: config.tau_inicial if config.aprender else 1.0 for q in contextos.viaveis}
+    geometria, av = contextos.obter(contextos.viaveis[0])
+    tau = tau_por_q[geometria.Q]
+    cache = {}
 
     def consultar(seq):
         if config.limite_segundos is not None and perf_counter() - inicio >= config.limite_segundos:
@@ -262,11 +276,16 @@ def resolver_aco(instancia: Instancia, parametros: Parametros | None = None,
         if res.consultas >= config.max_avaliacoes:
             raise _Limite("avaliacoes")
         res.consultas += 1
-        chave = tuple(seq)
+        chave = (geometria.Q, tuple(seq))
         if chave in cache:
+            contextos.consumir()
+            av.contadores['consultas_rotas'] += 1
+            av.contadores['acertos_cache'] += 1
             res.acertos_cache += 1
             return cache[chave]
         if inviabilidade_necessaria(geometria, seq, par):
+            contextos.consumir()
+            av.contadores['consultas_rotas'] += 1
             res.rejeicoes_necessarias += 1
             entrada = None, ['inviabilidade necessaria'], (0.0, 0.0)
             cache[chave] = entrada
@@ -282,6 +301,22 @@ def resolver_aco(instancia: Instancia, parametros: Parametros | None = None,
     for it in range(config.iteracoes):
         parar = False
         for ant in range(config.formigas):
+            indice = res.construcoes
+            qs = contextos.viaveis
+            if indice < len(qs):
+                q = qs[indice]
+            elif len(qs) == 1:
+                q = qs[0]
+            else:
+                # Exploração uniforme de 10%; sem aprendizado é toda uniforme.
+                total_tau = sum(tau_q.values())
+                probs_q = [(0.1 / len(qs) + 0.9 * tau_q[x] / total_tau)
+                           if config.aprender else 1 / len(qs) for x in qs]
+                q = qs[roleta(probs_q, rng)]
+            geometria, av = contextos.obter(q)
+            par = av.par
+            tau = tau_por_q[q]
+            contextos.visitas[q] += 1
             peso = ant / (config.formigas - 1)
             pendentes = list(instancia.coletas)
             rng.shuffle(pendentes)
@@ -298,7 +333,7 @@ def resolver_aco(instancia: Instancia, parametros: Parametros | None = None,
                         antigos = arcos(anterior, instancia.deposito_fim)
                         for seq in insercoes_pares(anterior, pedido, instancia.entrega_de(pedido),
                                                   config.limite_posicoes_insercao):
-                            if not capacidade_valida(instancia, seq):
+                            if not capacidade_valida(geometria, seq):
                                 continue
                             ag, erros, obj = consultar(seq)
                             if erros:
@@ -320,25 +355,39 @@ def resolver_aco(instancia: Instancia, parametros: Parametros | None = None,
                     else:
                         rotas[k], agendas[k], objetivos[k] = seq, ag, obj
                 else:
-                    sol = Solucao([Rota(seq) for seq in rotas])
-                    auditoria = verificar_solucao(instancia, sol, agendas, par)
+                    sol = Solucao([Rota(seq) for seq in rotas], Q=q)
+                    av.contadores['solucoes'] += 1
+                    auditoria = verificar_solucao(geometria, sol, agendas, par)
                     if not auditoria.viavel:
                         raise AssertionError(f"ACO produziu solucao invalida: {auditoria.violacoes}")
                     ponto = PontoACO(auditoria.f1, auditoria.f2, sol, agendas, peso)
                     res.solucoes.append(deepcopy(ponto))
                     atualizar_arquivo(res.fronteira, ponto)
-            except _Limite as limite:
-                res.motivo_parada = limite.motivo
+                    if arquivo_comum is not None:
+                        arquivo_comum.adicionar(ponto.f1, ponto.f2, sol)
+            except (_Limite, LimiteBusca) as limite:
+                res.motivo_parada = limite.motivo if isinstance(limite, _Limite) else 'consultas_rotas'
                 res.interrompidas += 1
                 parar = True
                 break
-        atualizar_feromonios(tau, res.fronteira, config, instancia.deposito_fim)
+        for capacidade, trilhas in tau_por_q.items():
+            atualizar_feromonios(trilhas, [p for p in res.fronteira if p.solucao.Q == capacidade],
+                                 config, instancia.deposito_fim)
+        if config.aprender:
+            for capacidade in tau_q:
+                tau_q[capacidade] *= 1 - config.evaporacao
+            elite = representantes(res.fronteira, config.representantes)
+            for ponto in elite:
+                tau_q[ponto.solucao.Q] += 1 / len(elite)
+            tau_q = {q: min(config.tau_max, max(config.tau_min, t)) for q, t in tau_q.items()}
         res.historico.append({"iteracao": it + 1, "consultas": res.consultas,
                               "tempo": perf_counter() - inicio,
                               "fronteira": [p.objetivos for p in res.fronteira],
-                              "completas": len(res.solucoes), "fracassadas": res.fracassadas})
+                              "completas": len(res.solucoes), "fracassadas": res.fracassadas,
+                              "visitas_q": dict(contextos.visitas), "feromonios_q": dict(tau_q)})
         if parar:
             break
     res.tempo = perf_counter() - inicio
     res.feromonios = tau
+    res.feromonios_q = tau_q
     return res

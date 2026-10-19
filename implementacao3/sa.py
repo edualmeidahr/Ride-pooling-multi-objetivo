@@ -8,10 +8,7 @@ import time
 
 from comum.avaliador import Avaliador
 from comum.instancia import Instancia
-from comum.solucao import solucao_individual
-from comum.emissoes import escalas_busca
-from implementacao3.base import ArquivoPareto, Metaheuristica, ResultadoOtimizacao
-from comum.operadores import construcao_gulosa_randomizada, perturbar_solucao
+from implementacao3.base import Metaheuristica, ResultadoOtimizacao
 
 
 class SimulatedAnnealing(Metaheuristica):
@@ -42,24 +39,25 @@ class SimulatedAnnealing(Metaheuristica):
     ) -> ResultadoOtimizacao:
         inicio = time.time()
         rng = random.Random(self.seed)
-        arquivo = ArquivoPareto()
+        arquivo = self._arquivo
+        busca = kwargs['contextos']
 
         # Solucao de partida
-        sol_base = solucao_individual(inst)
-        aval_base = av.avaliar(sol_base)
+        sol_base = busca.individual(busca.viaveis[0])
+        aval_base = busca.avaliar(sol_base)
         if aval_base.viavel:
             arquivo.adicionar(aval_base.f1, aval_base.f2, sol_base)
 
         total_iter = 0
         total_avals = 1
-        historico = []
-        escalas = escalas_busca(inst, av) if inst.matriz_ambiental is not None else None
+        historico = self._historico
+        escalas = busca.escalas
 
         # Executa uma trajetoria de resfriamento para cada vetor de pesos de exploracao
         for idx_peso, (w1, w2) in enumerate(self.pesos):
             # Solucao inicial gerada de forma gulosa ponderada
-            sol_atual = construcao_gulosa_randomizada(inst, av, alpha=0.3, peso_f1=w1, rng=rng)
-            aval_atual = av.avaliar(sol_atual)
+            sol_atual = busca.construir(busca.escolher(idx_peso, rng), rng, alpha=0.3, peso_f1=w1)
+            aval_atual = busca.avaliar(sol_atual)
             total_avals += 1
             if aval_atual.viavel:
                 arquivo.adicionar(aval_atual.f1, aval_atual.f2, sol_atual)
@@ -80,8 +78,8 @@ class SimulatedAnnealing(Metaheuristica):
             while T > self.temp_final:
                 for _ in range(self.iter_por_temp):
                     total_iter += 1
-                    vizinho = perturbar_solucao(sol_atual, inst, rng)
-                    aval_viz = av.avaliar(vizinho)
+                    vizinho = busca.perturbar(sol_atual, rng)
+                    aval_viz = busca.avaliar(vizinho)
                     total_avals += 1
 
                     if aval_viz.viavel:

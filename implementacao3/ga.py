@@ -8,9 +8,9 @@ import time
 from comum.avaliador import Avaliador
 from comum.instancia import Instancia
 from comum.pareto import domina
-from comum.solucao import Rota, Solucao, solucao_individual
-from implementacao3.base import ArquivoPareto, Metaheuristica, ResultadoOtimizacao
-from comum.operadores import construcao_gulosa_randomizada, inserir_requisicao, perturbar_solucao
+from comum.solucao import Rota, Solucao
+from implementacao3.base import Metaheuristica, ResultadoOtimizacao
+from comum.operadores import inserir_requisicao
 
 
 class AlgoritmoGenetico(Metaheuristica):
@@ -66,7 +66,7 @@ class AlgoritmoGenetico(Metaheuristica):
         rng.shuffle(faltando)
 
         # Insere requisicoes restantes nas rotas mais adequadas
-        sol_temp = Solucao(rotas=filho_rotas)
+        sol_temp = Solucao(rotas=filho_rotas, Q=inst.Q)
         for req in faltando:
             melhor_sol = None
             melhor_custo = float("inf")
@@ -87,7 +87,7 @@ class AlgoritmoGenetico(Metaheuristica):
                     melhor_custo = custo
                     cand_rotas = [r.copiar() for r in sol_temp.rotas]
                     cand_rotas[k] = cand_rota
-                    melhor_sol = Solucao(rotas=cand_rotas)
+                    melhor_sol = Solucao(rotas=cand_rotas, Q=inst.Q)
 
             sol_temp = melhor_sol if melhor_sol is not None else sol_temp
 
@@ -163,30 +163,37 @@ class AlgoritmoGenetico(Metaheuristica):
     ) -> ResultadoOtimizacao:
         inicio = time.time()
         rng = random.Random(self.seed)
-        arquivo = ArquivoPareto()
+        arquivo = self._arquivo
+        busca = kwargs['contextos']
 
         # 1. Inicializacao da Populacao
         pop: list[Solucao] = []
-        pop.append(solucao_individual(inst))
+        pop.append(busca.individual(busca.viaveis[0]))
+        inicial = busca.avaliar(pop[0])
+        if inicial.viavel:
+            arquivo.adicionar(inicial.f1, inicial.f2, pop[0])
 
         # Adiciona solucoes gulosas diversificadas
-        for _ in range(max(2, self.tamanho_populacao // 3)):
+        for i in range(min(self.tamanho_populacao - 1, max(2, self.tamanho_populacao // 3))):
             w = rng.random()
-            pop.append(construcao_gulosa_randomizada(inst, av, alpha=0.4, peso_f1=w, rng=rng))
+            pop.append(busca.construir(busca.escolher(i + 1, rng), rng, alpha=0.4, peso_f1=w))
+            inicial = busca.avaliar(pop[-1])
+            if inicial.viavel:
+                arquivo.adicionar(inicial.f1, inicial.f2, pop[-1])
 
         # Completa populacao com mutacoes
         while len(pop) < self.tamanho_populacao:
             base = rng.choice(pop)
-            pop.append(perturbar_solucao(base, inst, rng))
+            pop.append(busca.perturbar(base, rng))
 
         total_avals = 0
-        historico = []
+        historico = self._historico
 
         for gen in range(self.geracoes):
             # Avaliacao
             avaliados = []
             for sol in pop:
-                res = av.avaliar(sol)
+                res = busca.avaliar(sol)
                 total_avals += 1
                 if res.viavel:
                     arquivo.adicionar(res.f1, res.f2, sol)
@@ -197,15 +204,23 @@ class AlgoritmoGenetico(Metaheuristica):
             while len(descendentes) < self.tamanho_populacao:
                 p1 = rng.choice(pop)
                 p2 = rng.choice(pop)
-                filho = self._crossover(p1, p2, inst, av, rng)
+                # Q do pai da rota herdada define o contexto das inserções.
+                if len(busca.viaveis) > 1 and rng.random() < 0.5:
+                    p1, p2 = p2, p1
+                contexto_inst, contexto_av = busca.obter(p1.Q)
+                filho = self._crossover(p1, p2, contexto_inst, contexto_av, rng)
+                filho.Q = p1.Q
+                if p2.Q != p1.Q:
+                    reparado = busca.mudar(filho, filho.Q, rng)
+                    filho = reparado if reparado is not None else p1.copiar()
                 if rng.random() < self.prob_mutacao:
-                    filho = perturbar_solucao(filho, inst, rng)
+                    filho = busca.perturbar(filho, rng)
                 descendentes.append(filho)
 
             # Avalia descendentes
             desc_avaliados = []
             for sol in descendentes:
-                res = av.avaliar(sol)
+                res = busca.avaliar(sol)
                 total_avals += 1
                 if res.viavel:
                     arquivo.adicionar(res.f1, res.f2, sol)

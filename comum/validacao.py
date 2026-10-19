@@ -19,6 +19,8 @@ def verificar_solucao(inst: Instancia, sol: Solucao, agendas: list[AgendaRota],
     par = par or Parametros()
     res = Avaliacao()
     erros, tol = res.violacoes, par.tolerancia
+    if sol.Q is not None and (type(sol.Q) is not int or sol.Q != inst.Q):
+        erros.append("Q da solucao diverge do contexto")
     seqs = [r.sequencia for r in sol.rotas if r.sequencia]
     nos = [no for seq in seqs for no in seq]
     if len(sol.rotas) > inst.m:

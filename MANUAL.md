@@ -1,6 +1,6 @@
 # Manual da entrega — Ride-pooling multiobjetivo
 
-Versão de apresentação: 16/10/2026. Código organizado em três implementações, com avaliador e entradas compartilhados. A colônia de formigas foi integrada à rede e ao modelo ambiental atuais. Esta branch contém a entrega executável, sem campanhas e relatórios históricos.
+Versão atualizada: 18/10/2026, branch `codex/q-variavel`. Código organizado em três implementações, com avaliador e entradas compartilhados. Inclui quatro metaheurísticas próprias e três adaptadores de bibliotecas. O [README.md](README.md) é o guia de execução; este manual detalha o modelo e a arquitetura.
 
 ## 1. O que esta entrega resolve
 
@@ -11,13 +11,13 @@ Os dois objetivos são minimizados juntos:
 - `f1`: distância total em km no exemplo sem modelo ambiental; emissão operacional estimada em gramas de CO2 quando o modelo ambiental está habilitado.
 - `f2`: tempo perdido total em passageiro-minutos, formado por espera em relação ao horário desejado e desvio do tempo a bordo em relação à viagem direta. Não é o tempo total de viagem. Por isso, `f2 = 0` pode ocorrer mesmo com deslocamentos longos.
 
-`Q` é a capacidade de cada veículo no cenário; `m` é o número máximo de veículos disponíveis. O programa repete o cenário para os valores de Q da configuração. A frota disponível permanece fixa entre esses cenários; o número efetivamente usado pode mudar. A frota é homogênea dentro de cada Q: esta versão não combina tipos de veículos diferentes em uma única solução.
+`Q` é a capacidade de cada veículo; `m` é o número máximo de veículos disponíveis. No modo `fixo`, o programa repete o cenário para os Q da configuração. No modo `variavel`, cada candidato escolhe Q junto com as rotas, dentro da lista autorizada. Cada solução tem frota homogênea, embora soluções de uma mesma execução possam ter capacidades diferentes. O número máximo de veículos permanece fixo; o número usado pode mudar. Não há mistura de capacidades dentro de uma mesma solução.
 
-As três categorias exigidas estão presentes: método exato por enumeração, metaheurísticas GA/SA/GRASP/ACO e heurística gulosa independente. A colônia de formigas da branch `colonia-formiga` está integrada como quarta metaheurística, com as adaptações descritas na seção sobre ACO. O modelo MIP opcional com Gurobi também não faz parte do pacote: o método exato disponível no menu é a enumeração descrita adiante.
+As três categorias exigidas estão presentes: método exato por enumeração, sete metaheurísticas e heurística gulosa independente. SA, GA, GRASP e ACO são próprias; `ga_lib`, `sa_lib` e `pso_lib` usam motores prontos, descritos na seção 12. A colônia de formigas da branch `colonia-formiga` está integrada como quarta metaheurística própria. O método exato disponível no menu é a enumeração descrita adiante; não exige Gurobi.
 
 ## 2. Todos utilizam SciPy?
 
-**Sim, com a política `otimo` utilizada em todas as configurações incluídas, as seis implementações compartilham o avaliador que utiliza SciPy.** Isso não significa que SciPy implemente GA, SA, GRASP, ACO ou a heurística gulosa.
+**Sim, com a política `otimo` utilizada nas configurações incluídas, todos os nove métodos compartilham o avaliador que utiliza SciPy.** Por padrão são selecionados seis: exato, gulosa e quatro metaheurísticas próprias. Isso não significa que SciPy implemente seus ciclos de busca.
 
 O trabalho é dividido em duas partes:
 
@@ -26,9 +26,9 @@ O trabalho é dividido em duas partes:
 
 SciPy é a biblioteca de computação científica; `linprog` é sua interface de programação linear; HiGHS é o solucionador numérico usado por essa chamada. As variáveis desse subproblema são contínuas: horários de início de serviço e variáveis auxiliares de espera. As restrições incluem encadeamento temporal dos eventos, janelas, limites de permanência a bordo e duração da rota. A verificação de cobertura, pareamento, precedência e capacidade também é feita pelo código do projeto.
 
-Como a ordem já foi fixada, os deslocamentos e `f1` dessa rota já estão definidos. O SciPy melhora os horários e, portanto, `f2`; ele não procura todas as rotas nem decide a alocação global dos passageiros. GA, SA, GRASP, ACO, enumeração, operadores e construção gulosa foram programados no projeto, sem uma biblioteca externa que forneça esses algoritmos prontos. NumPy dá suporte aos dados numéricos.
+Como a ordem já foi fixada, os deslocamentos e `f1` dessa rota já estão definidos. O SciPy melhora os horários e, portanto, `f2`; ele não procura todas as rotas nem decide a alocação global dos passageiros. Os quatro métodos próprios, enumeração, operadores e construção gulosa foram programados no projeto. Os métodos com sufixo `_lib` delegam a busca ao pymoo ou simanneal. NumPy dá suporte aos dados numéricos.
 
-O avaliador também oferece as políticas `cedo` e `bordo`, que não utilizam essa programação linear para agendar. O menu exige `otimo` para o exato. No código atual, se o solucionador linear retorna insucesso, o avaliador produz uma agenda `bordo` para diagnosticar as violações. Esse retorno não deve ser confundido com uma certificação de horário ótimo em caso de falha numérica. A exatidão temporal pressupõe a solução bem-sucedida dos subproblemas lineares, dentro das tolerâncias numéricas.
+O avaliador também oferece as políticas `cedo` e `bordo`, que não utilizam essa programação linear para agendar. O menu exige `otimo` para o exato. Se o solver comprova inviabilidade (status 2), o avaliador usa BORDO somente para diagnóstico e mantém a rota marcada como inviável. Falhas técnicas ou numéricas interrompem a execução com erro explícito; não são tratadas como horários ótimos nem como prova de inviabilidade. A programação linear inclui horários próprios dos dois depósitos e permite espera após uma saída limitada pela janela. O retorno considera a abertura do depósito final; essa espera conta na duração da rota.
 
 ## 3. Estrutura e responsabilidade de cada arquivo
 
@@ -49,6 +49,10 @@ Ride-pooling-multi-objetivo/
     grasp.py
     colonia_formigas.py
     aco.py                   # Adaptador do ACO para o executor comum
+    ga_biblioteca.py          # NSGA-II do pymoo
+    sa_biblioteca.py          # SA do simanneal
+    pso_biblioteca.py         # PSO do pymoo
+    suporte_bibliotecas.py    # Representação, avaliação e quotas dos adaptadores
     base.py
     executar.py
   comum/
@@ -86,7 +90,7 @@ Cada pasta de implementação contém `executar.py`, um ponto de entrada que cha
 |---|---|
 | `README.md` | Início rápido: instalação e primeira execução. |
 | `MANUAL.md` | Este documento: arquitetura, algoritmos, exemplos, formatos e limitações. |
-| `requirements.txt` | Lista as dependências externas necessárias: NumPy e SciPy. |
+| `requirements.txt` | NumPy, SciPy, pymoo 0.6.2 e simanneal 0.5.0. |
 
 ### Código comum e método exato
 
@@ -100,6 +104,7 @@ Cada pasta de implementação contém `executar.py`, um ponto de entrada que cha
 | `comum/solucao.py` | Representa rotas e soluções, com depósitos implícitos. Confere cobertura, duplicações, pareamento e precedência; contém construção individual e ferramentas de representação. |
 | `comum/avaliador.py` | Agenda as rotas, verifica restrições e calcula `f1`, espera, desvio e `f2`. Contém a chamada ao SciPy/HiGHS e as políticas alternativas de agendamento. É compartilhado por todas as categorias. |
 | `comum/cenarios.py` | Cria uma cópia de cenário com outro Q, preservando os demais dados e a frota, salvo alteração explícita de `m`. |
+| `comum/capacidade.py` | Mantém contextos e caches isolados por Q, escalas globais, escolha/mutação de capacidade, reparo de carga e orçamento comum de consultas. |
 | `comum/emissoes.py` | Prepara os fatores de ruas reproduzíveis, calcula custos ambientais dos caminhos e escolhe o fator de veículo correspondente ao Q. |
 | `comum/pareto.py` | Define dominância e filtragem de pontos não dominados; reúne também ferramentas de comparação, incluindo hipervolume. O executor do menu não exporta hipervolume nesta entrega. |
 | `implementacao3/colonia_formigas.py` | Núcleo importado e adaptado da branch `colonia-formiga`: construções por inserção de pares, roleta, arquivo Pareto, evaporação e reforço dos feromônios. |
@@ -132,7 +137,9 @@ Cada pasta de implementação contém `executar.py`, um ponto de entrada que cha
 | `experimentos/comparacao_emissoes_q1_10.json` | Configura os 12 pedidos, Q=1 a 10 e modelo ambiental. Deve usar os métodos aproximados por superar o limite do exato. |
 | `experimentos/comparacao_100_corridas.json` | Configura os 100 pedidos completos, `m=100` fixo, Q=1 a 10, modelo ambiental e construção limitada para reduzir custo computacional. |
 
-Não foram incluídos os gráficos antigos, relatórios de campanhas, resultados já calculados, histórico Git, ambiente virtual, caches, scripts antigos de análise ou bibliotecas binárias. Os resultados serão criados pela própria execução.
+Os resultados são gerados localmente em `resultados/`, pasta ignorada pelo Git.
+O ambiente virtual e as bibliotecas binárias também não pertencem ao código
+versionado. Os scripts atuais de comparação e auditoria ficam em `experimentos/`.
 
 ## 4. Como os algoritmos resolvem o problema
 
@@ -158,7 +165,7 @@ O GRASP repete uma construção por inserções, sorteando entre candidatos cons
 
 Cada formiga constrói uma solução completa inserindo pares de coleta/entrega em rotas viáveis. A ordem dos pedidos é sorteada. Os candidatos são escolhidos por roleta usando feromônio e uma preferência ponderada pelos acréscimos normalizados dos objetivos. Formigas diferentes usam pesos distribuídos entre os extremos de emissão e tempo perdido. Ao fim de cada iteração, o feromônio evapora e as soluções representantes do arquivo Pareto reforçam seus arcos. O processo repete a construção com essa informação acumulada. Não reproduz uma variante publicada específica.
 
-A integração preserva essa lógica e adapta a emissão, a auditoria e a interface. A auditoria passou a usar distâncias e tempos da rede separadamente e a considerar os fatores ambientais; os feromônios, a roleta e as inserções de pares foram preservados. No menu, o ACO utiliza a política de `parametros_avaliacao`, portanto `otimo` nos exemplos, com as mesmas regras numéricas do avaliador comum. A função direta `resolver_aco` conserva `bordo` como padrão original; não a confunda com a configuração usada pelo menu.
+A integração adapta emissão, auditoria e interface. A auditoria usa distâncias e tempos da rede separadamente e considera os fatores ambientais. No menu, o ACO utiliza a política de `parametros_avaliacao`, portanto `otimo` nos exemplos, com as mesmas regras numéricas do avaliador comum. A função direta `resolver_aco` conserva `bordo` como padrão original; não a confunda com a configuração usada pelo menu. No modo variável, cada formiga escolhe Q antes das inserções, com feromônio de capacidade, exploração uniforme mínima de 10% e trilhas de arcos separadas por Q. Os pontos globais não dominados reforçam as capacidades e trilhas correspondentes. `aprender=False` desativa também o aprendizado de Q.
 
 A configuração de cem pedidos tem duas formigas, duas iterações e até 200.000 consultas; o limite de oito posições de inserção é herdado do bloco `construcao`. A ordem dos pedidos do ACO continua sorteada, enquanto a construção limitada dos demais métodos pode priorizar horários. Ao atingir o orçamento, somente construções completas entram na saída. Isso pode resultar em uma fronteira vazia, sem provar inviabilidade.
 
@@ -174,7 +181,7 @@ As metaheurísticas não garantem a fronteira ótima. Uma execução por semente
 
 ### Windows
 
-Extraia o ZIP. Abra um terminal **na pasta raiz da branch `apresentacao`**, onde estão `README.md` e `requirements.txt`. Instale Python 3.10 ou superior; a validação desta entrega utiliza Python 3.12. Não é necessário ativar o ambiente virtual no PowerShell.
+Abra um terminal **na pasta raiz do projeto**, onde estão `README.md` e `requirements.txt`. Use Python 3.10 ou superior; a instalação limpa desta versão foi validada em Python 3.14.6 no Windows. Não é necessário ativar o ambiente virtual no PowerShell.
 
 ```powershell
 py -3 -m venv .venv
@@ -182,7 +189,7 @@ py -3 -m venv .venv
 .\.venv\Scripts\python.exe menu.py
 ```
 
-A instalação de NumPy e SciPy exige internet ou os pacotes disponíveis localmente. O ZIP não contém o interpretador nem um ambiente virtual portátil. As dependências não foram fixadas em versões para permitir que o instalador escolha versões compatíveis com o Python. O ambiente de validação utilizou Python 3.12.14, NumPy 2.5.3 e SciPy 1.18.1.
+A instalação exige internet ou os pacotes disponíveis localmente. O projeto não contém um ambiente virtual portátil. As versões dos motores estão fixadas em `pymoo==0.6.2` e `simanneal==0.5.0`; NumPy e SciPy são resolvidos pelo instalador. A validação atual utilizou Python 3.14.6, NumPy 2.5.4 e SciPy 1.18.1. Outras versões de Python não foram certificadas nesta validação.
 
 No Linux/macOS, os equivalentes são `python3 -m venv .venv`, `.venv/bin/python -m pip install -r requirements.txt` e `.venv/bin/python menu.py`.
 
@@ -382,20 +389,21 @@ No exemplo pequeno, a fronteira exata para Q=2 tem os pares `(46 km; 4,5 passage
 Cabeçalho quando há execuções:
 
 ```csv
-Q,categoria,metodo,status,f1,f2,veiculos_usados,tempo_busca_s,pontos,solucao_id
+Q,categoria,metodo,status,f1,f2,veiculos_usados,tempo_busca_s,pontos,solucao_id,origem,biblioteca,versao_biblioteca
 ```
 
 | Coluna | Interpretação |
 |---|---|
 | `Q` | Capacidade do cenário. |
 | `categoria` | `exato`, `metaheuristica` ou `heuristica`. |
-| `metodo` | `exato`, `sa`, `ga`, `grasp`, `aco` ou `gulosa`. |
+| `metodo` | `exato`, `sa`, `ga`, `grasp`, `aco`, `ga_lib`, `sa_lib`, `pso_lib` ou `gulosa`. |
 | `status` | Estado de conclusão/construção, descrito abaixo. |
 | `f1`, `f2` | Objetivos do representante real escolhido para a linha. A unidade de f1 consta do resumo/JSON. |
 | `veiculos_usados` | Quantidade de rotas não vazias dessa solução, e não a frota máxima `m`. |
 | `tempo_busca_s` | Segundos da execução do método; não inclui a reavaliação posterior para exportação. |
 | `pontos` | Quantidade de soluções não dominadas retornadas pelo método; não é número de pedidos nem de veículos. |
 | `solucao_id` | Identificador para localizar exatamente a mesma solução em `solucoes.csv` e `execucoes.json`. |
+| `origem`, `biblioteca`, `versao_biblioteca` | Implementação própria ou de biblioteca, pacote e versão do motor efetivamente executado. |
 
 Os CSVs usam vírgula como separador, ponto decimal e UTF-8 com BOM. No Excel configurado em português, utilize importar texto/CSV e selecione vírgula como delimitador se a abertura direta agrupar tudo em uma coluna. Células vazias de objetivos em uma execução sem solução não representam zero.
 
@@ -450,7 +458,7 @@ O resumo arredonda objetivos para duas casas; JSON e CSV preservam mais precisã
 
 A validação da entrega executou doze combinações no caso de distância e seis no caso ambiental, além de testes do ACO, dos três executores e do menu. Na simplificação do menu, passaram nove testes de navegação e execução; um deles executou a gulosa com os cem pedidos completos em Q=1 e conferiu cobertura e objetivos exportados. A referência exata pequena esperada é `[[46.0,4.5],[92.0,0.0]]` para Q=2. Para conferir localmente, execute a comparação pequena da seção 5.
 
-Use entrada, configuração, semente de busca, semente de ruas e versões das bibliotecas iguais ao comparar reproduções. O tempo de execução depende da máquina; pequenas diferenças numéricas podem depender das versões do solucionador. Não foram repetidas as campanhas completas de 12 e 100 pedidos nem a instalação das dependências do zero. O cenário de cem pedidos foi incluído como entrada, não como obrigação de executar toda a campanha na conferência rápida do pacote.
+Use entrada, configuração, semente de busca, semente de ruas e versões das bibliotecas iguais ao comparar reproduções. O tempo de execução depende da máquina; pequenas diferenças numéricas podem depender das versões do solucionador. Na atualização de 18/10/2026 foram validados a instalação em ambiente virtual limpo, os 26 testes anteriores mais as integrações de bibliotecas, o pequeno com referência exata e os pilotos com 12 e 100 pedidos completos. Os pilotos usam limites curtos, sem estabelecer um ranking científico. Para conferir rapidamente, comece pelo exemplo pequeno do README.
 
 | Situação | Como proceder |
 |---|---|
@@ -481,7 +489,112 @@ Para comparar todos os métodos no pequeno, `--modo comparar` inclui exato, SA, 
 As pastas implementacao1, implementacao2 e implementacao3 contêm os algoritmos reais, não apenas atalhos. A pasta comum contém os componentes compartilhados. Não é necessário trocar de branch ou anexar manualmente arquivos ao ZIP. Esta edição já contém a integração. Não foram incorporados os gráficos/resultados históricos da outra branch nem substituído o núcleo comum pelo código antigo. Campanhas anteriores não ganham resultados ACO automaticamente; para comparações com ele, gere uma nova campanha/pasta com o código atualizado.
 
 
-## 10. Demonstração por pasta
+## 10. Q variável: decisão conjunta de capacidade e rotas
+
+O modo `fixo` continua sendo o padrão dos experimentos anteriores. Use a opção
+**7** no menu para escolher um exemplo, as capacidades permitidas e as
+metaheurísticas que vão otimizar Q junto com as rotas. A opção 6 mantém as
+50 execuções fixas de cem pedidos. Pela linha de comando:
+
+```powershell
+python menu.py --modo comparar --config experimentos/q_variavel_exemplo.json --saida resultados/q_variavel
+python menu.py --modo metaheuristica --config experimentos/comparacao_emissoes_q1_10.json --capacidade variavel --q 1 2 3 4 5 6 7 8 9 10 --max-consultas-rotas 20000 --saida resultados/q_variavel_12
+```
+
+O novo JSON de exemplo já declara `capacidade: "variavel"`; os demais preservam
+o modo fixo. A opção de linha de comando prevalece sobre o JSON. No modo
+variável, `capacidades`/`--q` definem o domínio da decisão, e não execuções
+separadas. Um domínio de um elemento é válido. Q deve ser inteiro positivo e
+estar coberto por exatamente um perfil ambiental. Capacidades menores que
+uma demanda indivisível são excluídas da inicialização e registradas.
+
+Cada solução transporta Q e continua usando no máximo `m` veículos da mesma
+capacidade. Os dois objetivos permanecem emissão/distância e tempo perdido.
+O GA herda/muta Q; o SA altera Q entre estados; o GRASP escolhe Q nos reinícios
+e também o modifica na busca local; a ACO escolhe Q por formiga e aprende sua
+distribuição com feromônios. Não há garantia de visitar todos os Q sob um
+orçamento curto.
+
+Reduções de capacidade removem pares das rotas sobrecarregadas e tentam
+reinseri-los no Q pretendido. Se o reparo falha, há uma reconstrução limitada
+ou rejeição; o programa não aumenta Q silenciosamente. Modificações de rotas
+invalidam partidas externas para que a agenda seja recalculada. O histórico
+registra movimentos tentados e aceitos no contexto, sem confundir essa
+aceitação estrutural/temporal com a aceitação posterior do estado pelo SA.
+
+Cada Q possui instância, parâmetros e cache próprios; a rede e os fatores de
+ruas são preparados uma vez. SA/GRASP comparam candidatos usando escalas
+globais fixas da execução: emissão de viagens individuais com o maior phi
+do domínio e um limite de tempo perdido calculado da demanda. As escalas
+estão em `estatisticas.escalas`; não são recalculadas com phi do candidato.
+Dominância continua dependendo só de f1/f2. Em objetivos iguais, o arquivo
+prefere menor Q e depois uma ordem canônica de rotas.
+
+No modelo atual, Q maior com o mesmo phi pode reproduzir soluções de Q menor.
+Para o domínio 1–10, [4,6,10] preserva a fronteira objetiva, embora omita
+capacidades equivalentes. A busca conserva a lista solicitada, sem reduzir
+automaticamente o domínio ou penalizar Q. Sem emissão/custo dependente de Q,
+a capacidade máxima amplia as opções e não piora a fronteira ótima.
+
+O exemplo novo contém dois pedidos indivisíveis de três passageiros. Sua
+fronteira exata global usa Q=4 e Q=6: dois automóveis evitam perda de tempo;
+um veículo familiar permite agrupamento com menor emissão total e algum
+tempo perdido. Q=10 não melhora essa fronteira. Os fatores ambientais
+continuam sendo hipóteses sintéticas, sem calibração física adicional.
+
+No modo variável, exato e gulosa fazem uma varredura do domínio e filtram a
+união. O exato segue limitado a seis pedidos e fornece a referência global;
+a gulosa é identificada como heurística. Cada metaheurística faz uma única
+busca por semente. Nos modos aproximados a referência global é empírica.
+
+O formato de saída é versão 2 (`versao_formato`). Cada ponto possui `Q`,
+`phi_g_km`, carga de pico, rotas e agendas completas, incluindo retorno e
+`status_agendamento`. No modo ambiental variável, inclui `tipo_veiculo`.
+O registro da execução variável possui `Q: null`, `capacidade: "variavel"`,
+domínio em `opcoes.capacidades`, `motivo_parada` e `estatisticas`.
+`referencias.global` serve à comparação e escolha do representante de todos
+os métodos. O resumo/CSV apresenta o Q do ponto selecionado, não um Q comum
+a todos os pontos da execução. No modo fixo as referências por Q continuam.
+
+`--max-consultas-rotas N` limita o total de consultas de rotas não vazias por
+metaheurística/semente. Acertos de cache contam. No modo variável o orçamento
+é compartilhado por todos os Q; no fixo cada Q recebe `N // quantidade_Q`,
+sem redistribuir o resto. Construção, avaliação e reparo usam o mesmo limite;
+as podas temporais consultadas e caches da ACO também contam. Rejeições
+imediatas de capacidade são verificações estruturais e não consultas de
+agendamento. Exato e gulosa de referência não são interrompidos por esse
+limite. Os limites nativos continuam valendo e podem encerrar antes.
+
+`estatisticas` registra soluções avaliadas, consultas de rotas, agendamentos,
+chamadas PL, acertos de cache, visitas por Q, movimentos e reparos. Ao atingir
+o limite, somente soluções completas já arquivadas são retornadas. Uma
+fronteira vazia não comprova inviabilidade. `motivo_parada` distingue
+`consultas_rotas`, limites ACO e término nativo. O limite não iguala tempo
+de máquina nem quantidade de resoluções PL entre métodos.
+
+A retomada continua entre métodos concluídos, sem restaurar o estado interno
+de uma busca interrompida. Modo, domínio, semente, orçamento, configuração,
+ambiente, entrada e hashes dos algoritmos/menu precisam coincidir. Registros
+antigos permanecem legíveis como fixos; executar código novo sobre checkpoints
+de algoritmos antigos é recusado por incompatibilidade de hashes.
+
+Testes e piloto reproduzível:
+
+```powershell
+python -m unittest discover -s tests -v
+python experimentos/comparar_q.py --orcamento 2000 --sementes 42 43 44
+python experimentos/auditar_q.py resultados/q_variavel resultados/q_variavel_piloto
+```
+
+O piloto compara 12 e 100 pedidos com a demanda inteira. Ele eleva os limites
+nativos para priorizar o orçamento comum e utiliza a mesma construção limitada
+em ambas as modalidades. Produz campanhas detalhadas, `comparacao.json` e
+`RESUMO.md` em `resultados/q_variavel_piloto`. O hipervolume usa uma referência
+empírica e extremos comuns a todas as modalidades/sementes do mesmo tamanho.
+Limites curtos, três sementes e dados sintéticos não estabelecem um ranking
+conclusivo. Para uma campanha maior, aumente orçamento e sementes.
+
+## 11. Demonstração por pasta
 
 
 
@@ -543,4 +656,84 @@ solucoes.csv e execucoes.json. O manual detalha suas colunas e os formatos de en
 O exato é limitado a seis pedidos; para entradas maiores use os aproximados.
 
 O pacote funciona após a extração sem o repositório original, GitHub ou Gurobi.
-Não inclui Python nem bibliotecas binárias. Leia MANUAL.md para detalhes.
+Não inclui Python nem bibliotecas binárias.
+
+## 12. Metaheurísticas prontas de bibliotecas
+
+O catálogo em `implementacao3/__init__.py` centraliza fábrica, validação,
+menu e scripts. Sem `--algoritmos`, a seleção continua sendo `sa ga grasp aco`.
+O grupo `bibliotecas` seleciona `ga_lib sa_lib pso_lib`; `todos` seleciona
+as sete metaheurísticas. O modo `comparar` acrescenta exato e gulosa.
+O menu principal 7 escolhe Q variável; o submenu 7 escolhe SA de biblioteca.
+Consulte a tabela completa dos dois menus no README.
+
+### Representação e restrições
+
+`suporte_bibliotecas.py` fornece um vetor de `3n+1` números em `[0,1]` para
+GA e PSO: uma chave de Q, `n` chaves de veículos e `2n` prioridades de eventos.
+As chaves discretas são convertidas por `min(int(chave*tamanho), tamanho-1)`;
+o extremo 1 pertence ao último índice. As capacidades vêm do domínio autorizado,
+excluindo as menores que um grupo indivisível de passageiros. Q fixo equivale
+a um domínio unitário. O número máximo de veículos não muda com Q.
+
+Dentro de cada veículo, a conversão escolhe o evento disponível de menor
+prioridade, desempatando pelo identificador. Uma entrega fica disponível após
+sua coleta. Isso garante cobertura, pareamento e precedência, mas não presume
+capacidade acumulada ou viabilidade temporal: o avaliador verifica ambas.
+A conversão inversa permite fornecer sementes individuais e construídas pelo
+projeto aos motores. Vetores aleatórios completam a população.
+
+### Responsabilidade de cada motor
+
+- `ga_biblioteca.py`: usa `pymoo.algorithms.moo.nsga2.NSGA2` e `minimize`.
+  Seleção, cruzamento, mutação e sobrevivência são da biblioteca. Os objetivos
+  são `f1/escala1` e `f2/escala2`; uma restrição separada recebe a quantidade
+  de violações do avaliador, zero para candidato viável.
+- `pso_biblioteca.py`: usa `pymoo.algorithms.soo.nonconvex.pso.PSO` e `minimize`.
+  Velocidades, posições e melhores partículas são atualizadas pelo pymoo.
+  Cada trajetória minimiza a soma ponderada dos objetivos normalizados,
+  mantendo a mesma restrição separada usada no GA.
+- `sa_biblioteca.py`: especializa `simanneal.Annealer`, com cópia de `Solucao`,
+  movimentos de rotas/Q dos operadores comuns e energia ponderada normalizada
+  mais `1000 * quantidade_de_violacoes`. Resfriamento e aceitação são do
+  `Annealer.anneal`. A semente e o handler SIGINT globais são restaurados.
+
+SA e PSO usam três trajetórias com os pesos `(0,8;0,2)`, `(0,5;0,5)` e
+`(0,2;0,8)`, configuráveis por `pesos`. Todos os candidatos viáveis avaliados,
+inclusive movimentos rejeitados pelo SA ou partículas que não melhoram o
+incumbente, alimentam um arquivo Pareto comum. As escalas são globais entre
+capacidades; Q não vira um terceiro objetivo. Os pesos não garantem recuperar
+toda a fronteira, principalmente em buscas curtas ou fronteiras não convexas.
+
+### Esforço, parâmetros e rastreabilidade
+
+Quando existe orçamento de consultas, SA e PSO o dividem igualmente entre as
+trajetórias; o resto vai para a última. A inicialização também conta. A
+construção de sementes recebe até um quarto da quota para reservar esforço
+ao motor. Limites nativos podem encerrar antes; sobras de trajetórias que
+terminam cedo não são redistribuídas. Mesmo sem uma solução, o método não
+ultrapassa o orçamento. Ao atingir o limite, retorna apenas soluções completas
+já arquivadas, com histórico e motivo de parada.
+
+Os JSONs usam `tamanho_populacao` e `geracoes` para GA, `iteracoes`,
+`temp_inicial`, `temp_final` e `pesos` para SA e `tamanho_populacao`,
+`iteracoes` e `pesos` para PSO. `geracoes`/`iteracoes` no pymoo são traduzidos
+para `n_gen`, incluindo a população inicial como primeira geração.
+
+As dependências são carregadas somente ao selecionar os novos métodos.
+Se faltarem, o erro orienta `python -m pip install -r requirements.txt`;
+não há substituição por algoritmo próprio. `ResultadoOtimizacao.estatisticas`
+preserva `origem`, `biblioteca`, `versao_biblioteca` e `motor`, além dos
+contadores comuns. Esses dados seguem para `execucoes.json`; os três primeiros
+também aparecem em `metricas.csv`. Se a demanda elimina todas as capacidades
+antes da busca, não há motor executado nem versão a registrar.
+
+Os adaptadores e seu suporte entram nos hashes de retomada. Além de código e
+configuração, a retomada verifica as versões dos motores já executados.
+Toda solução exportada passa pela auditoria independente. Os testes de
+`tests/test_bibliotecas.py` verificam chamadas reais aos motores, codificação,
+Q, sementes, orçamentos, metadados, menus, exportação e retomada.
+
+Referências dos motores: [NSGA-II](https://pymoo.org/algorithms/moo/nsga2.html),
+[PSO](https://pymoo.org/algorithms/soo/pso.html) e
+[simanneal](https://github.com/perrygeo/simanneal).

@@ -38,6 +38,9 @@ class Solucao:
     publicadas, que fixam esse instante.
     """
 
+    Q: int | None = None
+    """Capacidade homogênea escolhida; None usa o contexto fixo legado."""
+
     @property
     def veiculos_usados(self) -> int:
         return sum(1 for r in self.rotas if r.usada)
@@ -46,6 +49,7 @@ class Solucao:
         return Solucao(
             rotas=[r.copiar() for r in self.rotas],
             partidas=dict(self.partidas) if self.partidas else None,
+            Q=self.Q,
         )
 
     def nos_visitados(self) -> list[int]:
