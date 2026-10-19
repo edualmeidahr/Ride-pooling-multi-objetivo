@@ -9,7 +9,7 @@ from comum.avaliador import Avaliador
 from comum.instancia import Instancia
 from comum.pareto import domina
 from comum.solucao import Rota, Solucao
-from implementacao3.base import Metaheuristica, ResultadoOtimizacao
+from implementacao3.base import ORCAMENTO_BUSCA, Metaheuristica, ResultadoOtimizacao
 from comum.operadores import inserir_requisicao
 
 
@@ -19,7 +19,7 @@ class AlgoritmoGenetico(Metaheuristica):
     def __init__(
         self,
         tamanho_populacao: int = 30,
-        geracoes: int = 40,
+        geracoes: int = ORCAMENTO_BUSCA,
         prob_crossover: float = 0.85,
         prob_mutacao: float = 0.35,
         seed: int | None = None,

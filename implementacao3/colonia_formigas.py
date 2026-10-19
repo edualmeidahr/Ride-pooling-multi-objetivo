@@ -22,14 +22,15 @@ from comum.pareto import domina
 from comum.solucao import Rota, Solucao
 from comum.validacao import verificar_solucao
 from comum.capacidade import ContextoCapacidades, LimiteBusca, chave_solucao
+from implementacao3.base import ORCAMENTO_BUSCA
 
 
 @dataclass(frozen=True)
 class ConfigACO:
     politica: str = BORDO
     seed: int = 0
-    formigas: int = 20
-    iteracoes: int = 100
+    formigas: int = ORCAMENTO_BUSCA
+    iteracoes: int = ORCAMENTO_BUSCA
     max_avaliacoes: int = 200_000
     limite_segundos: float | None = None
     a: float = 1.0

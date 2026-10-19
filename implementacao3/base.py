@@ -13,6 +13,9 @@ from comum.pareto import domina, filtrar
 from comum.solucao import Solucao
 from comum.capacidade import ContextoCapacidades, LimiteBusca, chave_solucao
 
+# Pedido do professor: reduzir o orçamento exploratório de 100 para 10 rodadas.
+ORCAMENTO_BUSCA = 10
+
 
 @dataclass
 class ResultadoOtimizacao:

@@ -1,13 +1,13 @@
 """NSGA-II fornecido pelo pymoo, com adaptação numérica do DARP."""
 from time import perf_counter
 
-from implementacao3.base import Metaheuristica
+from implementacao3.base import ORCAMENTO_BUSCA, Metaheuristica
 from implementacao3.suporte_bibliotecas import (CodificacaoRotas, identificar, inteiro,
     amostra_inicial, problema_pymoo, callback_pymoo, resultado, semente_valida)
 
 
 class GeneticoBiblioteca(Metaheuristica):
-    def __init__(self, tamanho_populacao=16, geracoes=20, seed=42):
+    def __init__(self, tamanho_populacao=16, geracoes=ORCAMENTO_BUSCA, seed=42):
         super().__init__('GA biblioteca (pymoo NSGA-II)')
         self.tamanho_populacao = inteiro(tamanho_populacao, 'tamanho_populacao', 2)
         self.geracoes = inteiro(geracoes, 'geracoes')

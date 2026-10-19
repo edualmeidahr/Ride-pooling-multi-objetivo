@@ -9,7 +9,7 @@ from comum.avaliador import Avaliador
 from comum.instancia import Instancia
 from comum.pareto import domina
 from comum.solucao import Solucao
-from implementacao3.base import Metaheuristica, ResultadoOtimizacao
+from implementacao3.base import ORCAMENTO_BUSCA, Metaheuristica, ResultadoOtimizacao
 
 
 class GRASP(Metaheuristica):
@@ -17,7 +17,7 @@ class GRASP(Metaheuristica):
 
     def __init__(
         self,
-        max_iteracoes: int = 30,
+        max_iteracoes: int = ORCAMENTO_BUSCA,
         alpha_rcl: float = 0.3,
         max_passos_busca_local: int = 25,
         seed: int | None = None,

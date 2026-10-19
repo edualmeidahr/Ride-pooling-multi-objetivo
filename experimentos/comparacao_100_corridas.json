@@ -135,33 +135,33 @@
     },
     "ga": {
       "tamanho_populacao": 6,
-      "geracoes": 6
+      "geracoes": 10
     },
     "grasp": {
-      "max_iteracoes": 4,
+      "max_iteracoes": 10,
       "max_passos_busca_local": 3
     },
     "aco": {
-      "formigas": 2,
-      "iteracoes": 2,
+      "formigas": 10,
+      "iteracoes": 10,
       "max_avaliacoes": 200000
     },
     "ga_lib": {
       "tamanho_populacao": 8,
-      "geracoes": 6
+      "geracoes": 10
     },
     "sa_lib": {
-      "iteracoes": 60,
+      "iteracoes": 10,
       "temp_inicial": 2.0,
       "temp_final": 0.01
     },
     "pso_lib": {
       "tamanho_populacao": 8,
-      "iteracoes": 6
+      "iteracoes": 10
     }
   },
   "saida": "resultados/comparacao_100_corridas",
-  "observacao": "100 pedidos, Q=1..10, uma execucao por SA/GA/GRASP/ACO/gulosa. Construcao limitada para escala; ACO usa ordem sorteada e herda o limite de posicoes. Parametros exploratorios, sem ranking nem referencia exata.",
+  "observacao": "100 pedidos, Q=1..10, uma execucao por SA/GA/GRASP/ACO/gulosa. Orcamento exploratorio de 10 rodadas. Construcao limitada para escala; ACO usa ordem sorteada e herda o limite de posicoes. Sem ranking nem referencia exata.",
   "modelo_emissoes": {
     "descricao": "Hipotese sintetica por categorias de veiculo. Valores em g CO2/km, nao medidos nem transcritos das referencias.",
     "escopo": "CO2 operacional estimado; sem ciclo de vida, partida a frio ou marcha lenta explicitos",

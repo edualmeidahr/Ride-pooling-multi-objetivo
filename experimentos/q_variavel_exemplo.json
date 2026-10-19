@@ -30,29 +30,29 @@
     },
     "ga": {
       "tamanho_populacao": 8,
-      "geracoes": 6
+      "geracoes": 10
     },
     "grasp": {
-      "max_iteracoes": 6,
+      "max_iteracoes": 10,
       "max_passos_busca_local": 4
     },
     "aco": {
-      "formigas": 6,
-      "iteracoes": 5,
-      "max_avaliacoes": 2000
+      "formigas": 10,
+      "iteracoes": 10,
+      "max_avaliacoes": 5000
     },
     "ga_lib": {
       "tamanho_populacao": 8,
-      "geracoes": 6
+      "geracoes": 10
     },
     "sa_lib": {
-      "iteracoes": 60,
+      "iteracoes": 10,
       "temp_inicial": 2.0,
       "temp_final": 0.01
     },
     "pso_lib": {
       "tamanho_populacao": 8,
-      "iteracoes": 6
+      "iteracoes": 10
     }
   },
   "modelo_emissoes": {

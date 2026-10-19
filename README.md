@@ -47,10 +47,17 @@ Gurobi, conta em serviço externo ou código de outra branch para executar.
 ## 2. Comece por esta demonstração
 
 Este comando pequeno já compara o exato, a gulosa e as quatro metaheurísticas
-próprias, deixando os métodos escolherem Q:
+próprias, deixando os métodos escolherem Q. O orçamento exploratório é **10
+rodadas** (pedido para reduzir as 100 iterações da colônia de formigas):
 
 ```powershell
-python menu.py --modo comparar --config experimentos/q_variavel_exemplo.json
+python menu.py --modo comparar --config experimentos/q_variavel_exemplo.json --saida resultados/demo_10
+```
+
+No Linux, o mesmo atalho:
+
+```bash
+./rodar_demo.sh
 ```
 
 Sem ativar o ambiente, o mesmo comando no Windows é:

@@ -4,13 +4,13 @@ import random
 from time import perf_counter
 
 from comum.capacidade import LimiteBusca
-from implementacao3.base import Metaheuristica
+from implementacao3.base import ORCAMENTO_BUSCA, Metaheuristica
 from implementacao3.suporte_bibliotecas import (identificar, inteiro, pesos_validos,
     avaliar, quota_trajetoria, LimiteTrajetoria, semente_simanneal, resultado, semente_valida)
 
 
 class AnnealingBiblioteca(Metaheuristica):
-    def __init__(self, iteracoes=300, temp_inicial=2.0, temp_final=0.01, pesos=None, seed=42):
+    def __init__(self, iteracoes=ORCAMENTO_BUSCA, temp_inicial=2.0, temp_final=0.01, pesos=None, seed=42):
         super().__init__('SA biblioteca (simanneal)')
         self.iteracoes = inteiro(iteracoes, 'iteracoes')
         if any(isinstance(t, bool) or not isinstance(t, (int, float)) or not math.isfinite(t)

@@ -167,7 +167,7 @@ Cada formiga constrói uma solução completa inserindo pares de coleta/entrega 
 
 A integração adapta emissão, auditoria e interface. A auditoria usa distâncias e tempos da rede separadamente e considera os fatores ambientais. No menu, o ACO utiliza a política de `parametros_avaliacao`, portanto `otimo` nos exemplos, com as mesmas regras numéricas do avaliador comum. A função direta `resolver_aco` conserva `bordo` como padrão original; não a confunda com a configuração usada pelo menu. No modo variável, cada formiga escolhe Q antes das inserções, com feromônio de capacidade, exploração uniforme mínima de 10% e trilhas de arcos separadas por Q. Os pontos globais não dominados reforçam as capacidades e trilhas correspondentes. `aprender=False` desativa também o aprendizado de Q.
 
-A configuração de cem pedidos tem duas formigas, duas iterações e até 200.000 consultas; o limite de oito posições de inserção é herdado do bloco `construcao`. A ordem dos pedidos do ACO continua sorteada, enquanto a construção limitada dos demais métodos pode priorizar horários. Ao atingir o orçamento, somente construções completas entram na saída. Isso pode resultar em uma fronteira vazia, sem provar inviabilidade.
+O orçamento exploratório padrão é 10 rodadas (formigas/iterações/gerações), no lugar das 100 da campanha anterior. A configuração de cem pedidos usa 10 formigas, 10 iterações e até 200.000 consultas; o limite de oito posições de inserção é herdado do bloco `construcao`. A ordem dos pedidos do ACO continua sorteada, enquanto a construção limitada dos demais métodos pode priorizar horários. Ao atingir o orçamento, somente construções completas entram na saída. Isso pode resultar em uma fronteira vazia, sem provar inviabilidade.
 
 ### Heurística gulosa
 
@@ -324,9 +324,9 @@ Exemplo completo reduzido:
   "parametros_avaliacao": {"phi": 1, "alpha": 2, "politica": "otimo"},
   "algoritmos": {
     "sa": {"temp_inicial": 1, "temp_final": 0.5, "fator_resfriamento": 0.6, "iter_por_temp": 3},
-    "ga": {"tamanho_populacao": 6, "geracoes": 2},
-    "grasp": {"max_iteracoes": 2, "max_passos_busca_local": 2},
-    "aco": {"formigas": 4, "iteracoes": 3, "max_avaliacoes": 2000}
+    "ga": {"tamanho_populacao": 6, "geracoes": 10},
+    "grasp": {"max_iteracoes": 10, "max_passos_busca_local": 2},
+    "aco": {"formigas": 10, "iteracoes": 10, "max_avaliacoes": 5000}
   }
 }
 ```

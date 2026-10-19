@@ -2,14 +2,14 @@
 from time import perf_counter
 
 from comum.capacidade import LimiteBusca
-from implementacao3.base import Metaheuristica
+from implementacao3.base import ORCAMENTO_BUSCA, Metaheuristica
 from implementacao3.suporte_bibliotecas import (CodificacaoRotas, identificar, inteiro,
     pesos_validos, amostra_inicial, problema_pymoo, callback_pymoo, quota_trajetoria,
     LimiteTrajetoria, resultado, semente_valida)
 
 
 class PSOBiblioteca(Metaheuristica):
-    def __init__(self, tamanho_populacao=16, iteracoes=20, pesos=None, seed=42):
+    def __init__(self, tamanho_populacao=16, iteracoes=ORCAMENTO_BUSCA, pesos=None, seed=42):
         super().__init__('PSO biblioteca (pymoo)')
         self.tamanho_populacao = inteiro(tamanho_populacao, 'tamanho_populacao', 2)
         self.iteracoes = inteiro(iteracoes, 'iteracoes')

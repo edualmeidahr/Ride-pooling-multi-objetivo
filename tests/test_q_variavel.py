@@ -19,6 +19,7 @@ from comum.validacao import verificar_solucao
 from implementacao1.exato import fronteira_exata
 from implementacao3 import obter_metaheuristica
 from implementacao3.base import ArquivoPareto
+from implementacao3.base import ORCAMENTO_BUSCA
 from implementacao3.colonia_formigas import ConfigACO, resolver_aco
 from menu import executar, frente_global, preparar
 from menu import menu
@@ -233,6 +234,21 @@ class QVariavelTest(unittest.TestCase):
                 self.assertEqual(ctx.consultas, res.estatisticas['contadores']['consultas_rotas'])
                 self.assertEqual(res.avaliacoes, res.estatisticas['contadores']['solucoes'])
                 self.auditar(ctx, res.fronteira)
+
+    def test_orcamento_padrao_eh_dez(self):
+        from implementacao3.ga import AlgoritmoGenetico
+        from implementacao3.grasp import GRASP
+        from implementacao3.ga_biblioteca import GeneticoBiblioteca
+        from implementacao3.pso_biblioteca import PSOBiblioteca
+        from implementacao3.sa_biblioteca import AnnealingBiblioteca
+        self.assertEqual(ORCAMENTO_BUSCA, 10)
+        self.assertEqual(ConfigACO().iteracoes, 10)
+        self.assertEqual(ConfigACO().formigas, 10)
+        self.assertEqual(AlgoritmoGenetico().geracoes, 10)
+        self.assertEqual(GRASP().max_iteracoes, 10)
+        self.assertEqual(GeneticoBiblioteca().geracoes, 10)
+        self.assertEqual(PSOBiblioteca().iteracoes, 10)
+        self.assertEqual(AnnealingBiblioteca().iteracoes, 10)
 
     def test_aco_sem_aprendizado(self):
         ctx = self.contexto([1, 2, 5])
